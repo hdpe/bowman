@@ -1,0 +1,62 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>uk.co.blackpepper.sdrclient</groupId>
+	<artifactId>sdr-client-parent</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+	</properties>
+
+	<modules>
+		<module>annotation</module>
+		<module>gen</module>
+		<module>main</module>
+		<module>test</module>
+	</modules>
+	
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>2.17</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>check</goal>
+						</goals>
+					</execution>
+				</executions>
+				<!-- Fix for m2e-code-quality bug: https://groups.google.com/forum/#!topic/m2e-code-quality/_QGGBPIzpxg -->
+				<configuration>
+					<configLocation>checkstyle.xml</configLocation>
+					<sourceDirectory>${project.build.sourceDirectory}</sourceDirectory>
+					<testSourceDirectory>${project.build.testSourceDirectory}</testSourceDirectory>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>uk.co.blackpepper</groupId>
+						<artifactId>bp-build</artifactId>
+						<version>1.1.0</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+		</plugins>
+	</build>
+	
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>sdr-client-annotation</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+</project>
