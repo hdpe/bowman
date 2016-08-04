@@ -31,7 +31,7 @@ public class Generator {
 
 		JavaClassSource result = Roaster.create(JavaClassSource.class)
 			.setName(source.getName())
-			.setPackage(source.getPackage() + ".client")
+			.setPackage(convertToClientPackage(source.getPackage()))
 			.addAnnotation(RemoteResource.class)
 				.setStringValue((String) expectedAnnotation.values().get("value")).getOrigin();
 
@@ -40,10 +40,12 @@ public class Generator {
 		result.addProperty(URI.class, idField.getName()).removeMutator();
 
 		for (Field field : getNonIdFields(source)) {
-			// special handling for when same class - seems to be a roaster bug
-			String type = field.getQualifiedTypeNameWithGenerics().equals(source.getPackage() + "."
-					+ source.getName()) ? source.getName() : field.getQualifiedTypeNameWithGenerics();
-			
+			String type = field.getQualifiedTypeNameWithGenerics();
+			String fieldTypePackage = getFieldTypePackage(field);
+			if (fieldTypePackage.equals(source.getPackage())) {
+				type = convertToClientPackage(fieldTypePackage) + "." + getFieldTypeName(field);
+			}
+					
 			PropertySource<?> property = result.addProperty(type, field.getName());
 			addAnnotations(property.getAccessor(), getClientAnnotations(field.getAnnotations()));
 		}
@@ -51,6 +53,28 @@ public class Generator {
 		classWriter.write(createSourceFileRelativePath(result), result.toString());
 	}
 
+	private static String getFieldTypePackage(Field field) {
+		String fqTypeName = getFieldQualifiedTypeName(field);
+		return fqTypeName.substring(0, fqTypeName.indexOf(".") > -1 ? fqTypeName.lastIndexOf(".")
+				: fqTypeName.length());
+	}
+	
+	private static String getFieldTypeName(Field field) {
+		String fqTypeName = getFieldQualifiedTypeName(field);
+		return fqTypeName.substring(fqTypeName.indexOf(".") > -1 ? (fqTypeName.lastIndexOf(".") + 1) : 0);
+	}
+	
+	private static String getFieldQualifiedTypeName(Field field) {
+		String fqTypeName = field.getQualifiedTypeNameWithGenerics();
+		fqTypeName = fqTypeName.substring(0, fqTypeName.indexOf("<") > -1 ? fqTypeName.indexOf("<")
+				: fqTypeName.length());
+		return fqTypeName;
+	}
+	
+	private static String convertToClientPackage(String modelPackage) {
+		return modelPackage + ".client";
+	}
+	
 	private static void addAnnotations(MethodSource<?> getter, Collection<Annotation> annotations) {
 		for (Annotation annotation : annotations) {
 			getter.addAnnotation(annotation.getFullyQualifiedName());

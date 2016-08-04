@@ -39,29 +39,25 @@ public class GeneratorTest {
 
 	@Test
 	public void generateWithoutRestResourceAnnotationDoesNothing() throws IOException {
-		JavaClassSource javaClass = Roaster.create(JavaClassSource.class);
-		javaClass.setPackage("test").setName("Entity");
+		JavaClassSource javaClass = Roaster.create(JavaClassSource.class)
+			.setPackage("test")
+			.setName("Entity");
 
 		generator.generate(new RoasterClassSourceAdapter(javaClass), classWriter);
 
 		verifyZeroInteractions(classWriter);
 	}
-
+	
 	@Test
-	public void generateWritesFile() throws IOException {
+	public void generateWritesContent() throws IOException {
 		JavaClassSource javaClass = Roaster.create(JavaClassSource.class);
 		javaClass.setPackage("test").setName("Entity").addAnnotation(RemoteResource.class)
 				.setStringValue("/path/to/resource");
 		javaClass.addField().setName("id").addAnnotation(Id.class);
 		javaClass.addField().setName("name").setType(String.class);
 
-		ArgumentCaptor<String> content = ArgumentCaptor.forClass(String.class);
-
-		generator.generate(new RoasterClassSourceAdapter(javaClass), classWriter);
-
-		verify(classWriter).write(eq("test/client/Entity.java"), content.capture());
-
-		JavaClassSource output = (JavaClassSource) Roaster.parse(content.getValue());
+		JavaClassSource output = generateAndParseContent(javaClass);
+		
 		assertThat("qualifiedName", output.getQualifiedName(), is("test.client.Entity"));
 		assertThat("has class annotation", output.hasAnnotation(RemoteResource.class), is(true));
 		assertThat("class annotation value", output.getAnnotation(RemoteResource.class).getStringValue(),
@@ -75,18 +71,23 @@ public class GeneratorTest {
 	}
 
 	@Test
+	public void generateWritesToRelativePath() throws IOException {
+		JavaClassSource javaClass = createValidJavaClassSource("pkg.X");
+		
+		generator.generate(new RoasterClassSourceAdapter(javaClass), classWriter);
+		
+		verify(classWriter).write(eq("pkg/client/X.java"), anyString());
+	}
+
+	@Test
 	public void generateWithClientAnnotationPreservesAnnotation() throws IOException {
 		JavaClassSource javaClass = createValidJavaClassSource();
-		javaClass.addAnnotation(RemoteResource.class).setStringValue("/");
-		javaClass.addField().setName("field").addAnnotation(LinkedResource.class);
+		javaClass.addField()
+			.setName("field")
+			.addAnnotation(LinkedResource.class);
 
-		ArgumentCaptor<String> content = ArgumentCaptor.forClass(String.class);
-
-		generator.generate(new RoasterClassSourceAdapter(javaClass), classWriter);
-
-		verify(classWriter).write(anyString(), content.capture());
-
-		JavaClassSource output = (JavaClassSource) Roaster.parse(content.getValue());
+		JavaClassSource output = generateAndParseContent(javaClass);
+		
 		assertThat("field getter has @LinkedResource", output.getMethod("getField").hasAnnotation(LinkedResource.class),
 				is(true));
 	}
@@ -94,23 +95,57 @@ public class GeneratorTest {
 	@Test
 	public void generateWithOtherAnnotationDiscardsAnnotation() throws IOException {
 		JavaClassSource javaClass = createValidJavaClassSource();
-		javaClass.addAnnotation(RemoteResource.class).setStringValue("/");
-		javaClass.addField().setName("field").addAnnotation(Deprecated.class);
+		javaClass.addField()
+			.setName("field")
+			.addAnnotation(Deprecated.class);
 
-		ArgumentCaptor<String> content = ArgumentCaptor.forClass(String.class);
-
-		generator.generate(new RoasterClassSourceAdapter(javaClass), classWriter);
-
-		verify(classWriter).write(anyString(), content.capture());
-
-		JavaClassSource output = (JavaClassSource) Roaster.parse(content.getValue());
+		JavaClassSource output = generateAndParseContent(javaClass);
+		
 		assertThat("field getter has @Deprecated", output.getMethod("getField").hasAnnotation(Deprecated.class),
 				is(false));
 	}
+	
+	@Test
+	public void generateWithClientResourceTypeConvertsType() throws IOException {
+		JavaClassSource javaClass = createValidJavaClassSource("sourcepackage.X");
+		javaClass.addField()
+			.setName("field")
+			.setType("sourcepackage.Y");
+		
+		JavaClassSource output = generateAndParseContent(javaClass);
+		
+		assertThat("field type", output.getField("field").getType().getQualifiedName(), is("sourcepackage.client.Y"));
+	}
+	
+	private JavaClassSource generateAndParseContent(JavaClassSource in) throws IOException {
+		ArgumentCaptor<String> content = ArgumentCaptor.forClass(String.class);
 
+		generator.generate(new RoasterClassSourceAdapter(in), classWriter);
+
+		verify(classWriter).write(anyString(), content.capture());
+
+		return (JavaClassSource) Roaster.parse(content.getValue());
+	}
+	
 	private static JavaClassSource createValidJavaClassSource() {
-		JavaClassSource javaClass = Roaster.create(JavaClassSource.class).setName("X").setPackage("x");
-		javaClass.addField().setName("id").addAnnotation(Id.class);
+		return createValidJavaClassSource("packageName.ClassName");
+	}
+
+	private static JavaClassSource createValidJavaClassSource(String fqClassName) {
+		String packageName = fqClassName.substring(0, fqClassName.lastIndexOf("."));
+		String className = fqClassName.substring(fqClassName.lastIndexOf(".") + 1);
+		
+		JavaClassSource javaClass = Roaster.create(JavaClassSource.class)
+			.setPackage(packageName)
+			.setName(className);
+		
+		javaClass.addAnnotation(RemoteResource.class)
+			.setStringValue("/");
+		
+		javaClass.addField()
+			.setName("id")
+			.addAnnotation(Id.class);
+		
 		return javaClass;
 	}
 }
