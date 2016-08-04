@@ -4,7 +4,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
+import uk.co.blackpepper.sdrclient.annotation.LinkedResource;
 import uk.co.blackpepper.sdrclient.annotation.RemoteResource;
 
 @Entity
@@ -16,4 +18,8 @@ public class Entity1 {
 	private Integer id;
 
 	private String name;
+	
+	@ManyToOne
+	@LinkedResource
+	private Entity1 related;
 }

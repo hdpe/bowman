@@ -40,7 +40,11 @@ public class Generator {
 		result.addProperty(URI.class, idField.getName()).removeMutator();
 
 		for (Field field : getNonIdFields(source)) {
-			PropertySource<?> property = result.addProperty(field.getQualifiedTypeNameWithGenerics(), field.getName());
+			// special handling for when same class - seems to be a roaster bug
+			String type = field.getQualifiedTypeNameWithGenerics().equals(source.getPackage() + "."
+					+ source.getName()) ? source.getName() : field.getQualifiedTypeNameWithGenerics();
+			
+			PropertySource<?> property = result.addProperty(type, field.getName());
 			addAnnotations(property.getAccessor(), getClientAnnotations(field.getAnnotations()));
 		}
 
