@@ -15,6 +15,7 @@ import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 import uk.co.blackpepper.sdrclient.annotation.LinkedResource;
+import uk.co.blackpepper.sdrclient.annotation.RemoteResource;
 
 public class Client<T> {
 
@@ -113,7 +114,8 @@ public class Client<T> {
 	}
 
 	public URI post(T object) {
-		URI postUri = UriComponentsBuilder.fromUri(baseUri).path("/entities").build().toUri();
+		String path = object.getClass().getAnnotation(RemoteResource.class).value();
+		URI postUri = UriComponentsBuilder.fromUri(baseUri).path(path).build().toUri();
 		URI resourceUri = restTemplate.postForLocation(postUri, object);
 		
 		setId(object, resourceUri);

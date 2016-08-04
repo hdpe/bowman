@@ -10,8 +10,8 @@ import uk.co.blackpepper.sdrclient.annotation.LinkedResource;
 import uk.co.blackpepper.sdrclient.annotation.RemoteResource;
 
 @Entity
-@RemoteResource("/entities2")
-public class Entity2 {
+@RemoteResource("/bidi-children")
+public class BidiChildEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,5 +19,7 @@ public class Entity2 {
 	
 	@ManyToOne
 	@LinkedResource
-	private Entity1 related;
+	private BidiParentEntity parent;
+	
+	private String name;
 }
