@@ -24,7 +24,7 @@
 							<goal>generate</goal>
 						</goals>
 						<configuration>
-							<packageName>uk.co.blackpepper.sdrclient.test.server</packageName>
+							<packageName>uk.co.blackpepper.sdrclient.test.server.model</packageName>
 						</configuration>
 					</execution>
 				</executions>

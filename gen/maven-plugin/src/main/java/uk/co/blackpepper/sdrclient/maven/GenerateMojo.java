@@ -77,7 +77,7 @@ public class GenerateMojo extends AbstractMojo {
 			throw new MojoExecutionException("Couldn't read classpath resources", exception);
 		}
 
-		return classPath.getTopLevelClassesRecursive(packageName);
+		return classPath.getTopLevelClasses(packageName);
 	}
 
 	private ClassLoader newClassLoader() throws MojoExecutionException {
