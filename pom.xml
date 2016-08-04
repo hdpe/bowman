@@ -37,6 +37,7 @@
 					<configLocation>checkstyle.xml</configLocation>
 					<sourceDirectory>${project.build.sourceDirectory}</sourceDirectory>
 					<testSourceDirectory>${project.build.testSourceDirectory}</testSourceDirectory>
+					<includeTestSourceDirectory>true</includeTestSourceDirectory>
 				</configuration>
 				<dependencies>
 					<dependency>
