@@ -51,6 +51,14 @@ public class ReflectionClassSourceAdapter implements ClassSource {
 		public String getQualifiedTypeNameWithGenerics() {
 			return field.getGenericType().getTypeName();
 		}
+
+		public Collection<Annotation> getAnnotations() {
+			List<Annotation> result = new ArrayList<Annotation>();
+			for (java.lang.annotation.Annotation annotation : field.getAnnotations()) {
+				result.add(new AnnotationImpl(annotation));
+			}
+			return result;
+		}
 	}
 
 	private final Class<?> clazz;

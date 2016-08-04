@@ -9,6 +9,8 @@ import java.util.List;
 
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
+import org.jboss.forge.roaster.model.source.MethodSource;
+import org.jboss.forge.roaster.model.source.PropertySource;
 
 import uk.co.blackpepper.sdrclient.annotation.RemoteResource;
 import uk.co.blackpepper.sdrclient.gen.model.Annotation;
@@ -17,6 +19,8 @@ import uk.co.blackpepper.sdrclient.gen.model.Field;
 
 public class Generator {
 
+	private static final String CLIENT_ANNOTATION_PACKAGE = RemoteResource.class.getPackage().getName();
+	
 	public void generate(ClassSource source, GeneratedClassWriter classWriter) throws IOException {
 
 		Annotation expectedAnnotation = getAnnotation(source, RemoteResource.class);
@@ -36,10 +40,31 @@ public class Generator {
 		result.addProperty(URI.class, idField.getName()).removeMutator();
 
 		for (Field field : getNonIdFields(source)) {
-			result.addProperty(field.getQualifiedTypeNameWithGenerics(), field.getName());
+			PropertySource<?> property = result.addProperty(field.getQualifiedTypeNameWithGenerics(), field.getName());
+			addAnnotations(property.getAccessor(), getClientAnnotations(field.getAnnotations()));
 		}
 
 		classWriter.write(createSourceFileRelativePath(result), result.toString());
+	}
+
+	private static void addAnnotations(MethodSource<?> getter, Collection<Annotation> annotations) {
+		for (Annotation annotation : annotations) {
+			getter.addAnnotation(annotation.getFullyQualifiedName());
+		}
+	}
+
+	private static Collection<Annotation> getClientAnnotations(Collection<Annotation> annotations) {
+		List<Annotation> result = new ArrayList<Annotation>();
+		for (Annotation annotation : annotations) {
+			if (isClientAnnotation(annotation)) {
+				result.add(annotation);
+			}
+		}
+		return result;
+	}
+
+	private static boolean isClientAnnotation(Annotation annotation) {
+		return annotation.getFullyQualifiedName().startsWith(CLIENT_ANNOTATION_PACKAGE + ".");
 	}
 
 	public Field getIdField(ClassSource clazz) {
@@ -62,7 +87,7 @@ public class Generator {
 		return result;
 	}
 
-	private Annotation getAnnotation(ClassSource clazz, Class<?> type) {
+	private static Annotation getAnnotation(ClassSource clazz, Class<?> type) {
 		for (Annotation annotation : clazz.getAnnotations()) {
 			if (type.getName().equals(annotation.getFullyQualifiedName())) {
 				return annotation;
@@ -72,7 +97,7 @@ public class Generator {
 		return null;
 	}
 
-	private String createSourceFileRelativePath(JavaClassSource result) {
+	private static String createSourceFileRelativePath(JavaClassSource result) {
 		return result.getPackage().replaceAll("\\.", File.separator) + File.separator
 				+ result.getName() + ".java";
 	}

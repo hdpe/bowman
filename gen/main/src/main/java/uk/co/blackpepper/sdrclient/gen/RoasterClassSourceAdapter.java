@@ -3,6 +3,7 @@ package uk.co.blackpepper.sdrclient.gen;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.jboss.forge.roaster.model.source.AnnotationSource;
@@ -50,6 +51,14 @@ class RoasterClassSourceAdapter implements ClassSource {
 
 		public String getQualifiedTypeNameWithGenerics() {
 			return source.getType().getQualifiedNameWithGenerics();
+		}
+
+		public Collection<Annotation> getAnnotations() {
+			List<Annotation> result = new ArrayList<Annotation>();
+			for (AnnotationSource<?> annotation : source.getAnnotations()) {
+				result.add(new AnnotationImpl(annotation));
+			}
+			return result;
 		}
 	}
 
