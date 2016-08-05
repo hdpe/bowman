@@ -3,6 +3,7 @@ package uk.co.blackpepper.sdrclient.gen;
 import java.io.IOException;
 import java.net.URI;
 
+import javax.persistence.Entity;
 import javax.persistence.Id;
 
 import org.jboss.forge.roaster.Roaster;
@@ -38,7 +39,7 @@ public class GeneratorTest {
 	}
 
 	@Test
-	public void generateWithoutRestResourceAnnotationDoesNothing() throws IOException {
+	public void generateWithoutEntityAnnotationDoesNothing() throws IOException {
 		JavaClassSource javaClass = Roaster.create(JavaClassSource.class)
 			.setPackage("test")
 			.setName("Entity");
@@ -53,6 +54,7 @@ public class GeneratorTest {
 		JavaClassSource javaClass = Roaster.create(JavaClassSource.class)
 			.setPackage("test")
 			.setName("Entity");
+		javaClass.addAnnotation(Entity.class);
 		javaClass.addAnnotation(uk.co.blackpepper.sdrclient.annotation.RemoteResource.class)
 			.setStringValue("/path/to/resource");
 		javaClass.addField()
@@ -66,14 +68,24 @@ public class GeneratorTest {
 		
 		assertThat("qualifiedName", output.getQualifiedName(), is("test.client.Entity"));
 		assertThat("has class annotation", output.hasAnnotation(RemoteResource.class), is(true));
-		assertThat("class annotation value", output.getAnnotation(RemoteResource.class).getStringValue(),
-				is("/path/to/resource"));
 		assertThat("has id annotation", output.getField("id").hasAnnotation(Id.class), is(false));
 		assertThat("id field type", output.getField("id").getType().getQualifiedName(), is("java.net.URI"));
 		assertThat("id getter", output.getMethod("getId"), is(notNullValue()));
 		assertThat("id setter", output.getMethod("setId", URI.class), is(nullValue()));
 		assertThat("name getter", output.getMethod("getName"), is(notNullValue()));
 		assertThat("name setter", output.getMethod("setName", String.class), is(notNullValue()));
+	}
+	
+	@Test
+	public void generateWithRemoteResourcePreservesAnnotation() throws IOException {
+		JavaClassSource javaClass = createValidJavaClassSource();
+		javaClass.addAnnotation(uk.co.blackpepper.sdrclient.annotation.RemoteResource.class)
+			.setStringValue("/path/to/resource");
+		
+		JavaClassSource output = generateAndParseContent(javaClass);
+		
+		assertThat("class annotation value", output.getAnnotation(RemoteResource.class).getStringValue(),
+				is("/path/to/resource"));
 	}
 
 	@Test
@@ -160,8 +172,7 @@ public class GeneratorTest {
 			.setPackage(packageName)
 			.setName(className);
 		
-		javaClass.addAnnotation(uk.co.blackpepper.sdrclient.annotation.RemoteResource.class)
-			.setStringValue("/");
+		javaClass.addAnnotation(Entity.class);
 		
 		javaClass.addField()
 			.setName("id")

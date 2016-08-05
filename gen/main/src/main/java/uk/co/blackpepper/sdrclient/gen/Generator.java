@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.Entity;
+
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.Type;
 import org.jboss.forge.roaster.model.source.FieldSource;
@@ -37,22 +39,26 @@ public class Generator {
 	
 	public void generate(ClassSource source, GeneratedClassWriter classWriter) throws IOException {
 
-		Annotation expectedAnnotation = getAnnotation(source,
-				uk.co.blackpepper.sdrclient.annotation.RemoteResource.class);
-
-		if (expectedAnnotation == null) {
+		Annotation entityAnnotation = getAnnotation(source, Entity.class);
+		
+		if (entityAnnotation == null) {
 			return;
 		}
-
+		
 		JavaClassSource result = Roaster.create(JavaClassSource.class)
-			.setName(source.getName())
-			.setPackage(convertToClientPackage(source.getPackage()))
-			.addAnnotation(RemoteResource.class)
-				.setStringValue((String) expectedAnnotation.values().get("value")).getOrigin();
+				.setName(source.getName())
+				.setPackage(convertToClientPackage(source.getPackage()));
+		
+		Annotation remoteResourceAnnotation = getAnnotation(source,
+				uk.co.blackpepper.sdrclient.annotation.RemoteResource.class);
+		
+		if (remoteResourceAnnotation != null) {
+			result.addAnnotation(RemoteResource.class)
+					.setStringValue((String) remoteResourceAnnotation.values().get("value")).getOrigin();
+		}
 
-		Field idField = getIdField(source);
-
-		result.addProperty(URI.class, idField.getName()).removeMutator();
+		result.addProperty(URI.class, getIdField(source).getName())
+			.removeMutator();
 
 		for (Field field : getNonIdFields(source)) {
 			String type = convertFieldType(field, source);
