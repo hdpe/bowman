@@ -58,7 +58,7 @@ public class ClientFactory {
 
 	private final RestTemplate restTemplate;
 	
-	private final ClientProxyFactory proxyFactory = new CglibClientProxyFactory();
+	private final ClientProxyFactory proxyFactory = new JavassistClientProxyFactory();
 
 	public ClientFactory(URI baseUri) {
 		this.baseUri = baseUri;

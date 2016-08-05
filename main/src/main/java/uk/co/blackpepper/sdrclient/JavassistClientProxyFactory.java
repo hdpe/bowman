@@ -1,6 +1,5 @@
 package uk.co.blackpepper.sdrclient;
 
-import java.beans.Introspector;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.net.URI;
@@ -13,26 +12,29 @@ import org.springframework.hateoas.Resources;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.client.RestTemplate;
 
-import net.sf.cglib.proxy.Enhancer;
-import net.sf.cglib.proxy.MethodInterceptor;
-import net.sf.cglib.proxy.MethodProxy;
+import javassist.util.proxy.MethodFilter;
+import javassist.util.proxy.MethodHandler;
+import javassist.util.proxy.Proxy;
+import javassist.util.proxy.ProxyFactory;
 import uk.co.blackpepper.sdrclient.gen.annotation.LinkedResource;
 
-public class CglibClientProxyFactory implements ClientProxyFactory {
+import static uk.co.blackpepper.sdrclient.HalSupport.toLinkName;
 
-	private static class GetterInterceptor<T> implements MethodInterceptor {
+public class JavassistClientProxyFactory implements ClientProxyFactory {
 
+	private static class GetterMethodHandler<T> implements MethodHandler {
+		
 		private final URI uri;
-
+		
 		private final Class<T> entityType;
-
+		
 		private final RestTemplate restTemplate;
 
 		private Resource<T> resource;
 		
 		private T value;
-
-		GetterInterceptor(URI uri, Class<T> entityType, RestTemplate restTemplate) {
+		
+		GetterMethodHandler(URI uri, Class<T> entityType, RestTemplate restTemplate) {
 			this.uri = uri;
 			this.entityType = entityType;
 			this.restTemplate = restTemplate;
@@ -40,15 +42,9 @@ public class CglibClientProxyFactory implements ClientProxyFactory {
 
 		// CHECKSTYLE:OFF
 		
-		public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
+		public Object invoke(Object self, Method method, Method proceed, Object[] args) throws Throwable {
 			
 			// CHECKSTYLE:ON
-			
-			String methodName = proxy.getSignature().getName();
-
-			if ("getURI".equals(methodName) || !methodName.startsWith("get")) {
-				return proxy.invokeSuper(obj, args);
-			}
 			
 			if (value == null) {
 				// TODO: reduce chattiness
@@ -58,7 +54,7 @@ public class CglibClientProxyFactory implements ClientProxyFactory {
 
 			if (method.getAnnotation(LinkedResource.class) != null) {
 				
-				URI associationResource = URI.create(resource.getLink(toLinkName(methodName)).getHref());
+				URI associationResource = URI.create(resource.getLink(toLinkName(method.getName())).getHref());
 				
 				Object result;
 				
@@ -71,7 +67,7 @@ public class CglibClientProxyFactory implements ClientProxyFactory {
 					Class<?> entityType = (Class<?>) ((ParameterizedType) method.getGenericReturnType())
 							.getActualTypeArguments()[0];
 					
-					Collection collection = (Collection) proxy.invokeSuper(obj, new Object[0]);
+					Collection collection = (Collection) proceed.invoke(self);
 					collection.clear();
 					
 					for (Resource<?> resource : resources) {
@@ -92,21 +88,7 @@ public class CglibClientProxyFactory implements ClientProxyFactory {
 				return result;
 			}
 			
-			return proxy.invoke(value, args);
-		}
-
-		private static String toLinkName(String methodName) {
-			if (methodName.startsWith("is")) {
-				methodName = methodName.substring(2);
-			}
-			else if (methodName.startsWith("get")) {
-				methodName = methodName.substring(3);
-			}
-			else {
-				throw new IllegalArgumentException("not a bean property method: " + methodName);
-			}
-			
-			return Introspector.decapitalize(methodName);
+			return method.invoke(value, args);
 		}
 	}
 	
@@ -115,15 +97,29 @@ public class CglibClientProxyFactory implements ClientProxyFactory {
 	}
 
 	private static <T> T createProxy(URI uri, Class<T> entityType, RestTemplate restTemplate) {
-		Enhancer enhancer = new Enhancer();
-		enhancer.setSuperclass(entityType);
-		enhancer.setCallback(new GetterInterceptor<T>(uri, entityType, restTemplate));
-
-		@SuppressWarnings("unchecked")
-		T value = (T) enhancer.create();
-
-		ReflectionSupport.setId(value, uri);
-
-		return value;
+		ProxyFactory factory = new ProxyFactory();
+		factory.setSuperclass(entityType);
+		factory.setFilter(new MethodFilter() {
+			
+			public boolean isHandled(Method m) {
+				String methodName = m.getName();
+				
+				return methodName.startsWith("get") && !"getId".equals(methodName);
+			}
+		});
+		
+		Class<?> clazz = factory.createClass();
+		
+		T entity;
+		try {
+			entity = (T) clazz.newInstance();
+		}
+		catch (Exception exception) {
+			throw new ClientProxyException("couldn't create proxy instance of " + clazz, exception);
+		}
+		
+		((Proxy) entity).setHandler(new GetterMethodHandler<T>(uri, entityType, restTemplate));
+		
+		return entity;
 	}
 }
