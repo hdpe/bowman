@@ -22,7 +22,7 @@ import com.fasterxml.jackson.databind.ser.BeanPropertyWriter;
 import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
-import uk.co.blackpepper.sdrclient.annotation.LinkedResource;
+import uk.co.blackpepper.sdrclient.gen.annotation.LinkedResource;
 
 import static java.util.Arrays.asList;
 

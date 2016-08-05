@@ -20,6 +20,10 @@
 			<groupId>${project.groupId}</groupId>
 			<artifactId>sdr-client-annotation</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>sdr-client-gen-annotation</artifactId>
+		</dependency>
 
 		<dependency>
 			<groupId>org.hibernate.javax.persistence</groupId>

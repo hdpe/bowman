@@ -5,7 +5,9 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.Type;
@@ -14,18 +16,29 @@ import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 import org.jboss.forge.roaster.model.source.PropertySource;
 
-import uk.co.blackpepper.sdrclient.annotation.RemoteResource;
+import uk.co.blackpepper.sdrclient.gen.annotation.LinkedResource;
+import uk.co.blackpepper.sdrclient.gen.annotation.RemoteResource;
 import uk.co.blackpepper.sdrclient.gen.model.Annotation;
 import uk.co.blackpepper.sdrclient.gen.model.ClassSource;
 import uk.co.blackpepper.sdrclient.gen.model.Field;
 
 public class Generator {
 
-	private static final String CLIENT_ANNOTATION_PACKAGE = RemoteResource.class.getPackage().getName();
+	private static Map<String, String> targetAnnotationTypes = new HashMap<String, String>();
+	
+	static {
+		targetAnnotationTypes.put(
+				uk.co.blackpepper.sdrclient.annotation.RemoteResource.class.getName(),
+				RemoteResource.class.getName());
+		targetAnnotationTypes.put(
+				uk.co.blackpepper.sdrclient.annotation.LinkedResource.class.getName(),
+				LinkedResource.class.getName());
+	}
 	
 	public void generate(ClassSource source, GeneratedClassWriter classWriter) throws IOException {
 
-		Annotation expectedAnnotation = getAnnotation(source, RemoteResource.class);
+		Annotation expectedAnnotation = getAnnotation(source,
+				uk.co.blackpepper.sdrclient.annotation.RemoteResource.class);
 
 		if (expectedAnnotation == null) {
 			return;
@@ -44,7 +57,7 @@ public class Generator {
 		for (Field field : getNonIdFields(source)) {
 			String type = convertFieldType(field, source);
 			PropertySource<?> property = result.addProperty(type, field.getName());
-			addAnnotations(property.getAccessor(), getClientAnnotations(field.getAnnotations()));
+			addAnnotations(property.getAccessor(), getTargetAnnotationTypes(field.getAnnotations()));
 			addInitializer(property.getField(), result);
 		}
 
@@ -97,24 +110,21 @@ public class Generator {
 		return modelPackage + ".client";
 	}
 	
-	private static void addAnnotations(MethodSource<?> getter, Collection<Annotation> annotations) {
-		for (Annotation annotation : annotations) {
-			getter.addAnnotation(annotation.getFullyQualifiedName());
+	private static void addAnnotations(MethodSource<?> getter, Collection<String> annotationTypeNames) {
+		for (String annotation : annotationTypeNames) {
+			getter.addAnnotation(annotation);
 		}
 	}
 
-	private static Collection<Annotation> getClientAnnotations(Collection<Annotation> annotations) {
-		List<Annotation> result = new ArrayList<Annotation>();
-		for (Annotation annotation : annotations) {
-			if (isClientAnnotation(annotation)) {
-				result.add(annotation);
+	private static Collection<String> getTargetAnnotationTypes(Collection<Annotation> sourceAnnotations) {
+		List<String> result = new ArrayList<String>();
+		for (Annotation annotation : sourceAnnotations) {
+			String targetAnnotationType = targetAnnotationTypes.get(annotation.getFullyQualifiedName());
+			if (targetAnnotationType != null) {
+				result.add(targetAnnotationType);
 			}
 		}
 		return result;
-	}
-
-	private static boolean isClientAnnotation(Annotation annotation) {
-		return annotation.getFullyQualifiedName().startsWith(CLIENT_ANNOTATION_PACKAGE + ".");
 	}
 
 	public Field getIdField(ClassSource clazz) {

@@ -19,8 +19,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
-import uk.co.blackpepper.sdrclient.annotation.LinkedResource;
-import uk.co.blackpepper.sdrclient.annotation.RemoteResource;
+import uk.co.blackpepper.sdrclient.gen.annotation.LinkedResource;
+import uk.co.blackpepper.sdrclient.gen.annotation.RemoteResource;
 
 public class Client<T> {
 

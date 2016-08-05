@@ -11,8 +11,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
-import uk.co.blackpepper.sdrclient.annotation.LinkedResource;
-import uk.co.blackpepper.sdrclient.annotation.RemoteResource;
+import uk.co.blackpepper.sdrclient.gen.annotation.LinkedResource;
+import uk.co.blackpepper.sdrclient.gen.annotation.RemoteResource;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
@@ -50,11 +50,17 @@ public class GeneratorTest {
 	
 	@Test
 	public void generateWritesContent() throws IOException {
-		JavaClassSource javaClass = Roaster.create(JavaClassSource.class);
-		javaClass.setPackage("test").setName("Entity").addAnnotation(RemoteResource.class)
-				.setStringValue("/path/to/resource");
-		javaClass.addField().setName("id").addAnnotation(Id.class);
-		javaClass.addField().setName("name").setType(String.class);
+		JavaClassSource javaClass = Roaster.create(JavaClassSource.class)
+			.setPackage("test")
+			.setName("Entity");
+		javaClass.addAnnotation(uk.co.blackpepper.sdrclient.annotation.RemoteResource.class)
+			.setStringValue("/path/to/resource");
+		javaClass.addField()
+			.setName("id")
+			.addAnnotation(Id.class);
+		javaClass.addField()
+			.setName("name")
+			.setType(String.class);
 
 		JavaClassSource output = generateAndParseContent(javaClass);
 		
@@ -84,7 +90,7 @@ public class GeneratorTest {
 		JavaClassSource javaClass = createValidJavaClassSource();
 		javaClass.addField()
 			.setName("field")
-			.addAnnotation(LinkedResource.class);
+			.addAnnotation(uk.co.blackpepper.sdrclient.annotation.LinkedResource.class);
 
 		JavaClassSource output = generateAndParseContent(javaClass);
 		
@@ -154,7 +160,7 @@ public class GeneratorTest {
 			.setPackage(packageName)
 			.setName(className);
 		
-		javaClass.addAnnotation(RemoteResource.class)
+		javaClass.addAnnotation(uk.co.blackpepper.sdrclient.annotation.RemoteResource.class)
 			.setStringValue("/");
 		
 		javaClass.addField()
