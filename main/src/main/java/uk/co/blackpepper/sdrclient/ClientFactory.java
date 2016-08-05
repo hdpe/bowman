@@ -28,9 +28,9 @@ import static java.util.Arrays.asList;
 
 public class ClientFactory {
 
-	private static class ClientEntityUriSerializer extends StdSerializer<Object> {
+	private static class LinkedResourceUriSerializer extends StdSerializer<Object> {
 
-		protected ClientEntityUriSerializer() {
+		protected LinkedResourceUriSerializer() {
 			super(Object.class);
 		}
 
@@ -93,7 +93,7 @@ public class ClientFactory {
 				
 				for (BeanPropertyWriter writer : beanProperties) {
 					if (writer.getAnnotation(LinkedResource.class) != null) {
-						writer.assignSerializer(new ClientEntityUriSerializer());
+						writer.assignSerializer(new LinkedResourceUriSerializer());
 					}
 				}
 				
