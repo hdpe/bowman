@@ -57,6 +57,8 @@ public class ClientFactory {
 	private final URI baseUri;
 
 	private final RestTemplate restTemplate;
+	
+	private final ClientProxyFactory proxyFactory = new CglibClientProxyFactory();
 
 	public ClientFactory(URI baseUri) {
 		this.baseUri = baseUri;
@@ -64,7 +66,7 @@ public class ClientFactory {
 	}
 
 	public <T> Client<T> create(Class<T> entityType) {
-		return new Client<T>(entityType, baseUri, restTemplate);
+		return new Client<T>(entityType, baseUri, restTemplate, proxyFactory);
 	}
 
 	private static RestTemplate createRestTemplate() {

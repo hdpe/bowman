@@ -15,4 +15,10 @@ public final class ReflectionSupport {
 		ReflectionUtils.makeAccessible(field);
 		return (URI) ReflectionUtils.getField(field, object);
 	}
+
+	public static void setId(Object value, URI uri) {
+		Field idField = ReflectionUtils.findField(value.getClass(), "id");
+		idField.setAccessible(true);
+		ReflectionUtils.setField(idField, value, uri);
+	}
 }
