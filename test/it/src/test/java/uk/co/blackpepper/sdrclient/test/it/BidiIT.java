@@ -40,4 +40,18 @@ public class BidiIT {
 		BidiChildEntity retrieved = childClient.get(location);
 		assertThat(retrieved.getParent().getName(), is("x"));
 	}
+	
+	@Test
+	public void canGetChildrenAssocation() {
+		BidiParentEntity parent = new BidiParentEntity();
+		URI location = parentClient.post(parent);
+		
+		BidiChildEntity child = new BidiChildEntity();
+		child.setName("x");
+		child.setParent(parent);
+		childClient.post(child);
+		
+		BidiParentEntity retrieved = parentClient.get(location);
+		assertThat(retrieved.getChildren().iterator().next().getName(), is("x"));
+	}
 }

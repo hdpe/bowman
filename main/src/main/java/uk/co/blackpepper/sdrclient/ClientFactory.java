@@ -37,7 +37,20 @@ public class ClientFactory {
 		@Override
 		public void serialize(Object value, JsonGenerator jgen, SerializerProvider provider)
 				throws IOException, JsonGenerationException {
-			jgen.writeString(ReflectionSupport.getId(value).toString());
+			if (value instanceof Iterable<?>) {
+				jgen.writeStartArray();
+				for (Object child : (Iterable<?>) value) {
+					jgen.writeString(getEntityUri(child));
+				}
+				jgen.writeEndArray();
+			}
+			else {
+				jgen.writeString(getEntityUri(value));
+			}
+		}
+
+		private static String getEntityUri(Object value) {
+			return ReflectionSupport.getId(value).toString();
 		}
 	}
 	

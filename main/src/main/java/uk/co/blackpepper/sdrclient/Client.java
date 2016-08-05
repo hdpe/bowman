@@ -3,10 +3,15 @@ package uk.co.blackpepper.sdrclient;
 import java.beans.Introspector;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 import java.net.URI;
+import java.util.Collection;
 
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Resource;
+import org.springframework.hateoas.Resources;
+import org.springframework.http.HttpMethod;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -45,28 +50,53 @@ public class Client<T> {
 			
 			String methodName = proxy.getSignature().getName();
 
-			if (methodName.startsWith("get") && !"getURI".equals(methodName)) {
-				if (value == null) {
-					// TODO: reduce chattiness
-					resource = restTemplate.getForObject(uri, Resource.class);
-					value = restTemplate.getForObject(uri, entityType);
-				}
+			if ("getURI".equals(methodName) || !methodName.startsWith("get")) {
+				return proxy.invokeSuper(obj, args);
+			}
+			
+			if (value == null) {
+				// TODO: reduce chattiness
+				resource = restTemplate.getForObject(uri, Resource.class);
+				value = restTemplate.getForObject(uri, entityType);
+			}
 
-				if (method.getAnnotation(LinkedResource.class) != null) {
+			if (method.getAnnotation(LinkedResource.class) != null) {
+				
+				URI associationResource = URI.create(resource.getLink(toLinkName(methodName)).getHref());
+				
+				Object result;
+				
+				// TODO: reduce this chattiness too, and cache
+				if (Collection.class.isAssignableFrom(method.getReturnType())) {
 					
-					URI associationResource = URI.create(resource.getLink(toLinkName(methodName)).getHref());
+					Resources<Resource<?>> resources = restTemplate.exchange(associationResource, HttpMethod.GET,
+							null, new ParameterizedTypeReference<Resources<Resource<?>>>() { }).getBody();
 					
-					// TODO: reduce this chattiness too, and cache
+					Class<?> entityType = (Class<?>) ((ParameterizedType) method.getGenericReturnType())
+							.getActualTypeArguments()[0];
+					
+					Collection collection = (Collection) proxy.invokeSuper(obj, new Object[0]);
+					collection.clear();
+					
+					for (Resource<?> resource : resources) {
+						URI linkedResource = URI.create(resource.getLink(Link.REL_SELF).getHref());
+						
+						collection.add(createProxy(linkedResource, entityType, restTemplate));
+					}
+					
+					result = collection;
+				}
+				else {
 					URI linkedResource = URI.create(restTemplate.getForObject(associationResource, Resource.class)
 							.getLink(Link.REL_SELF).getHref());
 					
-					return createProxy(linkedResource, (Class) method.getReturnType(), restTemplate);
+					result = createProxy(linkedResource, (Class) method.getReturnType(), restTemplate);
 				}
 				
-				return proxy.invoke(value, args);
+				return result;
 			}
-
-			return proxy.invoke(obj, args);
+			
+			return proxy.invoke(value, args);
 		}
 
 		private static String toLinkName(String methodName) {

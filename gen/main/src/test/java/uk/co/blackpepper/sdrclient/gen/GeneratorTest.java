@@ -117,6 +117,21 @@ public class GeneratorTest {
 		assertThat("field type", output.getField("field").getType().getQualifiedName(), is("sourcepackage.client.Y"));
 	}
 	
+	@Test
+	public void generateWithGenericClientResourceTypeConvertsType() throws IOException {
+		JavaClassSource javaClass = createValidJavaClassSource("sourcepackage.X");
+		javaClass.addField()
+			.setName("field")
+			.setType("java.util.Set<sourcepackage.Y>");
+		
+		JavaClassSource output = generateAndParseContent(javaClass);
+		
+		assertThat("field type", output.getField("field").getType().getQualifiedNameWithGenerics(),
+				is("java.util.Set<Y>"));
+		assertThat("import sourcepackage.Y", output.getImport("sourcepackage.Y"), is(nullValue()));
+		assertThat("import sourcepackage.client.Y", output.getImport("sourcepackage.client.Y"), is(nullValue()));
+	}
+	
 	private JavaClassSource generateAndParseContent(JavaClassSource in) throws IOException {
 		ArgumentCaptor<String> content = ArgumentCaptor.forClass(String.class);
 

@@ -8,6 +8,8 @@ import java.util.Collection;
 import java.util.List;
 
 import org.jboss.forge.roaster.Roaster;
+import org.jboss.forge.roaster.model.Type;
+import org.jboss.forge.roaster.model.source.FieldSource;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 import org.jboss.forge.roaster.model.source.PropertySource;
@@ -40,35 +42,55 @@ public class Generator {
 		result.addProperty(URI.class, idField.getName()).removeMutator();
 
 		for (Field field : getNonIdFields(source)) {
-			String type = field.getQualifiedTypeNameWithGenerics();
-			String fieldTypePackage = getFieldTypePackage(field);
-			if (fieldTypePackage.equals(source.getPackage())) {
-				type = convertToClientPackage(fieldTypePackage) + "." + getFieldTypeName(field);
-			}
-					
+			String type = convertFieldType(field, source);
 			PropertySource<?> property = result.addProperty(type, field.getName());
 			addAnnotations(property.getAccessor(), getClientAnnotations(field.getAnnotations()));
+			addInitializer(property.getField(), result);
 		}
 
 		classWriter.write(createSourceFileRelativePath(result), result.toString());
 	}
 
-	private static String getFieldTypePackage(Field field) {
-		String fqTypeName = getFieldQualifiedTypeName(field);
-		return fqTypeName.substring(0, fqTypeName.indexOf(".") > -1 ? fqTypeName.lastIndexOf(".")
-				: fqTypeName.length());
+	private static void addInitializer(FieldSource<?> field, JavaClassSource result) {
+		String implementationType = getImplementationType(field);
+		if (implementationType != null) {
+			String simpleName = result.addImport(implementationType).getSimpleName();
+			String typeArgs = getTypeArgs(field.getType());
+			
+			field.setLiteralInitializer("new " + simpleName + typeArgs + "()");
+		}
 	}
-	
-	private static String getFieldTypeName(Field field) {
-		String fqTypeName = getFieldQualifiedTypeName(field);
-		return fqTypeName.substring(fqTypeName.indexOf(".") > -1 ? (fqTypeName.lastIndexOf(".") + 1) : 0);
+
+	private static String getTypeArgs(Type<?> type) {
+		StringBuilder sb = new StringBuilder("<");
+		for (Type<?> typeArg : type.getTypeArguments()) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+			sb.append(typeArg);
+		}
+		return sb.append(">").toString();
 	}
-	
-	private static String getFieldQualifiedTypeName(Field field) {
-		String fqTypeName = field.getQualifiedTypeNameWithGenerics();
-		fqTypeName = fqTypeName.substring(0, fqTypeName.indexOf("<") > -1 ? fqTypeName.indexOf("<")
-				: fqTypeName.length());
-		return fqTypeName;
+
+	private static String getImplementationType(FieldSource<?> field) {
+		String qualifiedName = field.getType().getQualifiedName();
+		
+		if ("java.util.Set".equals(qualifiedName)) {
+			return "java.util.LinkedHashSet";
+		}
+		if ("java.util.List".equals(qualifiedName)) {
+			return "java.util.ArrayList";
+		}
+		if ("java.util.SortedSet".equals(qualifiedName)) {
+			return "java.util.TreeSet";
+		}
+		
+		return null;
+	}
+
+	private static String convertFieldType(Field field, ClassSource source) {
+		return field.getQualifiedTypeNameWithGenerics().replaceAll(source.getPackage(),
+				convertToClientPackage(source.getPackage()));
 	}
 	
 	private static String convertToClientPackage(String modelPackage) {
