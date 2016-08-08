@@ -14,6 +14,7 @@ public class LoggingClientHttpRequestInterceptor implements ClientHttpRequestInt
 
 	private static final Logger LOG = LoggerFactory.getLogger(LoggingClientHttpRequestInterceptor.class);
 
+	@Override
 	public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution)
 			throws IOException {
 

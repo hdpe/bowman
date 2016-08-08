@@ -50,6 +50,7 @@ public class JavassistClientProxyFactory implements ClientProxyFactory {
 
 		// CHECKSTYLE:OFF
 		
+		@Override
 		public Object invoke(Object self, Method method, Method proceed, Object[] args) throws Throwable {
 			
 			// CHECKSTYLE:ON
@@ -100,10 +101,12 @@ public class JavassistClientProxyFactory implements ClientProxyFactory {
 		}
 	}
 	
+	@Override
 	public <T> T create(URI uri, Class<T> entityType, RestTemplate restTemplate) {
 		return createProxy(uri, entityType, restTemplate);
 	}
 
+	@Override
 	public <T> T create(Resource<T> resource, Class<T> entityType, RestTemplate  restTemplate) {
 		T entity = createProxyInstance(entityType);
 		
@@ -125,6 +128,7 @@ public class JavassistClientProxyFactory implements ClientProxyFactory {
 		factory.setSuperclass(entityType);
 		factory.setFilter(new MethodFilter() {
 			
+			@Override
 			public boolean isHandled(Method m) {
 				String methodName = m.getName();
 				

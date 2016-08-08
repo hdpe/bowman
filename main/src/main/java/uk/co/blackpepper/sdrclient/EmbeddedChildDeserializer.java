@@ -39,6 +39,7 @@ public class EmbeddedChildDeserializer extends StdDeserializer<Object> implement
 		return proxyFactory.create((Resource) resource, (Class) handledType(), restTemplate);
 	}
 
+	@Override
 	public JsonDeserializer<?> createContextual(DeserializationContext ctxt, BeanProperty property)
 			throws JsonMappingException {
 		return new EmbeddedChildDeserializer(ctxt.getContextualType());

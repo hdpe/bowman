@@ -19,6 +19,7 @@ class MojoClassWriter implements GeneratedClassWriter {
 		this.targetDirectory = targetDirectory;
 	}
 
+	@Override
 	public void write(String relativePath, String content) throws IOException {
 		File file = new File(targetDirectory, relativePath);
 		FileUtils.write(file, content, "UTF-8");

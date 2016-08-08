@@ -20,10 +20,12 @@ public class ReflectionClassSourceAdapter implements ClassSource {
 			this.annotation = annotation;
 		}
 
+		@Override
 		public String getFullyQualifiedName() {
 			return annotation.annotationType().getTypeName();
 		}
 
+		@Override
 		public Map<String, Object> values() {
 			Map<String, Object> result = new LinkedHashMap<String, Object>();
 			try {
@@ -44,14 +46,17 @@ public class ReflectionClassSourceAdapter implements ClassSource {
 			this.field = field;
 		}
 
+		@Override
 		public String getName() {
 			return field.getName();
 		}
 
+		@Override
 		public String getQualifiedTypeNameWithGenerics() {
 			return field.getGenericType().getTypeName();
 		}
 
+		@Override
 		public Collection<Annotation> getAnnotations() {
 			List<Annotation> result = new ArrayList<Annotation>();
 			for (java.lang.annotation.Annotation annotation : field.getAnnotations()) {
@@ -67,14 +72,17 @@ public class ReflectionClassSourceAdapter implements ClassSource {
 		this.clazz = clazz;
 	}
 
+	@Override
 	public String getName() {
 		return clazz.getSimpleName();
 	}
 
+	@Override
 	public String getPackage() {
 		return clazz.getPackage().getName();
 	}
 
+	@Override
 	public Collection<Annotation> getAnnotations() {
 		List<Annotation> result = new ArrayList<Annotation>();
 
@@ -85,6 +93,7 @@ public class ReflectionClassSourceAdapter implements ClassSource {
 		return result;
 	}
 
+	@Override
 	public Collection<Field> getFields() {
 		List<Field> result = new ArrayList<Field>();
 

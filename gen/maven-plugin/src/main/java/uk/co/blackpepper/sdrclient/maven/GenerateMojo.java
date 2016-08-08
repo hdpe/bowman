@@ -45,6 +45,7 @@ public class GenerateMojo extends AbstractMojo {
 	@Parameter(defaultValue = "${project.build.directory}/generated-sources/sdrclient", required = true)
 	private File targetDirectory;
 
+	@Override
 	public void execute() throws MojoExecutionException {
 
 		project.addCompileSourceRoot(targetDirectory.getAbsolutePath());
@@ -99,7 +100,7 @@ public class GenerateMojo extends AbstractMojo {
 		}
 	}
 
-	private URL toURL(String element) throws MojoExecutionException {
+	private static URL toURL(String element) throws MojoExecutionException {
 		try {
 			return new File(element).toURI().toURL();
 		}

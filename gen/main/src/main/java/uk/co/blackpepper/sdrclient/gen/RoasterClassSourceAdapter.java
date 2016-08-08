@@ -24,10 +24,12 @@ class RoasterClassSourceAdapter implements ClassSource {
 			this.source = source;
 		}
 
+		@Override
 		public String getFullyQualifiedName() {
 			return source.getQualifiedName();
 		}
 
+		@Override
 		public Map<String, Object> values() {
 			Map<String, Object> result = new LinkedHashMap<String, Object>();
 			if (source.isSingleValue()) {
@@ -45,14 +47,17 @@ class RoasterClassSourceAdapter implements ClassSource {
 			this.source = source;
 		}
 
+		@Override
 		public String getName() {
 			return source.getName();
 		}
 
+		@Override
 		public String getQualifiedTypeNameWithGenerics() {
 			return source.getType().getQualifiedNameWithGenerics();
 		}
 
+		@Override
 		public Collection<Annotation> getAnnotations() {
 			List<Annotation> result = new ArrayList<Annotation>();
 			for (AnnotationSource<?> annotation : source.getAnnotations()) {
@@ -68,14 +73,17 @@ class RoasterClassSourceAdapter implements ClassSource {
 		this.source = source;
 	}
 
+	@Override
 	public String getName() {
 		return source.getName();
 	}
 
+	@Override
 	public String getPackage() {
 		return source.getPackage();
 	}
 
+	@Override
 	public Collection<Annotation> getAnnotations() {
 		Collection<Annotation> result = new ArrayList<Annotation>();
 		for (AnnotationSource<?> annotation : source.getAnnotations()) {
@@ -84,6 +92,7 @@ class RoasterClassSourceAdapter implements ClassSource {
 		return result;
 	}
 
+	@Override
 	public Collection<Field> getFields() {
 		Collection<Field> result = new ArrayList<Field>();
 		for (FieldSource<?> field : source.getFields()) {
