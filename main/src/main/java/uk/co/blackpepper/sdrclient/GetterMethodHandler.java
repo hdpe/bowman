@@ -89,26 +89,27 @@ class GetterMethodHandler<T> implements MethodHandler {
 		return resolveSingleLinkedResource(associationResource, method.getReturnType());
 	}
 
-	private Object resolveSingleLinkedResource(URI associationResource, Class<?> linkedEntityType) {
-		Resource<?> linkedResource = restOperations.getResource(associationResource, linkedEntityType);
+	private <F> F resolveSingleLinkedResource(URI associationResource, Class<F> linkedEntityType) {
+		Resource<F> linkedResource = restOperations.getResource(associationResource, linkedEntityType);
 		
 		if (linkedResource == null) {
 			return null;
 		}
 		
-		return proxyFactory.create(linkedResource, (Class) linkedEntityType, restOperations);
+		return proxyFactory.create(linkedResource, linkedEntityType, restOperations);
 	}
 
-	private Object resolveCollectionLinkedResource(URI associationResource, Class<?> linkedEntityType,
+	private <F> Collection<F> resolveCollectionLinkedResource(URI associationResource, Class<F> linkedEntityType,
 		Object contextEntity, Method originalMethod) throws IllegalAccessException, InvocationTargetException {
 		
-		Resources<Resource<?>> resources = restOperations.getResources(associationResource, (Class) linkedEntityType);
+		Resources<Resource<F>> resources = restOperations.getResources(associationResource, linkedEntityType);
 		
-		Collection collection = (Collection) originalMethod.invoke(contextEntity);
+		@SuppressWarnings("unchecked")
+		Collection<F> collection = (Collection<F>) originalMethod.invoke(contextEntity);
 		collection.clear();
 		
-		for (Resource<?> resource : resources) {
-			collection.add(proxyFactory.create(resource, (Class) linkedEntityType, restOperations));
+		for (Resource<F> resource : resources) {
+			collection.add(proxyFactory.create(resource, linkedEntityType, restOperations));
 		}
 		
 		return collection;
