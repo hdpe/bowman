@@ -40,7 +40,7 @@ public class Generator {
 				RemoteResource.class.getName());
 		annotationRegistry.registerAnnotation(uk.co.blackpepper.sdrclient.annotation.LinkedResource.class.getName(),
 				LinkedResource.class.getName());
-		annotationRegistry.registerAnnotation(uk.co.blackpepper.sdrclient.annotation.EmbeddedResource.class.getName(),
+		annotationRegistry.registerAnnotation(uk.co.blackpepper.sdrclient.annotation.EmbeddedResources.class.getName(),
 				JsonDeserialize.class.getName(),
 				Collections.<String, Object>singletonMap("contentUsing", EmbeddedChildDeserializer.class));
 	}

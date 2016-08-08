@@ -11,7 +11,7 @@ import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
-import uk.co.blackpepper.sdrclient.annotation.EmbeddedResource;
+import uk.co.blackpepper.sdrclient.annotation.EmbeddedResources;
 import uk.co.blackpepper.sdrclient.annotation.RemoteResource;
 
 @Entity
@@ -25,7 +25,7 @@ public class EmbeddedBidiParentEntity {
 	private String name;
 
 	@OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
-	@EmbeddedResource
+	@EmbeddedResources
 	@JsonManagedReference
 	private Set<EmbeddedBidiChildEntity> children;
 }
