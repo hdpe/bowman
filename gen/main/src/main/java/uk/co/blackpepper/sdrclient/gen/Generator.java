@@ -35,15 +35,23 @@ public class Generator {
 	private static AnnotationRegistry annotationRegistry = new AnnotationRegistry();
 	
 	static {
-		annotationRegistry.registerAnnotation(Id.class.getName(), JsonIgnore.class.getName());
-		annotationRegistry.registerAnnotation(uk.co.blackpepper.sdrclient.annotation.RemoteResource.class.getName(),
+		annotationRegistry.registerAnnotationMapping(Id.class.getName(), JsonIgnore.class.getName());
+		
+		annotationRegistry.registerAnnotationMapping(
+				uk.co.blackpepper.sdrclient.annotation.RemoteResource.class.getName(),
 				RemoteResource.class.getName());
-		annotationRegistry.registerAnnotation(uk.co.blackpepper.sdrclient.annotation.LinkedResource.class.getName(),
+		
+		annotationRegistry.registerAnnotationMapping(
+				uk.co.blackpepper.sdrclient.annotation.LinkedResource.class.getName(),
 				LinkedResource.class.getName());
-		annotationRegistry.registerAnnotation(uk.co.blackpepper.sdrclient.annotation.EmbeddedResource.class.getName(),
+		
+		annotationRegistry.registerAnnotationMapping(
+				uk.co.blackpepper.sdrclient.annotation.EmbeddedResource.class.getName(),
 				JsonDeserialize.class.getName(),
 				Collections.<String, Object>singletonMap("using", EmbeddedChildDeserializer.class));
-		annotationRegistry.registerAnnotation(uk.co.blackpepper.sdrclient.annotation.EmbeddedResources.class.getName(),
+		
+		annotationRegistry.registerAnnotationMapping(
+				uk.co.blackpepper.sdrclient.annotation.EmbeddedResources.class.getName(),
 				JsonDeserialize.class.getName(),
 				Collections.<String, Object>singletonMap("contentUsing", EmbeddedChildDeserializer.class));
 	}

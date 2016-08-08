@@ -8,7 +8,7 @@ import java.util.Map;
 
 class AnnotationRegistry {
 
-	private static class RegisteredAnnotation {
+	private static class AnnotationMapping {
 		
 		private String sourceAnnotationFullyQualifiedName;
 		
@@ -16,7 +16,7 @@ class AnnotationRegistry {
 		
 		private Map<String, Object> targetAnnotationAttributes = new LinkedHashMap<String, Object>();
 
-		RegisteredAnnotation(String sourceAnnotationFullyQualifiedName,
+		AnnotationMapping(String sourceAnnotationFullyQualifiedName,
 			String targetAnnotationFullyQualifiedName, Map<String, Object> targetAnnotationAttributes) {
 			this.sourceAnnotationFullyQualifiedName = sourceAnnotationFullyQualifiedName;
 			this.targetAnnotationFullyQualifiedName = targetAnnotationFullyQualifiedName;
@@ -36,25 +36,25 @@ class AnnotationRegistry {
 		}
 	}
 	
-	private List<RegisteredAnnotation> annotations = new ArrayList<RegisteredAnnotation>();
+	private List<AnnotationMapping> annotations = new ArrayList<AnnotationMapping>();
 	
-	public void registerAnnotation(String sourceAnnotationFullyQualifiedName,
+	public void registerAnnotationMapping(String sourceAnnotationFullyQualifiedName,
 			String targetAnnotationFullyQualifiedName) {
-		registerAnnotation(sourceAnnotationFullyQualifiedName, targetAnnotationFullyQualifiedName,
+		registerAnnotationMapping(sourceAnnotationFullyQualifiedName, targetAnnotationFullyQualifiedName,
 				Collections.<String, Object>emptyMap());
 	}
 	
-	public void registerAnnotation(String sourceAnnotationFullyQualifiedName,
+	public void registerAnnotationMapping(String sourceAnnotationFullyQualifiedName,
 			String targetAnnotationFullyQualifiedName,
 			Map<String, Object> targetAnnotationAttributes) {
 		
-		annotations.add(new RegisteredAnnotation(sourceAnnotationFullyQualifiedName,
+		annotations.add(new AnnotationMapping(sourceAnnotationFullyQualifiedName,
 			targetAnnotationFullyQualifiedName,
 			targetAnnotationAttributes));
 	}
 	
 	public void applyAnnotations(String sourceAnnotationFullyQualifiedName, AnnotationApplicator applicator) {
-		for (RegisteredAnnotation annotation : annotations) {
+		for (AnnotationMapping annotation : annotations) {
 			if (annotation.isApplicableFor(sourceAnnotationFullyQualifiedName)) {
 				applicator.apply(annotation.getTargetAnnotationFullyQualifiedName(),
 						annotation.getTargetAnnotationAttributes());
