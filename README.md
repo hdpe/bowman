@@ -237,8 +237,8 @@ There are plenty of things still to do with this:
 
 * back-references to embedded associations' contexts should be supported
 * transient fields should be supported
+* support generation from more than one package
 * test coverage needs to be hardened up significantly
-* proxies should cache the results of their HTTP invocations so they are not repeatedly resolved when hitting the data model accessors, and should just generally be made less chatty
 * investigate whether it's possible to do away with the user annotations in `sdr-client-annotation` and derive this data from the Spring Data REST repository model
 * improve flaky m2e integration
 * ...
