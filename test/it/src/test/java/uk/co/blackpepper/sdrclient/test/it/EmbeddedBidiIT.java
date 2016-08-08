@@ -28,6 +28,30 @@ public class EmbeddedBidiIT {
 	}
 	
 	@Test
+	public void canGetChildAssocation() {
+		SimpleEntity related = new SimpleEntity();
+		related.setName("related");
+		simpleEntityClient.post(related);
+		
+		EmbeddedBidiParentEntity parent = new EmbeddedBidiParentEntity();
+		
+		EmbeddedBidiChildEntity child = new EmbeddedBidiChildEntity();
+		child.setName("x");
+		child.setRelated(related);
+//		child.setParent(parent);
+
+		parent.setChild(child);
+		
+		URI location = client.post(parent);
+		
+		EmbeddedBidiParentEntity retrieved = client.get(location);
+		
+		EmbeddedBidiChildEntity retrievedItem = retrieved.getChild();
+		assertThat(retrievedItem.getName(), is("x"));
+		assertThat(retrievedItem.getRelated().getName(), is("related"));
+	}
+	
+	@Test
 	public void canGetChildrenAssocation() {
 		SimpleEntity related = new SimpleEntity();
 		related.setName("related");

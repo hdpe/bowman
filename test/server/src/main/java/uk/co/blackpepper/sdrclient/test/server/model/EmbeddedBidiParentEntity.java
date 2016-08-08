@@ -8,9 +8,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+import uk.co.blackpepper.sdrclient.annotation.EmbeddedResource;
 import uk.co.blackpepper.sdrclient.annotation.EmbeddedResources;
 import uk.co.blackpepper.sdrclient.annotation.RemoteResource;
 
@@ -28,4 +30,8 @@ public class EmbeddedBidiParentEntity {
 	@EmbeddedResources
 	@JsonManagedReference
 	private Set<EmbeddedBidiChildEntity> children;
+	
+	@OneToOne(cascade = CascadeType.ALL)
+	@EmbeddedResource
+	private EmbeddedBidiChildEntity child;
 }
