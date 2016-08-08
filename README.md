@@ -28,17 +28,17 @@ Create a new Maven `pom.xml` with the following content:
 	<artifactId>app</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 
-  <properties>
+	<properties>
 		<sdr-client.version>0.0.1-SNAPSHOT</sdr-client.version>
 	</properties>
 
 	<dependencies>
-    <dependency>
+		<dependency>
 			<groupId>uk.co.blackpepper.sdrclient</groupId>
 			<artifactId>sdr-client</artifactId>
 			<version>${sdr-client.version}</version>
 		</dependency>
-    <dependency>
+		<dependency>
 			<groupId>uk.co.blackpepper.sdrclient</groupId>
 			<artifactId>sdr-client-annotation</artifactId>
 			<version>${sdr-client.version}</version>
