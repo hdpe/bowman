@@ -9,6 +9,7 @@ import uk.co.blackpepper.sdrclient.Client;
 import uk.co.blackpepper.sdrclient.ClientFactory;
 import uk.co.blackpepper.sdrclient.test.server.model.client.SimpleEntity;
 
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -45,5 +46,13 @@ public class SimpleEntityIT {
 
 		SimpleEntity retrieved = client.get(location);
 		assertThat(retrieved.getRelated().getName(), is("x"));
+	}
+	
+	@Test
+	public void canGetNullEntityAssocation() {
+		URI location = client.post(new SimpleEntity());
+
+		SimpleEntity retrieved = client.get(location);
+		assertThat(retrieved.getRelated(), is(nullValue()));
 	}
 }

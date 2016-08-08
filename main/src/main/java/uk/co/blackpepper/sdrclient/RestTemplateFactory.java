@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.springframework.hateoas.hal.Jackson2HalModule;
 import org.springframework.http.client.BufferingClientHttpRequestFactory;
-import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
@@ -55,7 +55,7 @@ public class RestTemplateFactory {
 	
 	public RestTemplate createRestTemplate() {
 		RestTemplate restTemplate = new RestTemplate(
-				new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory()));
+				new BufferingClientHttpRequestFactory(new HttpComponentsClientHttpRequestFactory()));
 		restTemplate.getMessageConverters().add(0, new MappingJackson2HttpMessageConverter(createObjectMapper()));
 		restTemplate.setInterceptors(
 				asList(new JsonClientHttpRequestInterceptor(), new LoggingClientHttpRequestInterceptor()));

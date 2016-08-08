@@ -1,5 +1,6 @@
 package uk.co.blackpepper.sdrclient;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.net.URI;
@@ -10,6 +11,8 @@ import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import javassist.util.proxy.MethodFilter;
@@ -62,42 +65,71 @@ public class JavassistClientProxyFactory implements ClientProxyFactory {
 			}
 
 			if (method.getAnnotation(LinkedResource.class) != null) {
-				
-				URI associationResource = URI.create(resource.getLink(toLinkName(method.getName())).getHref());
-				
-				Object result;
-				
-				// TODO: reduce this chattiness too, and cache
-				if (Collection.class.isAssignableFrom(method.getReturnType())) {
-					
-					Resources<Resource<?>> resources = restTemplate.exchange(associationResource, HttpMethod.GET,
-							null, new ParameterizedTypeReference<Resources<Resource<?>>>() { }).getBody();
-					
-					Class<?> entityType = (Class<?>) ((ParameterizedType) method.getGenericReturnType())
-							.getActualTypeArguments()[0];
-					
-					Collection collection = (Collection) proceed.invoke(self);
-					collection.clear();
-					
-					for (Resource<?> resource : resources) {
-						URI linkedResource = URI.create(resource.getLink(Link.REL_SELF).getHref());
-						
-						collection.add(createProxy(linkedResource, entityType, restTemplate));
-					}
-					
-					result = collection;
-				}
-				else {
-					URI linkedResource = URI.create(restTemplate.getForObject(associationResource, Resource.class)
-							.getLink(Link.REL_SELF).getHref());
-					
-					result = createProxy(linkedResource, (Class) method.getReturnType(), restTemplate);
-				}
-				
-				return result;
+				return resolveLinkedResource(self, method, proceed);
 			}
 			
 			return method.invoke(value, args);
+		}
+
+		private Object resolveLinkedResource(Object self, Method method, Method proceed)
+				throws IllegalAccessException, InvocationTargetException {
+			
+			URI associationResource = URI.create(resource.getLink(toLinkName(method.getName())).getHref());
+			
+			if (Collection.class.isAssignableFrom(method.getReturnType())) {
+				return resolveCollectionLinkedResource(self, method, proceed, associationResource);
+			}
+
+			return resolveSingleLinkedResource(method, associationResource);
+		}
+
+		// TODO: reduce this chattiness too, and cache
+		private Object resolveSingleLinkedResource(Method method, URI associationResource) {
+			Resource<?> linkedResource = doGetResource(associationResource);
+			
+			if (linkedResource == null) {
+				return null;
+			}
+			
+			URI linkedResourceUri = URI.create(linkedResource.getLink(Link.REL_SELF).getHref());
+			
+			return createProxy(linkedResourceUri, (Class) method.getReturnType(), restTemplate);
+		}
+
+		// TODO: reduce this chattiness too, and cache
+		private Object resolveCollectionLinkedResource(Object self, Method method, Method proceed,
+				URI associationResource) throws IllegalAccessException, InvocationTargetException {
+			Resources<Resource<?>> resources = restTemplate.exchange(associationResource, HttpMethod.GET,
+					null, new ParameterizedTypeReference<Resources<Resource<?>>>() { }).getBody();
+			
+			Class<?> entityType = (Class<?>) ((ParameterizedType) method.getGenericReturnType())
+					.getActualTypeArguments()[0];
+			
+			Collection collection = (Collection) proceed.invoke(self);
+			collection.clear();
+			
+			for (Resource<?> resource : resources) {
+				URI linkedResource = URI.create(resource.getLink(Link.REL_SELF).getHref());
+				
+				collection.add(createProxy(linkedResource, entityType, restTemplate));
+			}
+			
+			return collection;
+		}
+
+		private Resource<?> doGetResource(URI associationResource) {
+			Resource<?> linkedResource = null;
+			try {
+				linkedResource = restTemplate.getForObject(associationResource, Resource.class);
+			}
+			catch (HttpClientErrorException exception) {
+				if (exception.getStatusCode() == HttpStatus.NOT_FOUND) {
+					return null;
+				}
+				
+				throw exception;
+			}
+			return linkedResource;
 		}
 	}
 	
