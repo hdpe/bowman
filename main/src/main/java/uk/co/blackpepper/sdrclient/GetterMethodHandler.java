@@ -99,7 +99,6 @@ class GetterMethodHandler<T> implements MethodHandler {
 		return proxyFactory.create(linkedResource, (Class) linkedEntityType, restOperations);
 	}
 
-	// TODO: reduce this chattiness too, and cache
 	private Object resolveCollectionLinkedResource(Object self, Method method, Method proceed,
 			URI associationResource, Class<?> linkedEntityType)
 			throws IllegalAccessException, InvocationTargetException {
@@ -109,9 +108,7 @@ class GetterMethodHandler<T> implements MethodHandler {
 		collection.clear();
 		
 		for (Resource<?> resource : resources) {
-			URI linkedResource = URI.create(resource.getLink(Link.REL_SELF).getHref());
-			
-			collection.add(proxyFactory.create(linkedResource, linkedEntityType, restOperations));
+			collection.add(proxyFactory.create(resource, (Class) linkedEntityType, restOperations));
 		}
 		
 		return collection;
