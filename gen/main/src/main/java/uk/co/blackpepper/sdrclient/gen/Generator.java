@@ -24,7 +24,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import uk.co.blackpepper.sdrclient.EmbeddedChildDeserializer;
-import uk.co.blackpepper.sdrclient.gen.annotation.EmbeddedResource;
 import uk.co.blackpepper.sdrclient.gen.annotation.LinkedResource;
 import uk.co.blackpepper.sdrclient.gen.annotation.RemoteResource;
 import uk.co.blackpepper.sdrclient.gen.model.Annotation;
@@ -41,8 +40,6 @@ public class Generator {
 				RemoteResource.class.getName());
 		annotationRegistry.registerAnnotation(uk.co.blackpepper.sdrclient.annotation.LinkedResource.class.getName(),
 				LinkedResource.class.getName());
-		annotationRegistry.registerAnnotation(uk.co.blackpepper.sdrclient.annotation.EmbeddedResource.class.getName(),
-				EmbeddedResource.class.getName());
 		annotationRegistry.registerAnnotation(uk.co.blackpepper.sdrclient.annotation.EmbeddedResource.class.getName(),
 				JsonDeserialize.class.getName(),
 				Collections.<String, Object>singletonMap("contentUsing", EmbeddedChildDeserializer.class));
