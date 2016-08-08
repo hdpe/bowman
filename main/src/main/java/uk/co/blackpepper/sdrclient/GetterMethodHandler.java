@@ -80,10 +80,10 @@ class GetterMethodHandler<T> implements MethodHandler {
 		URI associationResource = URI.create(resource.getLink(toLinkName(method.getName())).getHref());
 		
 		if (Collection.class.isAssignableFrom(method.getReturnType())) {
-			Class<?> entityType = (Class<?>) ((ParameterizedType) method.getGenericReturnType())
-					.getActualTypeArguments()[0];
+			Class<?> linkedEntityType = (Class<?>) ((ParameterizedType) method.getGenericReturnType())
+				.getActualTypeArguments()[0];
 			
-			return resolveCollectionLinkedResource(associationResource, entityType, self, proceed);
+			return resolveCollectionLinkedResource(associationResource, linkedEntityType, self, proceed);
 		}
 
 		return resolveSingleLinkedResource(associationResource, method.getReturnType());
