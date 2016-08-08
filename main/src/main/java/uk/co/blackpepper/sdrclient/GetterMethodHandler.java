@@ -37,9 +37,9 @@ class GetterMethodHandler<T> implements MethodHandler {
 	
 	GetterMethodHandler(Resource<T> resource, Class<T> entityType, RestOperations restOperations,
 		ClientProxyFactory proxyFactory) {
-		this(null, resource, entityType, restOperations, proxyFactory);
+		this(getResourceURI(resource), resource, entityType, restOperations, proxyFactory);
 	}
-	
+
 	private GetterMethodHandler(URI uri, Resource<T> resource, Class<T> entityType, RestOperations restOperations,
 		ClientProxyFactory proxyFactory) {
 		this.uri = uri;
@@ -96,9 +96,7 @@ class GetterMethodHandler<T> implements MethodHandler {
 			return null;
 		}
 		
-		URI linkedResourceUri = URI.create(linkedResource.getLink(Link.REL_SELF).getHref());
-		
-		return proxyFactory.create(linkedResourceUri, linkedEntityType, restOperations);
+		return proxyFactory.create(linkedResource, (Class) linkedEntityType, restOperations);
 	}
 
 	// TODO: reduce this chattiness too, and cache
@@ -117,5 +115,10 @@ class GetterMethodHandler<T> implements MethodHandler {
 		}
 		
 		return collection;
+	}
+
+	private static <T> URI getResourceURI(Resource<T> resource) {
+		Link selfLink = resource.getLink(Link.REL_SELF);
+		return selfLink == null ? null : URI.create(selfLink.getHref());
 	}
 }
