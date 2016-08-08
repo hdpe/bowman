@@ -83,7 +83,7 @@ class GetterMethodHandler<T> implements MethodHandler {
 			Class<?> entityType = (Class<?>) ((ParameterizedType) method.getGenericReturnType())
 					.getActualTypeArguments()[0];
 			
-			return resolveCollectionLinkedResource(self, method, proceed, associationResource, entityType);
+			return resolveCollectionLinkedResource(associationResource, entityType, self, proceed);
 		}
 
 		return resolveSingleLinkedResource(associationResource, method.getReturnType());
@@ -99,12 +99,12 @@ class GetterMethodHandler<T> implements MethodHandler {
 		return proxyFactory.create(linkedResource, (Class) linkedEntityType, restOperations);
 	}
 
-	private Object resolveCollectionLinkedResource(Object self, Method method, Method proceed,
-			URI associationResource, Class<?> linkedEntityType)
-			throws IllegalAccessException, InvocationTargetException {
+	private Object resolveCollectionLinkedResource(URI associationResource, Class<?> linkedEntityType,
+		Object contextEntity, Method originalMethod) throws IllegalAccessException, InvocationTargetException {
+		
 		Resources<Resource<?>> resources = restOperations.getResources(associationResource, (Class) linkedEntityType);
 		
-		Collection collection = (Collection) proceed.invoke(self);
+		Collection collection = (Collection) originalMethod.invoke(contextEntity);
 		collection.clear();
 		
 		for (Resource<?> resource : resources) {
