@@ -3,7 +3,6 @@ package uk.co.blackpepper.sdrclient;
 import java.io.IOException;
 
 import org.springframework.hateoas.Resource;
-import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -19,7 +18,7 @@ public class EmbeddedChildDeserializer extends StdDeserializer<Object> implement
 
 	private ClientProxyFactory proxyFactory = new JavassistClientProxyFactory();
 	
-	private RestTemplate restTemplate = new RestTemplateFactory().createRestTemplate();
+	private RestOperations restOperations = new RestOperationsFactory().create();
 	
 	protected EmbeddedChildDeserializer() {
 		super(Object.class);
@@ -36,7 +35,7 @@ public class EmbeddedChildDeserializer extends StdDeserializer<Object> implement
 		
 		Object resource = p.getCodec().readValue(p, resourceType);
 		
-		return proxyFactory.create((Resource) resource, (Class) handledType(), restTemplate);
+		return proxyFactory.create((Resource) resource, (Class) handledType(), restOperations);
 	}
 
 	@Override

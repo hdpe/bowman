@@ -4,10 +4,6 @@ import java.io.IOException;
 import java.util.List;
 
 import org.springframework.hateoas.hal.Jackson2HalModule;
-import org.springframework.http.client.BufferingClientHttpRequestFactory;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -23,9 +19,7 @@ import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
 import uk.co.blackpepper.sdrclient.gen.annotation.LinkedResource;
 
-import static java.util.Arrays.asList;
-
-public class RestTemplateFactory {
+class ObjectMapperFactory {
 
 	private static class LinkedResourceUriSerializer extends StdSerializer<Object> {
 
@@ -53,16 +47,7 @@ public class RestTemplateFactory {
 		}
 	}
 	
-	public RestTemplate createRestTemplate() {
-		RestTemplate restTemplate = new RestTemplate(
-				new BufferingClientHttpRequestFactory(new HttpComponentsClientHttpRequestFactory()));
-		restTemplate.getMessageConverters().add(0, new MappingJackson2HttpMessageConverter(createObjectMapper()));
-		restTemplate.setInterceptors(
-				asList(new JsonClientHttpRequestInterceptor(), new LoggingClientHttpRequestInterceptor()));
-		return restTemplate;
-	}
-
-	private static ObjectMapper createObjectMapper() {
+	public ObjectMapper create() {
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		

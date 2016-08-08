@@ -5,15 +5,12 @@ import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.net.URI;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
 
 import javassist.util.proxy.MethodHandler;
 import uk.co.blackpepper.sdrclient.gen.annotation.LinkedResource;
@@ -26,30 +23,29 @@ class GetterMethodHandler<T> implements MethodHandler {
 	
 	private final Class<T> entityType;
 	
-	private final RestTemplate restTemplate;
+	private final RestOperations restOperations;
 
 	private Resource<T> resource;
 	
-	private T value;
-
 	private ClientProxyFactory proxyFactory;
 	
-	GetterMethodHandler(URI uri, Class<T> entityType, RestTemplate restTemplate, ClientProxyFactory proxyFactory) {
-		this(uri, null, null, entityType, restTemplate, proxyFactory);
+	private Map<String, Object> linkedResourceResults = new HashMap<String, Object>();
+	
+	GetterMethodHandler(URI uri, Class<T> entityType, RestOperations restOperations, ClientProxyFactory proxyFactory) {
+		this(uri, null, entityType, restOperations, proxyFactory);
 	}
 	
-	GetterMethodHandler(Resource<T> resource, Class<T> entityType, RestTemplate restTemplate,
+	GetterMethodHandler(Resource<T> resource, Class<T> entityType, RestOperations restOperations,
 		ClientProxyFactory proxyFactory) {
-		this(null, resource, resource.getContent(), entityType, restTemplate, proxyFactory);
+		this(null, resource, entityType, restOperations, proxyFactory);
 	}
 	
-	private GetterMethodHandler(URI uri, Resource<T> resource, T value, Class<T> entityType, RestTemplate restTemplate,
+	private GetterMethodHandler(URI uri, Resource<T> resource, Class<T> entityType, RestOperations restOperations,
 		ClientProxyFactory proxyFactory) {
 		this.uri = uri;
 		this.resource = resource;
-		this.value = value;
 		this.entityType = entityType;
-		this.restTemplate = restTemplate;
+		this.restOperations = restOperations;
 		this.proxyFactory = proxyFactory;
 	}
 
@@ -60,17 +56,22 @@ class GetterMethodHandler<T> implements MethodHandler {
 		
 		// CHECKSTYLE:ON
 		
-		if (value == null) {
-			// TODO: reduce chattiness
-			resource = restTemplate.getForObject(uri, Resource.class);
-			value = restTemplate.getForObject(uri, entityType);
+		if (resource == null) {
+			resource = restOperations.getResource(uri, entityType);
 		}
 
 		if (method.getAnnotation(LinkedResource.class) != null) {
-			return resolveLinkedResource(self, method, proceed);
+			Object linkedResourceResult = linkedResourceResults.get(method.getName());
+			
+			if (linkedResourceResult == null) {
+				linkedResourceResult = resolveLinkedResource(self, method, proceed);
+				linkedResourceResults.put(method.getName(), linkedResourceResult);
+			}
+			
+			return linkedResourceResult;
 		}
 		
-		return method.invoke(value, args);
+		return method.invoke(resource.getContent(), args);
 	}
 
 	private Object resolveLinkedResource(Object self, Method method, Method proceed)
@@ -79,15 +80,17 @@ class GetterMethodHandler<T> implements MethodHandler {
 		URI associationResource = URI.create(resource.getLink(toLinkName(method.getName())).getHref());
 		
 		if (Collection.class.isAssignableFrom(method.getReturnType())) {
-			return resolveCollectionLinkedResource(self, method, proceed, associationResource);
+			Class<?> entityType = (Class<?>) ((ParameterizedType) method.getGenericReturnType())
+					.getActualTypeArguments()[0];
+			
+			return resolveCollectionLinkedResource(self, method, proceed, associationResource, entityType);
 		}
 
-		return resolveSingleLinkedResource(method, associationResource);
+		return resolveSingleLinkedResource(associationResource, method.getReturnType());
 	}
 
-	// TODO: reduce this chattiness too, and cache
-	private Object resolveSingleLinkedResource(Method method, URI associationResource) {
-		Resource<?> linkedResource = doGetResource(associationResource);
+	private Object resolveSingleLinkedResource(URI associationResource, Class<?> linkedEntityType) {
+		Resource<?> linkedResource = restOperations.getResource(associationResource, linkedEntityType);
 		
 		if (linkedResource == null) {
 			return null;
@@ -95,17 +98,14 @@ class GetterMethodHandler<T> implements MethodHandler {
 		
 		URI linkedResourceUri = URI.create(linkedResource.getLink(Link.REL_SELF).getHref());
 		
-		return proxyFactory.create(linkedResourceUri, (Class) method.getReturnType(), restTemplate);
+		return proxyFactory.create(linkedResourceUri, linkedEntityType, restOperations);
 	}
 
 	// TODO: reduce this chattiness too, and cache
 	private Object resolveCollectionLinkedResource(Object self, Method method, Method proceed,
-			URI associationResource) throws IllegalAccessException, InvocationTargetException {
-		Resources<Resource<?>> resources = restTemplate.exchange(associationResource, HttpMethod.GET,
-				null, new ParameterizedTypeReference<Resources<Resource<?>>>() { }).getBody();
-		
-		Class<?> entityType = (Class<?>) ((ParameterizedType) method.getGenericReturnType())
-				.getActualTypeArguments()[0];
+			URI associationResource, Class<?> linkedEntityType)
+			throws IllegalAccessException, InvocationTargetException {
+		Resources<Resource<?>> resources = restOperations.getResources(associationResource, (Class) linkedEntityType);
 		
 		Collection collection = (Collection) proceed.invoke(self);
 		collection.clear();
@@ -113,24 +113,9 @@ class GetterMethodHandler<T> implements MethodHandler {
 		for (Resource<?> resource : resources) {
 			URI linkedResource = URI.create(resource.getLink(Link.REL_SELF).getHref());
 			
-			collection.add(proxyFactory.create(linkedResource, entityType, restTemplate));
+			collection.add(proxyFactory.create(linkedResource, linkedEntityType, restOperations));
 		}
 		
 		return collection;
-	}
-
-	private Resource<?> doGetResource(URI associationResource) {
-		Resource<?> linkedResource = null;
-		try {
-			linkedResource = restTemplate.getForObject(associationResource, Resource.class);
-		}
-		catch (HttpClientErrorException exception) {
-			if (exception.getStatusCode() == HttpStatus.NOT_FOUND) {
-				return null;
-			}
-			
-			throw exception;
-		}
-		return linkedResource;
 	}
 }

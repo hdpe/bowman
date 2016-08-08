@@ -2,22 +2,20 @@ package uk.co.blackpepper.sdrclient;
 
 import java.net.URI;
 
-import org.springframework.web.client.RestTemplate;
-
 public class ClientFactory {
 	
 	private final URI baseUri;
 
-	private final RestTemplate restTemplate;
+	private final RestOperations restOperations;
 	
 	private final ClientProxyFactory proxyFactory = new JavassistClientProxyFactory();
 
 	public ClientFactory(URI baseUri) {
 		this.baseUri = baseUri;
-		this.restTemplate = new RestTemplateFactory().createRestTemplate();
+		this.restOperations = new RestOperationsFactory().create();
 	}
 
 	public <T> Client<T> create(Class<T> entityType) {
-		return new Client<T>(entityType, baseUri, restTemplate, proxyFactory);
+		return new Client<T>(entityType, baseUri, restOperations, proxyFactory);
 	}
 }

@@ -2,7 +2,6 @@ package uk.co.blackpepper.sdrclient;
 
 import java.net.URI;
 
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import uk.co.blackpepper.sdrclient.gen.annotation.RemoteResource;
@@ -15,25 +14,25 @@ public class Client<T> {
 
 	private final URI baseUri;
 
-	private final RestTemplate restTemplate;
+	private final RestOperations restOperations;
 
 	private ClientProxyFactory proxyFactory;
 
-	public Client(Class<T> entityType, URI baseUri, RestTemplate restTemplate, ClientProxyFactory proxyFactory) {
+	public Client(Class<T> entityType, URI baseUri, RestOperations restOperations, ClientProxyFactory proxyFactory) {
 		this.entityType = entityType;
 		this.baseUri = baseUri;
-		this.restTemplate = restTemplate;
+		this.restOperations = restOperations;
 		this.proxyFactory = proxyFactory;
 	}
 
 	public T get(URI uri) {
-		return proxyFactory.create(uri, entityType, restTemplate);
+		return proxyFactory.create(uri, entityType, restOperations);
 	}
 
 	public URI post(T object) {
 		String path = object.getClass().getAnnotation(RemoteResource.class).value();
 		URI postUri = UriComponentsBuilder.fromUri(baseUri).path(path).build().toUri();
-		URI resourceUri = restTemplate.postForLocation(postUri, object);
+		URI resourceUri = restOperations.postObject(postUri, object);
 		
 		setId(object, resourceUri);
 		
@@ -41,6 +40,6 @@ public class Client<T> {
 	}
 
 	public void delete(URI uri) {
-		restTemplate.delete(uri);
+		restOperations.deleteResource(uri);
 	}
 }
