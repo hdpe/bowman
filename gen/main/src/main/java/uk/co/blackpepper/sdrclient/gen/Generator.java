@@ -5,19 +5,25 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.persistence.Entity;
 
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.Type;
+import org.jboss.forge.roaster.model.source.AnnotationSource;
 import org.jboss.forge.roaster.model.source.FieldSource;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 import org.jboss.forge.roaster.model.source.PropertySource;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+import uk.co.blackpepper.sdrclient.EmbeddedChildDeserializer;
+import uk.co.blackpepper.sdrclient.gen.annotation.EmbeddedResource;
 import uk.co.blackpepper.sdrclient.gen.annotation.LinkedResource;
 import uk.co.blackpepper.sdrclient.gen.annotation.RemoteResource;
 import uk.co.blackpepper.sdrclient.gen.model.Annotation;
@@ -26,15 +32,18 @@ import uk.co.blackpepper.sdrclient.gen.model.Field;
 
 public class Generator {
 
-	private static Map<String, String> targetAnnotationTypes = new HashMap<String, String>();
+	private static AnnotationRegistry annotationRegistry = new AnnotationRegistry();
 	
 	static {
-		targetAnnotationTypes.put(
-				uk.co.blackpepper.sdrclient.annotation.RemoteResource.class.getName(),
+		annotationRegistry.registerAnnotation(uk.co.blackpepper.sdrclient.annotation.RemoteResource.class.getName(),
 				RemoteResource.class.getName());
-		targetAnnotationTypes.put(
-				uk.co.blackpepper.sdrclient.annotation.LinkedResource.class.getName(),
+		annotationRegistry.registerAnnotation(uk.co.blackpepper.sdrclient.annotation.LinkedResource.class.getName(),
 				LinkedResource.class.getName());
+		annotationRegistry.registerAnnotation(uk.co.blackpepper.sdrclient.annotation.EmbeddedResource.class.getName(),
+				EmbeddedResource.class.getName());
+		annotationRegistry.registerAnnotation(uk.co.blackpepper.sdrclient.annotation.EmbeddedResource.class.getName(),
+				JsonDeserialize.class.getName(),
+				Collections.<String, Object>singletonMap("contentUsing", EmbeddedChildDeserializer.class));
 	}
 	
 	public void generate(ClassSource source, GeneratedClassWriter classWriter) throws IOException {
@@ -63,7 +72,7 @@ public class Generator {
 		for (Field field : getNonIdFields(source)) {
 			String type = convertFieldType(field, source);
 			PropertySource<?> property = result.addProperty(type, field.getName());
-			addAnnotations(property.getAccessor(), getTargetAnnotationTypes(field.getAnnotations()));
+			addAnnotations(property.getAccessor(), field.getAnnotations());
 			addInitializer(property.getField(), result);
 		}
 
@@ -116,21 +125,23 @@ public class Generator {
 		return modelPackage + ".client";
 	}
 	
-	private static void addAnnotations(MethodSource<?> getter, Collection<String> annotationTypeNames) {
-		for (String annotation : annotationTypeNames) {
-			getter.addAnnotation(annotation);
-		}
-	}
-
-	private static Collection<String> getTargetAnnotationTypes(Collection<Annotation> sourceAnnotations) {
-		List<String> result = new ArrayList<String>();
-		for (Annotation annotation : sourceAnnotations) {
-			String targetAnnotationType = targetAnnotationTypes.get(annotation.getFullyQualifiedName());
-			if (targetAnnotationType != null) {
-				result.add(targetAnnotationType);
+	private static void addAnnotations(final MethodSource<?> getter, Collection<Annotation> fieldAnnotations) {
+		AnnotationApplicator applicator = new AnnotationApplicator() {
+			
+			public void apply(String fullyQualifiedAnnotationName, Map<String, Object> annotationAttributes) {
+				AnnotationSource<?> annotation = getter.addAnnotation(fullyQualifiedAnnotationName);
+				
+				for (Entry<String, Object> attr : annotationAttributes.entrySet()) {
+					if (attr.getValue() instanceof Class<?>) {
+						annotation.setClassValue(attr.getKey(), (Class<?>) attr.getValue());
+					}
+				}
 			}
+		};
+		
+		for (Annotation annotation : fieldAnnotations) {
+			annotationRegistry.applyAnnotations(annotation.getFullyQualifiedName(), applicator);
 		}
-		return result;
 	}
 
 	public Field getIdField(ClassSource clazz) {

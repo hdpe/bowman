@@ -39,6 +39,14 @@ public class JavassistClientProxyFactory implements ClientProxyFactory {
 			this.entityType = entityType;
 			this.restTemplate = restTemplate;
 		}
+		
+		GetterMethodHandler(Resource<T> resource, Class<T> entityType, RestTemplate restTemplate) {
+			this.uri = null;
+			this.resource = resource;
+			this.value = resource.getContent();
+			this.entityType = entityType;
+			this.restTemplate = restTemplate;
+		}
 
 		// CHECKSTYLE:OFF
 		
@@ -96,7 +104,23 @@ public class JavassistClientProxyFactory implements ClientProxyFactory {
 		return createProxy(uri, entityType, restTemplate);
 	}
 
+	public <T> T create(Resource<T> resource, Class<T> entityType, RestTemplate  restTemplate) {
+		T entity = createProxyInstance(entityType);
+		
+		((Proxy) entity).setHandler(new GetterMethodHandler<T>(resource, entityType, restTemplate));
+		
+		return entity;
+	}
+
 	private static <T> T createProxy(URI uri, Class<T> entityType, RestTemplate restTemplate) {
+		T entity = createProxyInstance(entityType);
+		
+		((Proxy) entity).setHandler(new GetterMethodHandler<T>(uri, entityType, restTemplate));
+		
+		return entity;
+	}
+
+	private static <T> T createProxyInstance(Class<T> entityType) {
 		ProxyFactory factory = new ProxyFactory();
 		factory.setSuperclass(entityType);
 		factory.setFilter(new MethodFilter() {
@@ -117,9 +141,6 @@ public class JavassistClientProxyFactory implements ClientProxyFactory {
 		catch (Exception exception) {
 			throw new ClientProxyException("couldn't create proxy instance of " + clazz, exception);
 		}
-		
-		((Proxy) entity).setHandler(new GetterMethodHandler<T>(uri, entityType, restTemplate));
-		
 		return entity;
 	}
 }
