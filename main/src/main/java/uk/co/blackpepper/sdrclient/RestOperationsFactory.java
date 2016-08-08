@@ -9,7 +9,7 @@ import static java.util.Arrays.asList;
 
 public class RestOperationsFactory {
 
-	private ObjectMapperFactory objectMapperFactory = new ObjectMapperFactory();
+	private final ObjectMapperFactory objectMapperFactory = new ObjectMapperFactory();
 	
 	public RestOperations create() {
 		return new RestOperations(createRestTemplate(), objectMapperFactory.create());

@@ -16,7 +16,7 @@ public class Client<T> {
 
 	private final RestOperations restOperations;
 
-	private ClientProxyFactory proxyFactory;
+	private final ClientProxyFactory proxyFactory;
 
 	public Client(Class<T> entityType, URI baseUri, RestOperations restOperations, ClientProxyFactory proxyFactory) {
 		this.entityType = entityType;

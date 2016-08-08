@@ -14,9 +14,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 class RestOperations {
 
-	private RestTemplate restTemplate;
+	private final RestTemplate restTemplate;
 	
-	private ObjectMapper objectMapper;
+	private final ObjectMapper objectMapper;
 	
 	RestOperations(RestTemplate restTemplate, ObjectMapper objectMapper) {
 		this.restTemplate = restTemplate;
