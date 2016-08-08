@@ -35,7 +35,13 @@ public class GeneratorTest {
 	public void setup() {
 		classWriter = mock(GeneratedClassWriter.class);
 
-		generator = new Generator();
+		generator = new Generator(new Logger() {
+			
+			@Override
+			public void debug(String message, Exception exception) {
+				// we're alright.
+			}
+		});
 	}
 
 	@Test

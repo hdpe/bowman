@@ -49,7 +49,7 @@ public class GenerateMojo extends AbstractMojo {
 
 		project.addCompileSourceRoot(targetDirectory.getAbsolutePath());
 
-		Generator generator = new Generator();
+		Generator generator = new Generator(new LoggerAdapter(getLog()));
 		MojoClassWriter classWriter = new MojoClassWriter(buildContext, targetDirectory);
 
 		Collection<ClassInfo> classes = getClasses();
