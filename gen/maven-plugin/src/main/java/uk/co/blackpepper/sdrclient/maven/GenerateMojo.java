@@ -41,6 +41,9 @@ public class GenerateMojo extends AbstractMojo {
 
 	@Parameter(required = true)
 	private String packageName;
+	
+	@Parameter
+	private String targetPackageName;
 
 	@Parameter(defaultValue = "${project.build.directory}/generated-sources/sdrclient", required = true)
 	private File targetDirectory;
@@ -59,12 +62,16 @@ public class GenerateMojo extends AbstractMojo {
 			try {
 				ClassSource classSource = new ReflectionClassSourceAdapter(clazz.load());
 
-				generator.generate(classSource, classWriter);
+				generator.generate(classSource, getTargetPackageName(), classWriter);
 			}
 			catch (IOException exception) {
 				throw new MojoExecutionException("Couldn't generate class", exception);
 			}
 		}
+	}
+	
+	private String getTargetPackageName() {
+		return targetPackageName != null ? targetPackageName : (packageName + ".client");
 	}
 
 	private Collection<ClassInfo> getClasses() throws MojoExecutionException {

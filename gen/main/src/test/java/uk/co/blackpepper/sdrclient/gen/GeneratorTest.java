@@ -44,7 +44,7 @@ public class GeneratorTest {
 			.setPackage("test")
 			.setName("Entity");
 
-		generator.generate(new RoasterClassSourceAdapter(javaClass), classWriter);
+		generator.generate(new RoasterClassSourceAdapter(javaClass), "target.pkg", classWriter);
 
 		verifyZeroInteractions(classWriter);
 	}
@@ -52,7 +52,6 @@ public class GeneratorTest {
 	@Test
 	public void generateWritesContent() throws IOException {
 		JavaClassSource javaClass = Roaster.create(JavaClassSource.class)
-			.setPackage("test")
 			.setName("Entity");
 		javaClass.addAnnotation(Entity.class);
 		javaClass.addAnnotation(uk.co.blackpepper.sdrclient.annotation.RemoteResource.class)
@@ -64,9 +63,9 @@ public class GeneratorTest {
 			.setName("name")
 			.setType(String.class);
 
-		JavaClassSource output = generateAndParseContent(javaClass);
+		JavaClassSource output = generateAndParseContent(javaClass, "target.pkg");
 		
-		assertThat("qualifiedName", output.getQualifiedName(), is("test.client.Entity"));
+		assertThat("qualifiedName", output.getQualifiedName(), is("target.pkg.Entity"));
 		assertThat("has class annotation", output.hasAnnotation(RemoteResource.class), is(true));
 		assertThat("has javax.persistence.Id annotation",
 			output.getField("id").hasAnnotation(javax.persistence.Id.class), is(false));
@@ -94,9 +93,9 @@ public class GeneratorTest {
 	public void generateWritesToRelativePath() throws IOException {
 		JavaClassSource javaClass = createValidJavaClassSource("pkg.X");
 		
-		generator.generate(new RoasterClassSourceAdapter(javaClass), classWriter);
+		generator.generate(new RoasterClassSourceAdapter(javaClass), "target.pkg", classWriter);
 		
-		verify(classWriter).write(eq("pkg/client/X.java"), anyString());
+		verify(classWriter).write(eq("target/pkg/X.java"), anyString());
 	}
 
 	@Test
@@ -132,9 +131,9 @@ public class GeneratorTest {
 			.setName("field")
 			.setType("sourcepackage.Y");
 		
-		JavaClassSource output = generateAndParseContent(javaClass);
+		JavaClassSource output = generateAndParseContent(javaClass, "target.pkg");
 		
-		assertThat("field type", output.getField("field").getType().getQualifiedName(), is("sourcepackage.client.Y"));
+		assertThat("field type", output.getField("field").getType().getQualifiedName(), is("target.pkg.Y"));
 	}
 	
 	@Test
@@ -153,9 +152,13 @@ public class GeneratorTest {
 	}
 	
 	private JavaClassSource generateAndParseContent(JavaClassSource in) throws IOException {
+		return generateAndParseContent(in, "_target._package");
+	}
+	
+	private JavaClassSource generateAndParseContent(JavaClassSource in, String targetPackageName) throws IOException {
 		ArgumentCaptor<String> content = ArgumentCaptor.forClass(String.class);
 
-		generator.generate(new RoasterClassSourceAdapter(in), classWriter);
+		generator.generate(new RoasterClassSourceAdapter(in), targetPackageName, classWriter);
 
 		verify(classWriter).write(anyString(), content.capture());
 

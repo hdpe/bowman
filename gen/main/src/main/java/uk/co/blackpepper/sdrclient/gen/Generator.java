@@ -69,7 +69,8 @@ public class Generator {
 		this.logger = logger;
 	}
 	
-	public void generate(ClassSource source, GeneratedClassWriter classWriter) throws IOException {
+	public void generate(ClassSource source, String targetPackageName, GeneratedClassWriter classWriter)
+		throws IOException {
 
 		Annotation entityAnnotation = getAnnotation(source, Entity.class);
 		
@@ -79,7 +80,7 @@ public class Generator {
 		
 		JavaClassSource result = Roaster.create(JavaClassSource.class)
 				.setName(source.getName())
-				.setPackage(convertToClientPackage(source.getPackage()));
+				.setPackage(targetPackageName);
 		
 		Annotation remoteResourceAnnotation = getAnnotation(source,
 				uk.co.blackpepper.sdrclient.annotation.RemoteResource.class);
@@ -90,7 +91,7 @@ public class Generator {
 		}
 
 		for (Field field : source.getFields()) {
-			String type = convertFieldType(field, source);
+			String type = convertFieldType(field, source, targetPackageName);
 			PropertySource<?> property = result.addProperty(type, field.getName());
 			
 			if (isIdField(field) || isCollectionField(field)) {
@@ -175,17 +176,16 @@ public class Generator {
 		return null;
 	}
 
-	private static String convertFieldType(Field field, ClassSource source) {
+	private static String convertFieldType(Field field, ClassSource source, String targetPackageName) {
 		if (isIdField(field)) {
 			return URI.class.getName();
 		}
 		
-		return field.getQualifiedTypeNameWithGenerics().replaceAll(source.getPackage(),
-				convertToClientPackage(source.getPackage()));
-	}
-	
-	private static String convertToClientPackage(String modelPackage) {
-		return modelPackage + ".client";
+		if (source.getPackage() == null) {
+			return field.getQualifiedTypeNameWithGenerics();
+		}
+		
+		return field.getQualifiedTypeNameWithGenerics().replaceAll(source.getPackage(), targetPackageName);
 	}
 	
 	private static void addAnnotations(PropertySource<?> property, Collection<Annotation> fieldAnnotations) {
