@@ -218,7 +218,12 @@ The other primary motivation for this tool is so that a data model can be genera
 
 ### Entity assocations ###
 
+#### Class level ####
+
 * `@RemoteResource(path)` - the path to the remote repository: *Required* for entities with repositories
+
+#### Field level ####
+
 * `@LinkedResource` - mark a collection- or single-valued assocation to be a linked assocation, that is, to an entity that has a repository
 * `@EmbeddedResource` - mark a single-valued association to be an embedded association, that is, to an entity that does not have a repository
 * `@EmbeddedResources` - mark a collection-valued assocation to be an embedded assocation
@@ -229,12 +234,15 @@ The client supports `get`, `post` and `delete` operations - it is not intended t
 
 ## Limitations ##
 
+ID fields (PKs) must be generated in the database (annotated with `@GeneratedValue`). Currently ID fields must also be named `id`.
+
 The tool assumes that it is the *fields* of the server-side entities that should be the basis of the generated artifacts, not the properties, so Spring Data REST must have its `ObjectMapper` configured to use field- rather than property-level access. This is an intentional design decision - the fields comprise the state of the entity, and accessors/mutators may not be present or not directly pass through to the underlying fields.
 
 ## Roadmap ##
 
 There are plenty of things still to do with this:
 
+* support ID fields with any name 
 * back-references to embedded associations' contexts should be supported
 * transient fields should be supported
 * support generation from more than one package
