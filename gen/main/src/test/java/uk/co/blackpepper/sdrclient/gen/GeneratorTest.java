@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.URI;
 
 import javax.persistence.Entity;
-import javax.persistence.Id;
 
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
@@ -12,6 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
+import uk.co.blackpepper.sdrclient.gen.annotation.IdField;
 import uk.co.blackpepper.sdrclient.gen.annotation.LinkedResource;
 import uk.co.blackpepper.sdrclient.gen.annotation.RemoteResource;
 
@@ -65,7 +65,7 @@ public class GeneratorTest {
 			.setStringValue("/path/to/resource");
 		javaClass.addField()
 			.setName("id")
-			.addAnnotation(Id.class);
+			.addAnnotation(javax.persistence.Id.class);
 		javaClass.addField()
 			.setName("name")
 			.setType(String.class);
@@ -74,7 +74,9 @@ public class GeneratorTest {
 		
 		assertThat("qualifiedName", output.getQualifiedName(), is("test.client.Entity"));
 		assertThat("has class annotation", output.hasAnnotation(RemoteResource.class), is(true));
-		assertThat("has id annotation", output.getField("id").hasAnnotation(Id.class), is(false));
+		assertThat("has javax.persistence.Id annotation",
+			output.getField("id").hasAnnotation(javax.persistence.Id.class), is(false));
+		assertThat("has id annotation", output.getField("id").hasAnnotation(IdField.class), is(true));
 		assertThat("id field type", output.getField("id").getType().getQualifiedName(), is("java.net.URI"));
 		assertThat("id getter", output.getMethod("getId"), is(notNullValue()));
 		assertThat("id setter", output.getMethod("setId", URI.class), is(nullValue()));
@@ -182,7 +184,7 @@ public class GeneratorTest {
 		
 		javaClass.addField()
 			.setName("id")
-			.addAnnotation(Id.class);
+			.addAnnotation(IdField.class);
 		
 		return javaClass;
 	}

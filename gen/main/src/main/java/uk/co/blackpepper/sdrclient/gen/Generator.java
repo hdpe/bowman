@@ -10,20 +10,20 @@ import java.util.Map.Entry;
 
 import javax.lang.model.SourceVersion;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.Type;
 import org.jboss.forge.roaster.model.source.AnnotationSource;
 import org.jboss.forge.roaster.model.source.FieldSource;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
-import org.jboss.forge.roaster.model.source.MethodSource;
 import org.jboss.forge.roaster.model.source.PropertySource;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import uk.co.blackpepper.sdrclient.EmbeddedChildDeserializer;
+import uk.co.blackpepper.sdrclient.gen.AnnotationRegistry.AnnotationTargetType;
+import uk.co.blackpepper.sdrclient.gen.annotation.IdField;
 import uk.co.blackpepper.sdrclient.gen.annotation.LinkedResource;
 import uk.co.blackpepper.sdrclient.gen.annotation.RemoteResource;
 import uk.co.blackpepper.sdrclient.gen.model.Annotation;
@@ -35,7 +35,14 @@ public class Generator {
 	private static AnnotationRegistry annotationRegistry = new AnnotationRegistry();
 	
 	static {
-		annotationRegistry.registerAnnotationMapping(Id.class.getName(), JsonIgnore.class.getName());
+		annotationRegistry.registerAnnotationMapping(
+				javax.persistence.Id.class.getName(),
+				JsonIgnore.class.getName());
+		
+		annotationRegistry.registerAnnotationMapping(
+				javax.persistence.Id.class.getName(),
+				IdField.class.getName(),
+				AnnotationTargetType.FIELD);
 		
 		annotationRegistry.registerAnnotationMapping(
 				uk.co.blackpepper.sdrclient.annotation.RemoteResource.class.getName(),
@@ -90,7 +97,7 @@ public class Generator {
 				property.removeMutator();
 			}
 			
-			addAnnotations(property.getAccessor(), field.getAnnotations());
+			addAnnotations(property, field.getAnnotations());
 			addInitializer(property.getField(), result);
 		}
 				
@@ -98,7 +105,7 @@ public class Generator {
 	}
 	
 	private static boolean isIdField(Field field) {
-		return getFieldAnnotation(field, Id.class.getName()) != null;
+		return getFieldAnnotation(field, javax.persistence.Id.class.getName()) != null;
 	}
 	
 	private boolean isCollectionField(Field field) {
@@ -179,12 +186,29 @@ public class Generator {
 		return modelPackage + ".client";
 	}
 	
-	private static void addAnnotations(final MethodSource<?> getter, Collection<Annotation> fieldAnnotations) {
-		AnnotationApplicator applicator = new AnnotationApplicator() {
+	private static void addAnnotations(PropertySource<?> property, Collection<Annotation> fieldAnnotations) {
+		AnnotationApplicator applicator = createAnnotationApplicator(property);
+		
+		for (Annotation annotation : fieldAnnotations) {
+			annotationRegistry.applyAnnotations(annotation.getFullyQualifiedName(), applicator);
+		}
+	}
+	
+	private static AnnotationApplicator createAnnotationApplicator(final PropertySource<?> property) {
+		return new AnnotationApplicator() {
 			
 			@Override
-			public void apply(String fullyQualifiedAnnotationName, Map<String, Object> annotationAttributes) {
-				AnnotationSource<?> annotation = getter.addAnnotation(fullyQualifiedAnnotationName);
+			public void apply(String fullyQualifiedAnnotationName, Map<String, Object> annotationAttributes,
+				AnnotationTargetType targetType) {
+				
+				AnnotationSource<?> annotation;
+				
+				if (targetType == AnnotationTargetType.FIELD) {
+					annotation = property.getField().addAnnotation(fullyQualifiedAnnotationName);
+				}
+				else {
+					annotation = property.getAccessor().addAnnotation(fullyQualifiedAnnotationName);
+				}
 				
 				for (Entry<String, Object> attr : annotationAttributes.entrySet()) {
 					if (attr.getValue() instanceof Class<?>) {
@@ -193,10 +217,6 @@ public class Generator {
 				}
 			}
 		};
-		
-		for (Annotation annotation : fieldAnnotations) {
-			annotationRegistry.applyAnnotations(annotation.getFullyQualifiedName(), applicator);
-		}
 	}
 
 	private static Annotation getAnnotation(ClassSource clazz, Class<?> type) {

@@ -234,7 +234,7 @@ The client supports `get`, `post` and `delete` operations - it is not intended t
 
 ## Limitations ##
 
-ID fields (PKs) must be generated in the database (annotated with `@GeneratedValue`). Currently ID fields must also be named `id`.
+ID fields (PKs) must be generated in the database (annotated with `@GeneratedValue`).
 
 The tool assumes that it is the *fields* of the server-side entities that should be the basis of the generated artifacts, not the properties, so Spring Data REST must have its `ObjectMapper` configured to use field- rather than property-level access. This is an intentional design decision - the fields comprise the state of the entity, and accessors/mutators may not be present or not directly pass through to the underlying fields.
 
@@ -242,7 +242,6 @@ The tool assumes that it is the *fields* of the server-side entities that should
 
 There are plenty of things still to do with this:
 
-* support ID fields with any name 
 * back-references to embedded associations' contexts should be supported
 * transient fields should be supported
 * support generation from more than one package
