@@ -146,10 +146,12 @@ package greeting.model.client;
 import uk.co.blackpepper.sdrclient.gen.annotation.RemoteResource;
 import java.net.URI;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import uk.co.blackpepper.sdrclient.gen.annotation.IdField;
 
 @RemoteResource("/greetings")
 public class Greeting {
 
+	@IdField
 	private URI id;
 	private String message;
 
@@ -224,7 +226,8 @@ The other primary motivation for this tool is so that a data model can be genera
 
 #### Field level ####
 
-* `@LinkedResource` - mark a collection- or single-valued assocation to be a linked assocation, that is, to an entity that has a repository
+Associations are assumed to be *linked* (i.e. to an entity that has its own repository) unless marked as *embedded* as follows:
+
 * `@EmbeddedResource` - mark a single-valued association to be an embedded association, that is, to an entity that does not have a repository
 * `@EmbeddedResources` - mark a collection-valued assocation to be an embedded assocation
 
