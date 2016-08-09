@@ -101,6 +101,8 @@ public class Generator {
 			addInitializer(property.getField(), result);
 		}
 				
+		logger.info("Generated data model class " + result.getQualifiedName());
+		
 		classWriter.write(createSourceFileRelativePath(result), result.toString());
 	}
 	
