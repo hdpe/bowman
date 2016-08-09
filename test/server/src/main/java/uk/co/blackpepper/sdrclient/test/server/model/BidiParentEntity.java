@@ -8,7 +8,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
-import uk.co.blackpepper.sdrclient.annotation.LinkedResource;
 import uk.co.blackpepper.sdrclient.annotation.RemoteResource;
 
 @Entity
@@ -22,6 +21,5 @@ public class BidiParentEntity {
 	private String name;
 	
 	@OneToMany(mappedBy = "parent")
-	@LinkedResource
 	private Set<BidiChildEntity> children;
 }

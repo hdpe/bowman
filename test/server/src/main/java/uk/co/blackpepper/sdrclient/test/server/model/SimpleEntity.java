@@ -6,7 +6,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
-import uk.co.blackpepper.sdrclient.annotation.LinkedResource;
 import uk.co.blackpepper.sdrclient.annotation.RemoteResource;
 
 @Entity
@@ -20,6 +19,5 @@ public class SimpleEntity {
 	private String name;
 	
 	@ManyToOne
-	@LinkedResource
 	private SimpleEntity related;
 }

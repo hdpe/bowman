@@ -14,7 +14,7 @@ class AnnotationRegistry {
 	
 	private static class AnnotationMapping {
 		
-		private String sourceAnnotationFullyQualifiedName;
+		private AnnotationMappingCondition condition;
 		
 		private String targetAnnotationFullyQualifiedName;
 		
@@ -22,17 +22,17 @@ class AnnotationRegistry {
 		
 		private AnnotationTargetType targetType;
 
-		AnnotationMapping(String sourceAnnotationFullyQualifiedName,
+		AnnotationMapping(AnnotationMappingCondition condition,
 			String targetAnnotationFullyQualifiedName, Map<String, Object> targetAnnotationAttributes,
 			AnnotationTargetType targetType) {
-			this.sourceAnnotationFullyQualifiedName = sourceAnnotationFullyQualifiedName;
+			this.condition = condition;
 			this.targetAnnotationFullyQualifiedName = targetAnnotationFullyQualifiedName;
 			this.targetAnnotationAttributes = targetAnnotationAttributes;
 			this.targetType = targetType;
 		}
 
-		public boolean isApplicableFor(String sourceAnnotationFullyQualifiedName) {
-			return this.sourceAnnotationFullyQualifiedName.equals(sourceAnnotationFullyQualifiedName);
+		public boolean isApplicableFor(PropertyGenerationContext sourceProperty) {
+			return condition.appliesTo(sourceProperty);
 		}
 
 		public String getTargetAnnotationFullyQualifiedName() {
@@ -48,12 +48,36 @@ class AnnotationRegistry {
 		}
 	}
 	
+	interface AnnotationMappingCondition {
+		boolean appliesTo(PropertyGenerationContext sourceProperty);
+	}
+	
+	private static class NameMatchAnnotationMappingCondition implements AnnotationMappingCondition {
+
+		private String sourceAnnotationFullyQualifiedName;
+
+		NameMatchAnnotationMappingCondition(String sourceAnnotationFullyQualifiedName) {
+			this.sourceAnnotationFullyQualifiedName = sourceAnnotationFullyQualifiedName;
+		}
+		
+		@Override
+		public boolean appliesTo(PropertyGenerationContext sourceProperty) {
+			return sourceProperty.hasAnnotation(sourceAnnotationFullyQualifiedName);
+		}
+	}
+	
 	private List<AnnotationMapping> annotations = new ArrayList<AnnotationMapping>();
 	
 	public void registerAnnotationMapping(String sourceAnnotationFullyQualifiedName,
 			String targetAnnotationFullyQualifiedName) {
 		registerAnnotationMapping(sourceAnnotationFullyQualifiedName, targetAnnotationFullyQualifiedName,
 			Collections.<String, Object>emptyMap());
+	}
+	
+	public void registerAnnotationMapping(AnnotationMappingCondition condition,
+			String targetAnnotationFullyQualifiedName) {
+		registerAnnotationMapping(condition, targetAnnotationFullyQualifiedName,
+				Collections.<String, Object>emptyMap(), AnnotationTargetType.PROPERTY);
 	}
 	
 	public void registerAnnotationMapping(String sourceAnnotationFullyQualifiedName,
@@ -73,14 +97,21 @@ class AnnotationRegistry {
 		String targetAnnotationFullyQualifiedName, Map<String, Object> targetAnnotationAttributes,
 		AnnotationTargetType targetType) {
 		
-		annotations.add(new AnnotationMapping(sourceAnnotationFullyQualifiedName,
-			targetAnnotationFullyQualifiedName,
-			targetAnnotationAttributes, targetType));
+		registerAnnotationMapping(new NameMatchAnnotationMappingCondition(sourceAnnotationFullyQualifiedName),
+			targetAnnotationFullyQualifiedName, targetAnnotationAttributes, targetType);
 	}
 	
-	public void applyAnnotations(String sourceAnnotationFullyQualifiedName, AnnotationApplicator applicator) {
+	public void registerAnnotationMapping(AnnotationMappingCondition condition,
+			String targetAnnotationFullyQualifiedName, Map<String, Object> targetAnnotationAttributes,
+			AnnotationTargetType targetType) {
+		
+		annotations.add(new AnnotationMapping(condition, targetAnnotationFullyQualifiedName, targetAnnotationAttributes,
+			targetType));
+	}
+	
+	public void applyAnnotations(PropertyGenerationContext sourceProperty, AnnotationApplicator applicator) {
 		for (AnnotationMapping annotation : annotations) {
-			if (annotation.isApplicableFor(sourceAnnotationFullyQualifiedName)) {
+			if (annotation.isApplicableFor(sourceProperty)) {
 				applicator.apply(annotation.getTargetAnnotationFullyQualifiedName(),
 					annotation.getTargetAnnotationAttributes(), annotation.getTargetType());
 			}

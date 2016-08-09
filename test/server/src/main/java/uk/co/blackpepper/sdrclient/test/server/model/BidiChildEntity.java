@@ -6,7 +6,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
-import uk.co.blackpepper.sdrclient.annotation.LinkedResource;
 import uk.co.blackpepper.sdrclient.annotation.RemoteResource;
 
 @Entity
@@ -18,7 +17,6 @@ public class BidiChildEntity {
 	private Integer id;
 	
 	@ManyToOne
-	@LinkedResource
 	private BidiParentEntity parent;
 	
 	private String name;

@@ -99,11 +99,11 @@ public class GeneratorTest {
 	}
 
 	@Test
-	public void generateWithClientAnnotationPreservesAnnotation() throws IOException {
-		JavaClassSource javaClass = createValidJavaClassSource();
+	public void generateWithAssociationFieldAddsAnnotation() throws IOException {
+		JavaClassSource javaClass = createValidJavaClassSource("sourcepackage.X");
 		javaClass.addField()
 			.setName("field")
-			.addAnnotation(uk.co.blackpepper.sdrclient.annotation.LinkedResource.class);
+			.setType("sourcepackage.Y");
 
 		JavaClassSource output = generateAndParseContent(javaClass);
 		

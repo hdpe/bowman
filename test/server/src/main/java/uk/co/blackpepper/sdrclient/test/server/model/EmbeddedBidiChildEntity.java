@@ -8,8 +8,6 @@ import javax.persistence.ManyToOne;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
-import uk.co.blackpepper.sdrclient.annotation.LinkedResource;
-
 @Entity
 public class EmbeddedBidiChildEntity {
 
@@ -24,6 +22,5 @@ public class EmbeddedBidiChildEntity {
 	private String name;
 
 	@ManyToOne
-	@LinkedResource
 	private SimpleEntity related;
 }
