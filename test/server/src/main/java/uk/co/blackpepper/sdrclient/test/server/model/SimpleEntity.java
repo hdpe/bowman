@@ -6,10 +6,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
-import uk.co.blackpepper.sdrclient.annotation.RemoteResource;
+import uk.co.blackpepper.sdrclient.annotation.GeneratesClient;
 
 @Entity
-@RemoteResource("/simple-entities")
+@GeneratesClient("/simple-entities")
 public class SimpleEntity {
 
 	@Id

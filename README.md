@@ -90,7 +90,7 @@ public class App extends RepositoryRestConfigurerAdapter {
 
 ```java
 @Entity
-@uk.co.blackpepper.sdrclient.annotation.RemoteResource("/greetings")
+@GeneratesClient("/greetings")
 public class Greeting {
 
 	@Id
@@ -222,7 +222,7 @@ The other primary motivation for this tool is so that a data model can be genera
 
 #### Class level ####
 
-* `@RemoteResource(path)` - the path to the remote repository: *Required* for entities with repositories
+* `@GeneratesClient(path)` - the path to the remote repository: *Required* for entities with repositories
 
 #### Field level ####
 

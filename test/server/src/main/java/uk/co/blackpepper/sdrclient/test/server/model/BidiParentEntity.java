@@ -8,10 +8,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
-import uk.co.blackpepper.sdrclient.annotation.RemoteResource;
+import uk.co.blackpepper.sdrclient.annotation.GeneratesClient;
 
 @Entity
-@RemoteResource("/bidi-parents")
+@GeneratesClient("/bidi-parents")
 public class BidiParentEntity {
 
 	@Id
