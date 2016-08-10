@@ -21,6 +21,7 @@ import uk.co.blackpepper.sdrclient.annotation.EmbeddedResource;
 import uk.co.blackpepper.sdrclient.annotation.EmbeddedResources;
 import uk.co.blackpepper.sdrclient.gen.AnnotationRegistry.AnnotationMappingCondition;
 import uk.co.blackpepper.sdrclient.gen.AnnotationRegistry.AnnotationTargetType;
+import uk.co.blackpepper.sdrclient.gen.annotation.IdAccessor;
 import uk.co.blackpepper.sdrclient.gen.annotation.IdField;
 import uk.co.blackpepper.sdrclient.gen.annotation.LinkedResource;
 import uk.co.blackpepper.sdrclient.gen.annotation.RemoteResource;
@@ -36,6 +37,10 @@ public class Generator {
 		annotationRegistry.registerAnnotationMapping(
 				javax.persistence.Id.class.getName(),
 				JsonIgnore.class.getName());
+
+		annotationRegistry.registerAnnotationMapping(
+				javax.persistence.Id.class.getName(),
+				IdAccessor.class.getName());
 		
 		annotationRegistry.registerAnnotationMapping(
 				javax.persistence.Id.class.getName(),

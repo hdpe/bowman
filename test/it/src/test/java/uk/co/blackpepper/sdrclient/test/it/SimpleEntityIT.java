@@ -55,4 +55,15 @@ public class SimpleEntityIT {
 		SimpleEntity retrieved = client.get(location);
 		assertThat(retrieved.getRelated(), is(nullValue()));
 	}
+	
+	@Test
+	public void canPostEntityWithAssociatedProxy() {
+		SimpleEntity related = new SimpleEntity();
+		URI relatedResource = client.post(related);
+		
+		SimpleEntity sent = new SimpleEntity();
+		sent.setRelated(client.get(relatedResource));
+		
+		client.post(sent);
+	}
 }

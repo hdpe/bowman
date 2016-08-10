@@ -1,10 +1,12 @@
 package uk.co.blackpepper.sdrclient;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.net.URI;
 
 import org.springframework.util.ReflectionUtils;
 
+import uk.co.blackpepper.sdrclient.gen.annotation.IdAccessor;
 import uk.co.blackpepper.sdrclient.gen.annotation.IdField;
 
 public final class ReflectionSupport {
@@ -13,9 +15,8 @@ public final class ReflectionSupport {
 	}
 	
 	public static URI getId(Object object) {
-		Field field = getIdField(object.getClass());
-		ReflectionUtils.makeAccessible(field);
-		return (URI) ReflectionUtils.getField(field, object);
+		Method accessor = getIdAccessor(object.getClass());
+		return (URI) ReflectionUtils.invokeMethod(accessor, object);
 	}
 
 	public static void setId(Object value, URI uri) {
@@ -24,6 +25,16 @@ public final class ReflectionSupport {
 		ReflectionUtils.setField(idField, value, uri);
 	}
 	
+	private static Method getIdAccessor(Class<?> clazz) {
+		for (Method method : ReflectionUtils.getAllDeclaredMethods(clazz)) {
+			if (method.getAnnotation(IdAccessor.class) != null) {
+				return method;
+			}
+		}
+		
+		throw new IllegalArgumentException("No @IdAccessor found for " + clazz);
+	}
+
 	private static Field getIdField(Class<?> clazz) {
 		for (Field field : clazz.getDeclaredFields()) {
 			if (field.getAnnotation(IdField.class) != null) {

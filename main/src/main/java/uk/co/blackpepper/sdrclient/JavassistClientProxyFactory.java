@@ -14,8 +14,8 @@ class JavassistClientProxyFactory implements ClientProxyFactory {
 
 	private static final class GetterMethodFilter implements MethodFilter {
 		@Override
-		public boolean isHandled(Method m) {
-			return m.getName().startsWith("get");
+		public boolean isHandled(Method method) {
+			return method.getName().startsWith("get");
 		}
 	}
 	
