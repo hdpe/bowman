@@ -14,10 +14,10 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import uk.co.blackpepper.sdrclient.annotation.EmbeddedResource;
 import uk.co.blackpepper.sdrclient.annotation.EmbeddedResources;
-import uk.co.blackpepper.sdrclient.annotation.GeneratesClient;
+import uk.co.blackpepper.sdrclient.annotation.RestRepository;
 
 @Entity
-@GeneratesClient("/embedded-bidi-parents")
+@RestRepository("/embedded-bidi-parents")
 public class EmbeddedBidiParentEntity {
 
 	@Id

@@ -100,7 +100,7 @@ public class App extends RepositoryRestConfigurerAdapter {
 
 ```java
 @Entity
-@GeneratesClient("/greetings")
+@RestRepository("/greetings")
 public class Greeting {
 
 	@Id
@@ -232,7 +232,7 @@ The other primary motivation for this tool is so that a data model can be genera
 
 #### Class level ####
 
-* `@GeneratesClient(path)` - the path to the remote repository: *Required* for entities with repositories
+* `@RestRepository(path)` - the path to the remote repository: *Required* for entities with repositories
 
 #### Field level ####
 

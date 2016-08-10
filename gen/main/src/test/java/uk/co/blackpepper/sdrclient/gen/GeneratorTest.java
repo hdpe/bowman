@@ -54,7 +54,7 @@ public class GeneratorTest {
 		JavaClassSource javaClass = Roaster.create(JavaClassSource.class)
 			.setName("Entity");
 		javaClass.addAnnotation(Entity.class);
-		javaClass.addAnnotation(uk.co.blackpepper.sdrclient.annotation.GeneratesClient.class)
+		javaClass.addAnnotation(uk.co.blackpepper.sdrclient.annotation.RestRepository.class)
 			.setStringValue("/path/to/resource");
 		javaClass.addField()
 			.setName("id")
@@ -80,7 +80,7 @@ public class GeneratorTest {
 	@Test
 	public void generateWithGeneratesClientAddsAnnotation() throws IOException {
 		JavaClassSource javaClass = createValidJavaClassSource();
-		javaClass.addAnnotation(uk.co.blackpepper.sdrclient.annotation.GeneratesClient.class)
+		javaClass.addAnnotation(uk.co.blackpepper.sdrclient.annotation.RestRepository.class)
 			.setStringValue("/path/to/resource");
 		
 		JavaClassSource output = generateAndParseContent(javaClass);

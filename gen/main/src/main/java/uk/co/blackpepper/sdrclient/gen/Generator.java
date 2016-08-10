@@ -48,7 +48,7 @@ public class Generator {
 				AnnotationTargetType.FIELD);
 		
 		annotationRegistry.registerAnnotationMapping(
-				uk.co.blackpepper.sdrclient.annotation.GeneratesClient.class.getName(),
+				uk.co.blackpepper.sdrclient.annotation.RestRepository.class.getName(),
 				RemoteResource.class.getName());
 		
 		annotationRegistry.registerAnnotationMapping(
@@ -94,7 +94,7 @@ public class Generator {
 				.setPackage(targetPackageName);
 		
 		Annotation remoteResourceAnnotation = getAnnotation(source,
-				uk.co.blackpepper.sdrclient.annotation.GeneratesClient.class);
+				uk.co.blackpepper.sdrclient.annotation.RestRepository.class);
 		
 		if (remoteResourceAnnotation != null) {
 			result.addAnnotation(RemoteResource.class)
