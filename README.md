@@ -4,6 +4,16 @@ A client-side data model generator and client framework for a JPA Spring Data RE
 
 Primarily intended to provide a convenient means for the setup and tear-down of data for use in automated acceptance tests.
 
+## Building ##
+
+To build and install into the local Maven repository:
+
+`mvn install`
+
+To run the integration tests:
+
+`mvn verify -PrunITs`
+
 ## Quickstart ##
 
 ### Creating an application ###
