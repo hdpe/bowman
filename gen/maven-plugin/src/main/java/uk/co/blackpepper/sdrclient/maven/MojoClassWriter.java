@@ -3,10 +3,11 @@ package uk.co.blackpepper.sdrclient.maven;
 import java.io.File;
 import java.io.IOException;
 
-import org.apache.commons.io.FileUtils;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
 import uk.co.blackpepper.sdrclient.gen.GeneratedClassWriter;
+
+import static org.apache.commons.io.FileUtils.writeByteArrayToFile;
 
 class MojoClassWriter implements GeneratedClassWriter {
 
@@ -22,7 +23,19 @@ class MojoClassWriter implements GeneratedClassWriter {
 	@Override
 	public void write(String relativePath, String content) throws IOException {
 		File file = new File(targetDirectory, relativePath);
-		FileUtils.write(file, content, "UTF-8");
-		context.refresh(file);
+		
+		long existingFileSize = -1;
+		
+		if (file.exists()) {
+			existingFileSize = file.length();
+		}
+		
+		byte[] newFileContent = content.getBytes("UTF-8");
+		
+		writeByteArrayToFile(file, newFileContent);
+		
+		if (newFileContent.length != existingFileSize) {
+			context.refresh(file);
+		}
 	}
 }
