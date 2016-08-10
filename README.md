@@ -243,7 +243,7 @@ Associations are assumed to be *linked* (i.e. to an entity that has its own repo
 
 ### Client API ###
 
-The client supports `get`, `post` and `delete` operations - it is not intended to support `put`/`patch` at this time.
+The client supports `get`, `getAll`, `post` and `delete` operations - it is not intended to support `put`/`patch` at this time.
 
 ## Limitations ##
 
