@@ -105,7 +105,9 @@ public class Generator {
 			PropertyGenerationContext sourceProperty = new PropertyGenerationContext(field, source, targetPackageName,
 				logger);
 			
-			generateProperty(sourceProperty, result);
+			if (!sourceProperty.isIgnoredField()) {
+				generateProperty(sourceProperty, result);
+			}
 		}
 				
 		logger.info("Generated data model class " + result.getQualifiedName());

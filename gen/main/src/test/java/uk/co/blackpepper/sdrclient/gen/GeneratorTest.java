@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URI;
 
 import javax.persistence.Entity;
+import javax.persistence.Transient;
 
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
@@ -11,6 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
+import uk.co.blackpepper.sdrclient.annotation.RestIgnore;
 import uk.co.blackpepper.sdrclient.gen.annotation.IdField;
 import uk.co.blackpepper.sdrclient.gen.annotation.LinkedResource;
 import uk.co.blackpepper.sdrclient.gen.annotation.RemoteResource;
@@ -149,6 +151,30 @@ public class GeneratorTest {
 				is("java.util.Set<Y>"));
 		assertThat("import sourcepackage.Y", output.getImport("sourcepackage.Y"), is(nullValue()));
 		assertThat("import sourcepackage.client.Y", output.getImport("sourcepackage.client.Y"), is(nullValue()));
+	}
+	
+	@Test
+	public void generateWithRestIgnoreFieldIgnoresField() throws IOException {
+		JavaClassSource javaClass = createValidJavaClassSource();
+		javaClass.addField()
+			.setName("x")
+			.addAnnotation(RestIgnore.class);
+		
+		JavaClassSource output = generateAndParseContent(javaClass);
+		
+		assertThat("field x", output.getField("x"), is(nullValue()));
+	}
+	
+	@Test
+	public void generateWithTransientFieldIgnoresField() throws IOException {
+		JavaClassSource javaClass = createValidJavaClassSource();
+		javaClass.addField()
+			.setName("x")
+			.addAnnotation(Transient.class);
+		
+		JavaClassSource output = generateAndParseContent(javaClass);
+		
+		assertThat("field x", output.getField("x"), is(nullValue()));
 	}
 	
 	private JavaClassSource generateAndParseContent(JavaClassSource in) throws IOException {

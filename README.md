@@ -240,6 +240,7 @@ Associations are assumed to be *linked* (i.e. to an entity that has its own repo
 
 * `@EmbeddedResource` - mark a single-valued association to be an embedded association, that is, to an entity that does not have a repository
 * `@EmbeddedResources` - mark a collection-valued assocation to be an embedded assocation
+* `@RestIgnore` - don't generate a property in the client data model for this field
 
 ### Client API ###
 
@@ -256,7 +257,6 @@ The tool assumes that it is the *fields* of the server-side entities that should
 There are plenty of things still to do with this:
 
 * back-references to embedded associations' contexts should be supported
-* transient fields should be supported
 * support generation from more than one package
 * test coverage needs to be hardened up significantly
 * investigate whether it's possible to do away with the user annotations in `sdr-client-annotation` and derive this data from the Spring Data REST repository model
