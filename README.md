@@ -44,12 +44,12 @@ Create a new Maven `pom.xml` with the following content:
 
 	<dependencies>
 		<dependency>
-			<groupId>uk.co.blackpepper.sdrclient</groupId>
+			<groupId>uk.co.blackpepper.sdr-client</groupId>
 			<artifactId>sdr-client</artifactId>
 			<version>${sdr-client.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>uk.co.blackpepper.sdrclient</groupId>
+			<groupId>uk.co.blackpepper.sdr-client</groupId>
 			<artifactId>sdr-client-annotation</artifactId>
 			<version>${sdr-client.version}</version>
 		</dependency>
@@ -130,7 +130,7 @@ Add the following to your `pom.xml`:
 <build>
   <plugins>
     <plugin>
-      <groupId>uk.co.blackpepper.sdrclient</groupId>
+      <groupId>uk.co.blackpepper.sdr-client</groupId>
       <artifactId>sdr-client-gen-maven-plugin</artifactId>
       <version>${sdr-client.version}</version>
       <executions>
@@ -148,7 +148,7 @@ Add the following to your `pom.xml`:
 </build>
 ```
 
-Rebuild your application and you should see the following file has been generated in `target/generated-sources/sdrclient/greeting/model/client`:
+Rebuild your application and you should see the following file has been generated in `target/generated-sources/sdr-client/greeting/model/client`:
 
 ```java
 package greeting.model.client;

@@ -3,7 +3,7 @@
 
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>uk.co.blackpepper.sdrclient</groupId>
+	<groupId>uk.co.blackpepper.sdr-client</groupId>
 	<artifactId>sdr-client-parent</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>

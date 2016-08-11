@@ -45,7 +45,7 @@ public class GenerateMojo extends AbstractMojo {
 	@Parameter
 	private String targetPackageName;
 
-	@Parameter(defaultValue = "${project.build.directory}/generated-sources/sdrclient", required = true)
+	@Parameter(defaultValue = "${project.build.directory}/generated-sources/sdr-client", required = true)
 	private File targetDirectory;
 
 	@Override
