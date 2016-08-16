@@ -13,8 +13,8 @@ import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
 
 import javassist.util.proxy.MethodHandler;
-import uk.co.blackpepper.sdrclient.annotation.IdAccessor;
 import uk.co.blackpepper.sdrclient.annotation.LinkedResource;
+import uk.co.blackpepper.sdrclient.annotation.ResourceId;
 
 import static uk.co.blackpepper.sdrclient.HalSupport.toLinkName;
 
@@ -57,7 +57,7 @@ class GetterMethodHandler<T> implements MethodHandler {
 		
 		// CHECKSTYLE:ON
 		
-		if (method.isAnnotationPresent(IdAccessor.class)) {
+		if (method.isAnnotationPresent(ResourceId.class)) {
 			return uri;
 		}
 		

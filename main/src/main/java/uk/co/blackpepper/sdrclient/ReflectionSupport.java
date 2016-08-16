@@ -6,7 +6,7 @@ import java.net.URI;
 
 import org.springframework.util.ReflectionUtils;
 
-import uk.co.blackpepper.sdrclient.annotation.IdAccessor;
+import uk.co.blackpepper.sdrclient.annotation.ResourceId;
 
 public final class ReflectionSupport {
 
@@ -26,7 +26,7 @@ public final class ReflectionSupport {
 	
 	private static Method getIdAccessor(Class<?> clazz) {
 		for (Method method : ReflectionUtils.getAllDeclaredMethods(clazz)) {
-			if (method.getAnnotation(IdAccessor.class) != null) {
+			if (method.getAnnotation(ResourceId.class) != null) {
 				return method;
 			}
 		}

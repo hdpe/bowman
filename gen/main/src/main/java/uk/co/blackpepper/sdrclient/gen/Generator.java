@@ -17,9 +17,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import uk.co.blackpepper.sdrclient.EmbeddedChildDeserializer;
-import uk.co.blackpepper.sdrclient.annotation.IdAccessor;
 import uk.co.blackpepper.sdrclient.annotation.LinkedResource;
 import uk.co.blackpepper.sdrclient.annotation.RemoteResource;
+import uk.co.blackpepper.sdrclient.annotation.ResourceId;
 import uk.co.blackpepper.sdrclient.gen.AnnotationRegistry.AnnotationMappingCondition;
 import uk.co.blackpepper.sdrclient.gen.annotation.EmbeddedResource;
 import uk.co.blackpepper.sdrclient.gen.annotation.EmbeddedResources;
@@ -38,7 +38,7 @@ public class Generator {
 
 		annotationRegistry.registerAnnotationMapping(
 				javax.persistence.Id.class.getName(),
-				IdAccessor.class.getName());
+				ResourceId.class.getName());
 		
 		annotationRegistry.registerAnnotationMapping(
 				uk.co.blackpepper.sdrclient.gen.annotation.RestRepository.class.getName(),

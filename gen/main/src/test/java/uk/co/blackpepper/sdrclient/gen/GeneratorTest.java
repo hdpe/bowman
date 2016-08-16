@@ -12,9 +12,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
-import uk.co.blackpepper.sdrclient.annotation.IdAccessor;
 import uk.co.blackpepper.sdrclient.annotation.LinkedResource;
 import uk.co.blackpepper.sdrclient.annotation.RemoteResource;
+import uk.co.blackpepper.sdrclient.annotation.ResourceId;
 import uk.co.blackpepper.sdrclient.gen.annotation.RestIgnore;
 
 import static org.hamcrest.Matchers.is;
@@ -73,7 +73,8 @@ public class GeneratorTest {
 			output.getField("id").hasAnnotation(javax.persistence.Id.class), is(false));
 		assertThat("id field type", output.getField("id").getType().getQualifiedName(), is("java.net.URI"));
 		assertThat("id getter", output.getMethod("getId"), is(notNullValue()));
-		assertThat("id getter has id annotation", output.getMethod("getId").hasAnnotation(IdAccessor.class), is(true));
+		assertThat("id getter has ResourceId annotation",
+			output.getMethod("getId").hasAnnotation(ResourceId.class), is(true));
 		assertThat("id setter", output.getMethod("setId", URI.class), is(nullValue()));
 		assertThat("name getter", output.getMethod("getName"), is(notNullValue()));
 		assertThat("name setter", output.getMethod("setName", String.class), is(notNullValue()));
@@ -208,7 +209,7 @@ public class GeneratorTest {
 		javaClass.addProperty(URI.class, "id")
 			.removeMutator()
 			.getAccessor()
-				.addAnnotation(IdAccessor.class);
+				.addAnnotation(ResourceId.class);
 		
 		return javaClass;
 	}
