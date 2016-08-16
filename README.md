@@ -153,10 +153,10 @@ Rebuild your application and you should see the following file has been generate
 ```java
 package greeting.model.client;
 
-import uk.co.blackpepper.sdrclient.gen.annotation.RemoteResource;
+import uk.co.blackpepper.hal.client.gen.annotation.RemoteResource;
 import java.net.URI;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import uk.co.blackpepper.sdrclient.gen.annotation.IdField;
+import uk.co.blackpepper.hal.client.gen.annotation.IdField;
 
 @RemoteResource("/greetings")
 public class Greeting {

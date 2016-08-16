@@ -17,7 +17,7 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
-					<mainClass>uk.co.blackpepper.sdrclient.test.server.Application</mainClass>
+					<mainClass>uk.co.blackpepper.hal.client.test.server.Application</mainClass>
 				</configuration>
 				<executions>
 					<execution>

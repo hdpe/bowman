@@ -9,7 +9,7 @@
 	</appender>
 
 <!--  	<logger -->
-<!--  		name="uk.co.blackpepper.sdrclient.LoggingClientHttpRequestInterceptor" -->
+<!--  		name="uk.co.blackpepper.hal.client.LoggingClientHttpRequestInterceptor" -->
 <!--  		level="trace"/> -->
 
 	<root level="info">
