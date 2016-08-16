@@ -1,4 +1,4 @@
-package uk.co.blackpepper.sdrclient.gen.annotation;
+package uk.co.blackpepper.sdrclient.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

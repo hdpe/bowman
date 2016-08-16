@@ -36,7 +36,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>sdr-client-annotation</artifactId>
+			<artifactId>sdr-client-gen-annotation</artifactId>
 		</dependency>
 
 		<dependency>

@@ -7,7 +7,7 @@ import java.util.Objects;
 import javax.lang.model.SourceVersion;
 import javax.persistence.Transient;
 
-import uk.co.blackpepper.sdrclient.annotation.RestIgnore;
+import uk.co.blackpepper.sdrclient.gen.annotation.RestIgnore;
 import uk.co.blackpepper.sdrclient.gen.model.Annotation;
 import uk.co.blackpepper.sdrclient.gen.model.ClassSource;
 import uk.co.blackpepper.sdrclient.gen.model.Field;

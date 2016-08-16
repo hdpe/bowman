@@ -8,7 +8,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
-import uk.co.blackpepper.sdrclient.annotation.RestRepository;
+import uk.co.blackpepper.sdrclient.gen.annotation.RestRepository;
 
 @Entity
 @RestRepository("/bidi-parents")

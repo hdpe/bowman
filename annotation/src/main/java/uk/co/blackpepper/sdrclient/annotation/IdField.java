@@ -7,6 +7,6 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface EmbeddedResource {
-	// marker interface
+public @interface IdField {
+	// marker annotation
 }

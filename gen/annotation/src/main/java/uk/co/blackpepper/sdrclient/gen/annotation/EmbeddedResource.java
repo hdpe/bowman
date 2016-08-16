@@ -6,8 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface RemoteResource {
-
-	String value();
+@Target(ElementType.FIELD)
+public @interface EmbeddedResource {
+	// marker interface
 }

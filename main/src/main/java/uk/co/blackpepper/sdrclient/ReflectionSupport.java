@@ -6,8 +6,8 @@ import java.net.URI;
 
 import org.springframework.util.ReflectionUtils;
 
-import uk.co.blackpepper.sdrclient.gen.annotation.IdAccessor;
-import uk.co.blackpepper.sdrclient.gen.annotation.IdField;
+import uk.co.blackpepper.sdrclient.annotation.IdAccessor;
+import uk.co.blackpepper.sdrclient.annotation.IdField;
 
 public final class ReflectionSupport {
 

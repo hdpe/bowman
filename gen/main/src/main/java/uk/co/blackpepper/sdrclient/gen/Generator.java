@@ -17,14 +17,14 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import uk.co.blackpepper.sdrclient.EmbeddedChildDeserializer;
-import uk.co.blackpepper.sdrclient.annotation.EmbeddedResource;
-import uk.co.blackpepper.sdrclient.annotation.EmbeddedResources;
+import uk.co.blackpepper.sdrclient.annotation.IdAccessor;
+import uk.co.blackpepper.sdrclient.annotation.IdField;
+import uk.co.blackpepper.sdrclient.annotation.LinkedResource;
+import uk.co.blackpepper.sdrclient.annotation.RemoteResource;
 import uk.co.blackpepper.sdrclient.gen.AnnotationRegistry.AnnotationMappingCondition;
 import uk.co.blackpepper.sdrclient.gen.AnnotationRegistry.AnnotationTargetType;
-import uk.co.blackpepper.sdrclient.gen.annotation.IdAccessor;
-import uk.co.blackpepper.sdrclient.gen.annotation.IdField;
-import uk.co.blackpepper.sdrclient.gen.annotation.LinkedResource;
-import uk.co.blackpepper.sdrclient.gen.annotation.RemoteResource;
+import uk.co.blackpepper.sdrclient.gen.annotation.EmbeddedResource;
+import uk.co.blackpepper.sdrclient.gen.annotation.EmbeddedResources;
 import uk.co.blackpepper.sdrclient.gen.model.Annotation;
 import uk.co.blackpepper.sdrclient.gen.model.ClassSource;
 import uk.co.blackpepper.sdrclient.gen.model.Field;
@@ -48,7 +48,7 @@ public class Generator {
 				AnnotationTargetType.FIELD);
 		
 		annotationRegistry.registerAnnotationMapping(
-				uk.co.blackpepper.sdrclient.annotation.RestRepository.class.getName(),
+				uk.co.blackpepper.sdrclient.gen.annotation.RestRepository.class.getName(),
 				RemoteResource.class.getName());
 		
 		annotationRegistry.registerAnnotationMapping(
@@ -94,7 +94,7 @@ public class Generator {
 				.setPackage(targetPackageName);
 		
 		Annotation remoteResourceAnnotation = getAnnotation(source,
-				uk.co.blackpepper.sdrclient.annotation.RestRepository.class);
+				uk.co.blackpepper.sdrclient.gen.annotation.RestRepository.class);
 		
 		if (remoteResourceAnnotation != null) {
 			result.addAnnotation(RemoteResource.class)

@@ -12,9 +12,9 @@ import javax.persistence.OneToOne;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
-import uk.co.blackpepper.sdrclient.annotation.EmbeddedResource;
-import uk.co.blackpepper.sdrclient.annotation.EmbeddedResources;
-import uk.co.blackpepper.sdrclient.annotation.RestRepository;
+import uk.co.blackpepper.sdrclient.gen.annotation.EmbeddedResource;
+import uk.co.blackpepper.sdrclient.gen.annotation.EmbeddedResources;
+import uk.co.blackpepper.sdrclient.gen.annotation.RestRepository;
 
 @Entity
 @RestRepository("/embedded-bidi-parents")

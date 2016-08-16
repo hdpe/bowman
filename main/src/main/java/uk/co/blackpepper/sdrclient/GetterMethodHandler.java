@@ -13,8 +13,8 @@ import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
 
 import javassist.util.proxy.MethodHandler;
-import uk.co.blackpepper.sdrclient.gen.annotation.IdAccessor;
-import uk.co.blackpepper.sdrclient.gen.annotation.LinkedResource;
+import uk.co.blackpepper.sdrclient.annotation.IdAccessor;
+import uk.co.blackpepper.sdrclient.annotation.LinkedResource;
 
 import static uk.co.blackpepper.sdrclient.HalSupport.toLinkName;
 

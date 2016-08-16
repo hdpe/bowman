@@ -8,7 +8,7 @@ import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import uk.co.blackpepper.sdrclient.gen.annotation.RemoteResource;
+import uk.co.blackpepper.sdrclient.annotation.RemoteResource;
 
 import static uk.co.blackpepper.sdrclient.ReflectionSupport.setId;
 
