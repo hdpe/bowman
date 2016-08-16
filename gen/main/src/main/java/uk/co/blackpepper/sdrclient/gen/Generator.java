@@ -18,11 +18,9 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import uk.co.blackpepper.sdrclient.EmbeddedChildDeserializer;
 import uk.co.blackpepper.sdrclient.annotation.IdAccessor;
-import uk.co.blackpepper.sdrclient.annotation.IdField;
 import uk.co.blackpepper.sdrclient.annotation.LinkedResource;
 import uk.co.blackpepper.sdrclient.annotation.RemoteResource;
 import uk.co.blackpepper.sdrclient.gen.AnnotationRegistry.AnnotationMappingCondition;
-import uk.co.blackpepper.sdrclient.gen.AnnotationRegistry.AnnotationTargetType;
 import uk.co.blackpepper.sdrclient.gen.annotation.EmbeddedResource;
 import uk.co.blackpepper.sdrclient.gen.annotation.EmbeddedResources;
 import uk.co.blackpepper.sdrclient.gen.model.Annotation;
@@ -41,11 +39,6 @@ public class Generator {
 		annotationRegistry.registerAnnotationMapping(
 				javax.persistence.Id.class.getName(),
 				IdAccessor.class.getName());
-		
-		annotationRegistry.registerAnnotationMapping(
-				javax.persistence.Id.class.getName(),
-				IdField.class.getName(),
-				AnnotationTargetType.FIELD);
 		
 		annotationRegistry.registerAnnotationMapping(
 				uk.co.blackpepper.sdrclient.gen.annotation.RestRepository.class.getName(),
@@ -145,17 +138,10 @@ public class Generator {
 		return new AnnotationApplicator() {
 			
 			@Override
-			public void apply(String fullyQualifiedAnnotationName, Map<String, Object> annotationAttributes,
-				AnnotationTargetType targetType) {
+			public void apply(String fullyQualifiedAnnotationName, Map<String, Object> annotationAttributes) {
 				
-				AnnotationSource<?> annotation;
-				
-				if (targetType == AnnotationTargetType.FIELD) {
-					annotation = property.getField().addAnnotation(fullyQualifiedAnnotationName);
-				}
-				else {
-					annotation = property.getAccessor().addAnnotation(fullyQualifiedAnnotationName);
-				}
+				AnnotationSource<?> annotation = property.getAccessor()
+					.addAnnotation(fullyQualifiedAnnotationName);
 				
 				for (Entry<String, Object> attr : annotationAttributes.entrySet()) {
 					if (attr.getValue() instanceof Class<?>) {

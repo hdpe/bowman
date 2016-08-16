@@ -7,7 +7,6 @@ import java.net.URI;
 import org.springframework.util.ReflectionUtils;
 
 import uk.co.blackpepper.sdrclient.annotation.IdAccessor;
-import uk.co.blackpepper.sdrclient.annotation.IdField;
 
 public final class ReflectionSupport {
 
@@ -36,12 +35,7 @@ public final class ReflectionSupport {
 	}
 
 	private static Field getIdField(Class<?> clazz) {
-		for (Field field : clazz.getDeclaredFields()) {
-			if (field.getAnnotation(IdField.class) != null) {
-				return field;
-			}
-		}
-		
-		throw new IllegalArgumentException("No @IdField found for " + clazz);
+		Method idAccessor = getIdAccessor(clazz);
+		return ReflectionUtils.findField(clazz, HalSupport.toLinkName(idAccessor.getName()));
 	}
 }

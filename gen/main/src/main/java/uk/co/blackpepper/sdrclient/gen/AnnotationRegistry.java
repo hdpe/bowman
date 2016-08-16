@@ -7,10 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 class AnnotationRegistry {
-
-	enum AnnotationTargetType {
-		FIELD, PROPERTY;
-	}
 	
 	private static class AnnotationMapping {
 		
@@ -20,15 +16,11 @@ class AnnotationRegistry {
 		
 		private Map<String, Object> targetAnnotationAttributes = new LinkedHashMap<String, Object>();
 		
-		private AnnotationTargetType targetType;
-
 		AnnotationMapping(AnnotationMappingCondition condition,
-			String targetAnnotationFullyQualifiedName, Map<String, Object> targetAnnotationAttributes,
-			AnnotationTargetType targetType) {
+			String targetAnnotationFullyQualifiedName, Map<String, Object> targetAnnotationAttributes) {
 			this.condition = condition;
 			this.targetAnnotationFullyQualifiedName = targetAnnotationFullyQualifiedName;
 			this.targetAnnotationAttributes = targetAnnotationAttributes;
-			this.targetType = targetType;
 		}
 
 		public boolean isApplicableFor(PropertyGenerationContext sourceProperty) {
@@ -41,10 +33,6 @@ class AnnotationRegistry {
 
 		public Map<String, Object> getTargetAnnotationAttributes() {
 			return targetAnnotationAttributes;
-		}
-		
-		public AnnotationTargetType getTargetType() {
-			return targetType;
 		}
 	}
 	
@@ -77,43 +65,28 @@ class AnnotationRegistry {
 	public void registerAnnotationMapping(AnnotationMappingCondition condition,
 			String targetAnnotationFullyQualifiedName) {
 		registerAnnotationMapping(condition, targetAnnotationFullyQualifiedName,
-				Collections.<String, Object>emptyMap(), AnnotationTargetType.PROPERTY);
+				Collections.<String, Object>emptyMap());
 	}
 	
 	public void registerAnnotationMapping(String sourceAnnotationFullyQualifiedName,
-			String targetAnnotationFullyQualifiedName, AnnotationTargetType targetType) {
-		registerAnnotationMapping(sourceAnnotationFullyQualifiedName, targetAnnotationFullyQualifiedName,
-			Collections.<String, Object>emptyMap(), targetType);
-	}
-	
-	public void registerAnnotationMapping(String sourceAnnotationFullyQualifiedName,
-			String targetAnnotationFullyQualifiedName,
-			Map<String, Object> targetAnnotationAttributes) {
-		registerAnnotationMapping(sourceAnnotationFullyQualifiedName, targetAnnotationFullyQualifiedName,
-			targetAnnotationAttributes, AnnotationTargetType.PROPERTY);
-	}
-	
-	public void registerAnnotationMapping(String sourceAnnotationFullyQualifiedName,
-		String targetAnnotationFullyQualifiedName, Map<String, Object> targetAnnotationAttributes,
-		AnnotationTargetType targetType) {
+		String targetAnnotationFullyQualifiedName, Map<String, Object> targetAnnotationAttributes) {
 		
 		registerAnnotationMapping(new NameMatchAnnotationMappingCondition(sourceAnnotationFullyQualifiedName),
-			targetAnnotationFullyQualifiedName, targetAnnotationAttributes, targetType);
+			targetAnnotationFullyQualifiedName, targetAnnotationAttributes);
 	}
 	
 	public void registerAnnotationMapping(AnnotationMappingCondition condition,
-			String targetAnnotationFullyQualifiedName, Map<String, Object> targetAnnotationAttributes,
-			AnnotationTargetType targetType) {
+			String targetAnnotationFullyQualifiedName, Map<String, Object> targetAnnotationAttributes) {
 		
-		annotations.add(new AnnotationMapping(condition, targetAnnotationFullyQualifiedName, targetAnnotationAttributes,
-			targetType));
+		annotations.add(new AnnotationMapping(condition, targetAnnotationFullyQualifiedName,
+			targetAnnotationAttributes));
 	}
 	
 	public void applyAnnotations(PropertyGenerationContext sourceProperty, AnnotationApplicator applicator) {
 		for (AnnotationMapping annotation : annotations) {
 			if (annotation.isApplicableFor(sourceProperty)) {
 				applicator.apply(annotation.getTargetAnnotationFullyQualifiedName(),
-					annotation.getTargetAnnotationAttributes(), annotation.getTargetType());
+					annotation.getTargetAnnotationAttributes());
 			}
 		}
 	}

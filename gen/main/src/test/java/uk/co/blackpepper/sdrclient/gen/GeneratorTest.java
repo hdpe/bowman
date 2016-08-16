@@ -12,7 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
-import uk.co.blackpepper.sdrclient.annotation.IdField;
+import uk.co.blackpepper.sdrclient.annotation.IdAccessor;
 import uk.co.blackpepper.sdrclient.annotation.LinkedResource;
 import uk.co.blackpepper.sdrclient.annotation.RemoteResource;
 import uk.co.blackpepper.sdrclient.gen.annotation.RestIgnore;
@@ -71,9 +71,9 @@ public class GeneratorTest {
 		assertThat("has class annotation", output.hasAnnotation(RemoteResource.class), is(true));
 		assertThat("has javax.persistence.Id annotation",
 			output.getField("id").hasAnnotation(javax.persistence.Id.class), is(false));
-		assertThat("has id annotation", output.getField("id").hasAnnotation(IdField.class), is(true));
 		assertThat("id field type", output.getField("id").getType().getQualifiedName(), is("java.net.URI"));
 		assertThat("id getter", output.getMethod("getId"), is(notNullValue()));
+		assertThat("id getter has id annotation", output.getMethod("getId").hasAnnotation(IdAccessor.class), is(true));
 		assertThat("id setter", output.getMethod("setId", URI.class), is(nullValue()));
 		assertThat("name getter", output.getMethod("getName"), is(notNullValue()));
 		assertThat("name setter", output.getMethod("setName", String.class), is(notNullValue()));
@@ -205,9 +205,10 @@ public class GeneratorTest {
 		
 		javaClass.addAnnotation(Entity.class);
 		
-		javaClass.addField()
-			.setName("id")
-			.addAnnotation(IdField.class);
+		javaClass.addProperty(URI.class, "id")
+			.removeMutator()
+			.getAccessor()
+				.addAnnotation(IdAccessor.class);
 		
 		return javaClass;
 	}
