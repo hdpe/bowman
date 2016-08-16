@@ -1,6 +1,8 @@
-package uk.co.blackpepper.sdrclient.test.server.model.client;
+package uk.co.blackpepper.sdrclient.test.client;
 
 import java.net.URI;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -8,19 +10,19 @@ import uk.co.blackpepper.sdrclient.annotation.LinkedResource;
 import uk.co.blackpepper.sdrclient.annotation.RemoteResource;
 import uk.co.blackpepper.sdrclient.annotation.ResourceId;
 
-@RemoteResource("/simple-entities")
-public class SimpleEntity {
+@RemoteResource("/bidi-parents")
+public class BidiParentEntity {
 
-	private URI id;
-
+	private URI entityId;
+	
 	private String name;
 	
-	private SimpleEntity related;
+	private Set<BidiChildEntity> children = new LinkedHashSet<BidiChildEntity>();
 	
 	@ResourceId
 	@JsonIgnore
-	public URI getId() {
-		return id;
+	public URI getEntityId() {
+		return entityId;
 	}
 
 	public String getName() {
@@ -32,11 +34,7 @@ public class SimpleEntity {
 	}
 
 	@LinkedResource
-	public SimpleEntity getRelated() {
-		return related;
-	}
-
-	public void setRelated(SimpleEntity related) {
-		this.related = related;
+	public Set<BidiChildEntity> getChildren() {
+		return children;
 	}
 }

@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import uk.co.blackpepper.sdrclient.Client;
 import uk.co.blackpepper.sdrclient.ClientFactory;
-import uk.co.blackpepper.sdrclient.test.server.model.client.SimpleEntity;
+import uk.co.blackpepper.sdrclient.test.client.SimpleEntity;
 
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.is;

@@ -1,4 +1,4 @@
-package uk.co.blackpepper.sdrclient.test.server.model.client;
+package uk.co.blackpepper.sdrclient.test.client;
 
 import java.net.URI;
 import java.util.LinkedHashSet;

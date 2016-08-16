@@ -7,8 +7,8 @@ import org.junit.Test;
 
 import uk.co.blackpepper.sdrclient.Client;
 import uk.co.blackpepper.sdrclient.ClientFactory;
-import uk.co.blackpepper.sdrclient.test.server.model.client.BidiChildEntity;
-import uk.co.blackpepper.sdrclient.test.server.model.client.BidiParentEntity;
+import uk.co.blackpepper.sdrclient.test.client.BidiChildEntity;
+import uk.co.blackpepper.sdrclient.test.client.BidiParentEntity;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
