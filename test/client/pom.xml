@@ -11,35 +11,7 @@
 
 	<artifactId>sdr-client-test-client</artifactId>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>${project.groupId}</groupId>
-				<artifactId>sdr-client-gen-maven-plugin</artifactId>
-				<version>${project.version}</version>
-				<executions>
-					<execution>
-						<id>generate-client</id>
-						<goals>
-							<goal>generate</goal>
-						</goals>
-						<configuration>
-							<packageName>uk.co.blackpepper.sdrclient.test.server.model</packageName>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
-
 	<dependencies>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>sdr-client-test-server</artifactId>
-			<version>${project.version}</version>
-			<optional>true</optional>
-		</dependency>
-		
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>sdr-client</artifactId>
