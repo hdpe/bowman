@@ -4,17 +4,17 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>uk.co.blackpepper.sdr-client</groupId>
-		<artifactId>sdr-client-test-parent</artifactId>
+		<groupId>uk.co.blackpepper.hal-client</groupId>
+		<artifactId>hal-client-test-parent</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>sdr-client-test-client</artifactId>
+	<artifactId>hal-client-test-client</artifactId>
 
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>sdr-client</artifactId>
+			<artifactId>hal-client</artifactId>
 		</dependency>
 	</dependencies>
 	

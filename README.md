@@ -39,19 +39,19 @@ Create a new Maven `pom.xml` with the following content:
 	<version>0.0.1-SNAPSHOT</version>
 
 	<properties>
-		<sdr-client.version>0.0.1-SNAPSHOT</sdr-client.version>
+		<hal-client.version>0.0.1-SNAPSHOT</hal-client.version>
 	</properties>
 
 	<dependencies>
 		<dependency>
-			<groupId>uk.co.blackpepper.sdr-client</groupId>
-			<artifactId>sdr-client</artifactId>
-			<version>${sdr-client.version}</version>
+			<groupId>uk.co.blackpepper.hal-client</groupId>
+			<artifactId>hal-client</artifactId>
+			<version>${hal-client.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>uk.co.blackpepper.sdr-client</groupId>
-			<artifactId>sdr-client-annotation</artifactId>
-			<version>${sdr-client.version}</version>
+			<groupId>uk.co.blackpepper.hal-client</groupId>
+			<artifactId>hal-client-annotation</artifactId>
+			<version>${hal-client.version}</version>
 		</dependency>
 
 		<dependency>
@@ -130,9 +130,9 @@ Add the following to your `pom.xml`:
 <build>
   <plugins>
     <plugin>
-      <groupId>uk.co.blackpepper.sdr-client</groupId>
-      <artifactId>sdr-client-gen-maven-plugin</artifactId>
-      <version>${sdr-client.version}</version>
+      <groupId>uk.co.blackpepper.hal-client</groupId>
+      <artifactId>hal-client-gen-maven-plugin</artifactId>
+      <version>${hal-client.version}</version>
       <executions>
         <execution>
           <goals>
@@ -148,7 +148,7 @@ Add the following to your `pom.xml`:
 </build>
 ```
 
-Rebuild your application and you should see the following file has been generated in `target/generated-sources/sdr-client/greeting/model/client`:
+Rebuild your application and you should see the following file has been generated in `target/generated-sources/hal-client/greeting/model/client`:
 
 ```java
 package greeting.model.client;
@@ -216,7 +216,7 @@ public class GreetingTest {
 
 ## But, in real life... ##
 
-Obviously the above example is pretty contrived, as the same result could be achieved just by using the original `@Entity` class and Spring's `RestTemplate`. See the tests in `sdr-client-test-it` for the more worthwhile demonstrations of this tool described below.
+Obviously the above example is pretty contrived, as the same result could be achieved just by using the original `@Entity` class and Spring's `RestTemplate`. See the tests in `hal-client-test-it` for the more worthwhile demonstrations of this tool described below.
 
 ### Assocations ###
 
@@ -224,7 +224,7 @@ Obviously the above example is pretty contrived, as the same result could be ach
 
 ### Data model artifact ###
 
-The other primary motivation for this tool is so that a data model can be generated for use by a client application that does *not* have a dependency on the server application code. For this, it is suggested that you generate the data model into a separate artifact, which imports the server project as an *optional* dependency so it is not resolved by the client application transitively. See the `sdr-client-test-client` module for an example of this.
+The other primary motivation for this tool is so that a data model can be generated for use by a client application that does *not* have a dependency on the server application code. For this, it is suggested that you generate the data model into a separate artifact, which imports the server project as an *optional* dependency so it is not resolved by the client application transitively. See the `hal-client-test-client` module for an example of this.
 
 ## Usage ##
 
@@ -259,6 +259,6 @@ There are plenty of things still to do with this:
 * back-references to embedded associations' contexts should be supported
 * support generation from more than one package
 * test coverage needs to be hardened up significantly
-* investigate whether it's possible to do away with the user annotations in `sdr-client-annotation` and derive this data from the Spring Data REST repository model
+* investigate whether it's possible to do away with the user annotations in `hal-client-annotation` and derive this data from the Spring Data REST repository model
 * improve flaky m2e integration
 * ...

@@ -4,12 +4,12 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>uk.co.blackpepper.sdr-client</groupId>
-		<artifactId>sdr-client-test-parent</artifactId>
+		<groupId>uk.co.blackpepper.hal-client</groupId>
+		<artifactId>hal-client-test-parent</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>sdr-client-test-it</artifactId>
+	<artifactId>hal-client-test-it</artifactId>
 
 	<profiles>
 		<profile>
@@ -29,7 +29,7 @@
 									<artifactItems>
 										<artifactItem>
 											<groupId>${project.groupId}</groupId>
-											<artifactId>sdr-client-test-server</artifactId>
+											<artifactId>hal-client-test-server</artifactId>
 											<version>${project.version}</version>
 											<classifier>jar</classifier>
 											<outputDirectory>${project.build.directory}</outputDirectory>
@@ -71,7 +71,7 @@
 									<goal>start</goal>
 								</goals>
 								<configuration>
-									<name>sdr-client-test-server</name>
+									<name>hal-client-test-server</name>
 									<waitForInterrupt>false</waitForInterrupt>
 									<healthcheckUrl>http://localhost:${tomcat.http.port}</healthcheckUrl>
 									<arguments>
@@ -119,12 +119,12 @@
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>sdr-client</artifactId>
+			<artifactId>hal-client</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>sdr-client-test-client</artifactId>
+			<artifactId>hal-client-test-client</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 

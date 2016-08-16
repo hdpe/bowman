@@ -3,8 +3,8 @@
 
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>uk.co.blackpepper.sdr-client</groupId>
-	<artifactId>sdr-client-parent</artifactId>
+	<groupId>uk.co.blackpepper.hal-client</groupId>
+	<artifactId>hal-client-parent</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
@@ -65,17 +65,17 @@
 		<dependencies>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
-				<artifactId>sdr-client</artifactId>
+				<artifactId>hal-client</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
-				<artifactId>sdr-client-annotation</artifactId>
+				<artifactId>hal-client-annotation</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
-				<artifactId>sdr-client-gen-annotation</artifactId>
+				<artifactId>hal-client-gen-annotation</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			
