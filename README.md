@@ -44,12 +44,12 @@ Create a new Maven `pom.xml` with the following content:
 
 	<dependencies>
 		<dependency>
-			<groupId>uk.co.blackpepper.hal-client</groupId>
+			<groupId>uk.co.blackpepper.hal.client</groupId>
 			<artifactId>hal-client</artifactId>
 			<version>${hal-client.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>uk.co.blackpepper.hal-client</groupId>
+			<groupId>uk.co.blackpepper.hal.client</groupId>
 			<artifactId>hal-client-annotation</artifactId>
 			<version>${hal-client.version}</version>
 		</dependency>
@@ -130,7 +130,7 @@ Add the following to your `pom.xml`:
 <build>
   <plugins>
     <plugin>
-      <groupId>uk.co.blackpepper.hal-client</groupId>
+      <groupId>uk.co.blackpepper.hal.client</groupId>
       <artifactId>hal-client-gen-maven-plugin</artifactId>
       <version>${hal-client.version}</version>
       <executions>

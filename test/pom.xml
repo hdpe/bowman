@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>uk.co.blackpepper.hal-client</groupId>
+		<groupId>uk.co.blackpepper.hal.client</groupId>
 		<artifactId>hal-client-parent</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
