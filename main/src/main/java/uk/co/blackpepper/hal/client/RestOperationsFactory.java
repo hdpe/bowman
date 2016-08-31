@@ -4,9 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.BeanUtils;
-import org.springframework.http.client.BufferingClientHttpRequestFactory;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.DeserializationConfig;
@@ -21,8 +18,6 @@ import com.fasterxml.jackson.databind.introspect.Annotated;
 import com.fasterxml.jackson.databind.jsontype.TypeIdResolver;
 import com.fasterxml.jackson.databind.jsontype.TypeResolverBuilder;
 
-import static java.util.Arrays.asList;
-
 class RestOperationsFactory {
 	
 	private static class RestOperationsInstantiation extends HandlerInstantiator {
@@ -31,15 +26,15 @@ class RestOperationsFactory {
 		
 		private final Map<Class<?>, Object> handlerMap = new HashMap<Class<?>, Object>();
 		
-		RestOperationsInstantiation(ObjectMapperFactory objectMapperFactory, ClientProxyFactory proxyFactory) {
+		RestOperationsInstantiation(Configuration configuration) {
 			
-			ObjectMapper objectMapper = objectMapperFactory.create(this);
-			RestTemplate restTemplate = createRestTemplate(objectMapper);
+			ObjectMapper objectMapper = configuration.getObjectMapperFactory().create(this);
+			RestTemplate restTemplate = configuration.getRestTemplateFactory().create(objectMapper);
 			
 			restOperations = new RestOperations(restTemplate, objectMapper);
 			
 			handlerMap.put(EmbeddedChildDeserializer.class,
-					new EmbeddedChildDeserializer(restOperations, proxyFactory));
+					new EmbeddedChildDeserializer(restOperations, configuration.getProxyFactory()));
 		}
 		
 		public RestOperations getRestOperations() {
@@ -82,28 +77,13 @@ class RestOperationsFactory {
 		}
 	}
 
-	private final ObjectMapperFactory objectMapperFactory;
+	private final Configuration configuration;
 	
-	private final ClientProxyFactory proxyFactory;
-	
-	RestOperationsFactory(ObjectMapperFactory objectMapperFactory, ClientProxyFactory proxyFactory) {
-		this.objectMapperFactory = objectMapperFactory;
-		this.proxyFactory = proxyFactory;
+	RestOperationsFactory(Configuration configuration) {
+		this.configuration = configuration;
 	}
 	
 	public RestOperations create() {
-		return new RestOperationsInstantiation(objectMapperFactory, proxyFactory).getRestOperations();
-	}
-	
-	private static RestTemplate createRestTemplate(ObjectMapper objectMapper) {
-		RestTemplate restTemplate = new RestTemplate(
-			new BufferingClientHttpRequestFactory(new HttpComponentsClientHttpRequestFactory()));
-		
-		restTemplate.getMessageConverters().add(0, new MappingJackson2HttpMessageConverter(objectMapper));
-		
-		restTemplate.setInterceptors(
-			asList(new JsonClientHttpRequestInterceptor(), new LoggingClientHttpRequestInterceptor()));
-		
-		return restTemplate;
+		return new RestOperationsInstantiation(configuration).getRestOperations();
 	}
 }

@@ -17,16 +17,16 @@ public class Client<T> {
 	private final Class<T> entityType;
 
 	private final URI baseUri;
+	
+	private final ClientProxyFactory proxyFactory;
 
 	private final RestOperations restOperations;
 
-	private final ClientProxyFactory proxyFactory;
-
-	public Client(Class<T> entityType, URI baseUri, RestOperations restOperations, ClientProxyFactory proxyFactory) {
+	public Client(Class<T> entityType, Configuration configuration, RestOperations restOperations) {
 		this.entityType = entityType;
-		this.baseUri = baseUri;
+		this.baseUri = configuration.getBaseUri();
+		this.proxyFactory = configuration.getProxyFactory();
 		this.restOperations = restOperations;
-		this.proxyFactory = proxyFactory;
 	}
 
 	public T get(URI uri) {

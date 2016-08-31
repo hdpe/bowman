@@ -4,18 +4,24 @@ import java.net.URI;
 
 public class ClientFactory {
 	
-	private final URI baseUri;
+	private final Configuration configuration;
 
 	private final RestOperations restOperations;
 	
-	private final ClientProxyFactory proxyFactory = new JavassistClientProxyFactory();
-
+	public ClientFactory() {
+		this(Configuration.builder().build());
+	}
+	
 	public ClientFactory(URI baseUri) {
-		this.baseUri = baseUri;
-		this.restOperations = new RestOperationsFactory(new ObjectMapperFactory(), proxyFactory).create();
+		this(Configuration.builder().baseUri(baseUri).build());
+	}
+
+	public ClientFactory(Configuration configuration) {
+		this.configuration = configuration;
+		this.restOperations = new RestOperationsFactory(configuration).create();
 	}
 
 	public <T> Client<T> create(Class<T> entityType) {
-		return new Client<T>(entityType, baseUri, restOperations, proxyFactory);
+		return new Client<T>(entityType, configuration, restOperations);
 	}
 }
