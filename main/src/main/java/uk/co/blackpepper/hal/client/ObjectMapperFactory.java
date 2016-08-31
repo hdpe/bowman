@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationConfig;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.cfg.HandlerInstantiator;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.BeanPropertyWriter;
 import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
@@ -47,7 +48,7 @@ class ObjectMapperFactory {
 		}
 	}
 	
-	public ObjectMapper create() {
+	public ObjectMapper create(HandlerInstantiator instantiator) {
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		
@@ -71,7 +72,7 @@ class ObjectMapperFactory {
 		});
 		
 		mapper.registerModule(module);
-		
+		mapper.setHandlerInstantiator(instantiator);
 		return mapper;
 	}
 }

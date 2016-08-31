@@ -15,17 +15,20 @@ import com.fasterxml.jackson.databind.deser.ContextualDeserializer;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 
 public class EmbeddedChildDeserializer extends StdDeserializer<Object> implements ContextualDeserializer {
+	
+	private RestOperations restOperations;
 
-	private ClientProxyFactory proxyFactory = new JavassistClientProxyFactory();
+	private ClientProxyFactory proxyFactory;
 	
-	private RestOperations restOperations = new RestOperationsFactory().create();
-	
-	protected EmbeddedChildDeserializer() {
-		super(Object.class);
+	public EmbeddedChildDeserializer(RestOperations restOperations, ClientProxyFactory proxyFactory) {
+		this(Object.class, restOperations, proxyFactory);
 	}
 	
-	private EmbeddedChildDeserializer(JavaType entityType) {
-		super(entityType);
+	private EmbeddedChildDeserializer(Class<?> type, RestOperations restOperations, ClientProxyFactory proxyFactory) {
+		super(type);
+		
+		this.restOperations = restOperations;
+		this.proxyFactory = proxyFactory;
 	}
 
 	@Override
@@ -41,6 +44,6 @@ public class EmbeddedChildDeserializer extends StdDeserializer<Object> implement
 	@Override
 	public JsonDeserializer<?> createContextual(DeserializationContext ctxt, BeanProperty property)
 			throws JsonMappingException {
-		return new EmbeddedChildDeserializer(ctxt.getContextualType());
+		return new EmbeddedChildDeserializer(ctxt.getContextualType().getRawClass(), restOperations, proxyFactory);
 	}
 }

@@ -12,7 +12,7 @@ public class ClientFactory {
 
 	public ClientFactory(URI baseUri) {
 		this.baseUri = baseUri;
-		this.restOperations = new RestOperationsFactory().create();
+		this.restOperations = new RestOperationsFactory(new ObjectMapperFactory(), proxyFactory).create();
 	}
 
 	public <T> Client<T> create(Class<T> entityType) {

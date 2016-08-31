@@ -12,6 +12,7 @@ import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.cfg.HandlerInstantiator;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import static org.hamcrest.Matchers.is;
@@ -38,7 +39,7 @@ public class RestOperationsTest {
 	@Before
 	public void setup() {
 		restTemplate = mock(RestTemplate.class);
-		objectMapper = new ObjectMapperFactory().create();
+		objectMapper = new ObjectMapperFactory().create(mock(HandlerInstantiator.class));
 
 		restOperations = new RestOperations(restTemplate, objectMapper);
 	}
