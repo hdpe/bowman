@@ -39,7 +39,7 @@ public class RestOperationsTest {
 	@Before
 	public void setup() {
 		restTemplate = mock(RestTemplate.class);
-		objectMapper = new ObjectMapperFactory().create(mock(HandlerInstantiator.class));
+		objectMapper = new DefaultObjectMapperFactory().create(mock(HandlerInstantiator.class));
 
 		restOperations = new RestOperations(restTemplate, objectMapper);
 	}

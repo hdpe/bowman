@@ -8,7 +8,7 @@ public final class Configuration {
 		
 		private URI baseUri = URI.create("http://localhost:8080");
 		
-		private ObjectMapperFactory objectMapperFactory = new ObjectMapperFactory();
+		private ObjectMapperFactory objectMapperFactory = new DefaultObjectMapperFactory();
 		
 		private RestTemplateFactory restTemplateFactory = new DefaultRestTemplateFactory();
 

@@ -1,19 +1,9 @@
 package uk.co.blackpepper.hal.client;
 
-import org.springframework.hateoas.hal.Jackson2HalModule;
-
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.cfg.HandlerInstantiator;
 
-class ObjectMapperFactory {
-	
-	public ObjectMapper create(HandlerInstantiator instantiator) {
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		mapper.registerModule(new Jackson2HalModule());
-		mapper.registerModule(new JacksonClientModule());
-		mapper.setHandlerInstantiator(instantiator);
-		return mapper;
-	}
+public interface ObjectMapperFactory {
+
+	ObjectMapper create(HandlerInstantiator instantiator);
 }
