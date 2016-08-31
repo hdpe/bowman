@@ -6,20 +6,19 @@ import org.junit.Before;
 import org.junit.Test;
 
 import uk.co.blackpepper.hal.client.Client;
-import uk.co.blackpepper.hal.client.ClientFactory;
 import uk.co.blackpepper.hal.client.test.client.SimpleEntity;
 
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
-public class SimpleEntityIT {
+public class SimpleEntityIT extends AbstractIT {
 
 	private Client<SimpleEntity> client;
 
 	@Before
 	public void setup() {
-		client = new ClientFactory(URI.create(System.getProperty("baseUrl"))).create(SimpleEntity.class);
+		client = clientFactory.create(SimpleEntity.class);
 	}
 
 	@Test

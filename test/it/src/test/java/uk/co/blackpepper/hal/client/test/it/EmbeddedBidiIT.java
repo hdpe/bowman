@@ -6,7 +6,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import uk.co.blackpepper.hal.client.Client;
-import uk.co.blackpepper.hal.client.ClientFactory;
 import uk.co.blackpepper.hal.client.test.client.EmbeddedBidiChildEntity;
 import uk.co.blackpepper.hal.client.test.client.EmbeddedBidiParentEntity;
 import uk.co.blackpepper.hal.client.test.client.SimpleEntity;
@@ -14,7 +13,7 @@ import uk.co.blackpepper.hal.client.test.client.SimpleEntity;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
-public class EmbeddedBidiIT {
+public class EmbeddedBidiIT extends AbstractIT {
 
 	private Client<EmbeddedBidiParentEntity> client;
 	
@@ -22,7 +21,6 @@ public class EmbeddedBidiIT {
 	
 	@Before
 	public void setup() {
-		ClientFactory clientFactory = new ClientFactory(URI.create(System.getProperty("baseUrl")));
 		client = clientFactory.create(EmbeddedBidiParentEntity.class);
 		simpleEntityClient = clientFactory.create(SimpleEntity.class);
 	}

@@ -6,14 +6,13 @@ import org.junit.Before;
 import org.junit.Test;
 
 import uk.co.blackpepper.hal.client.Client;
-import uk.co.blackpepper.hal.client.ClientFactory;
 import uk.co.blackpepper.hal.client.test.client.BidiChildEntity;
 import uk.co.blackpepper.hal.client.test.client.BidiParentEntity;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
-public class BidiIT {
+public class BidiIT extends AbstractIT {
 
 	private Client<BidiParentEntity> parentClient;
 	
@@ -21,7 +20,6 @@ public class BidiIT {
 
 	@Before
 	public void setup() {
-		ClientFactory clientFactory = new ClientFactory(URI.create(System.getProperty("baseUrl")));
 		parentClient = clientFactory.create(BidiParentEntity.class);
 		childClient = clientFactory.create(BidiChildEntity.class);
 	}

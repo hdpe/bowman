@@ -7,8 +7,6 @@ import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import static java.util.Arrays.asList;
-
 public class DefaultRestTemplateFactory implements RestTemplateFactory {
 
 	@Override
@@ -17,9 +15,7 @@ public class DefaultRestTemplateFactory implements RestTemplateFactory {
 			new BufferingClientHttpRequestFactory(new HttpComponentsClientHttpRequestFactory()));
 		
 		restTemplate.getMessageConverters().add(0, new MappingJackson2HttpMessageConverter(objectMapper));
-		
-		restTemplate.setInterceptors(
-			asList(new JsonClientHttpRequestInterceptor(), new LoggingClientHttpRequestInterceptor()));
+		restTemplate.getInterceptors().add(new JsonClientHttpRequestInterceptor());
 		
 		return restTemplate;
 	}
