@@ -65,7 +65,7 @@ class GetterMethodHandler<T> implements MethodHandler {
 			resource = restOperations.getResource(uri, entityType);
 		}
 
-		if (method.getAnnotation(LinkedResource.class) != null) {
+		if (method.isAnnotationPresent(LinkedResource.class)) {
 			Object linkedResourceResult = linkedResourceResults.get(method.getName());
 			
 			if (linkedResourceResult == null) {
