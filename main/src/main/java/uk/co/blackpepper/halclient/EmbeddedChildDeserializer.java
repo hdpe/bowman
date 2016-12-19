@@ -16,6 +16,8 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 
 public class EmbeddedChildDeserializer extends StdDeserializer<Object> implements ContextualDeserializer {
 	
+	private static final long serialVersionUID = -8694505834979017488L;
+
 	private RestOperations restOperations;
 
 	private ClientProxyFactory proxyFactory;

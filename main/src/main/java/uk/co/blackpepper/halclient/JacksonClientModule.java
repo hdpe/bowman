@@ -17,7 +17,11 @@ import uk.co.blackpepper.halclient.annotation.LinkedResource;
 
 public class JacksonClientModule extends SimpleModule {
 
+	private static final long serialVersionUID = 3399166531461618498L;
+
 	private static class LinkedResourceUriSerializer extends StdSerializer<Object> {
+
+		private static final long serialVersionUID = -5901774722661025524L;
 
 		protected LinkedResourceUriSerializer() {
 			super(Object.class);
