@@ -30,18 +30,24 @@ public class Client<T> {
 	}
 
 	public T get(URI uri) {
-		return proxyFactory.create(uri, entityType, restOperations);
+		Resource<T> resource = restOperations.getResource(uri, entityType);
+		
+		return proxyFactory.create(resource, entityType, restOperations);
 	}
 	
 	public Iterable<T> getAll() {
+		return getAll(getEntityBaseUri());
+	}
+	
+	public Iterable<T> getAll(URI uri) {
 		List<T> result = new ArrayList<T>();
-		
-		Resources<Resource<T>> resources = restOperations.getResources(getEntityBaseUri(), entityType);
-		
+
+		Resources<Resource<T>> resources = restOperations.getResources(uri, entityType);
+
 		for (Resource<T> resource : resources) {
 			result.add(proxyFactory.create(resource, entityType, restOperations));
 		}
-		
+
 		return result;
 	}
 
