@@ -22,7 +22,7 @@ public class Client<T> {
 
 	private final RestOperations restOperations;
 
-	public Client(Class<T> entityType, Configuration configuration, RestOperations restOperations) {
+	Client(Class<T> entityType, Configuration configuration, RestOperations restOperations) {
 		this.entityType = entityType;
 		this.baseUri = configuration.getBaseUri();
 		this.proxyFactory = configuration.getProxyFactory();

@@ -1,7 +1,6 @@
 package uk.co.blackpepper.hal.client.test.it;
 
 import java.io.IOException;
-import java.net.URI;
 
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -61,9 +60,9 @@ public class AbstractIT {
 	// CHECKSTYLE:ON
 	
 	protected AbstractIT() {
-		clientFactory = new ClientFactory(Configuration.builder()
-				.baseUri(URI.create(System.getProperty("baseUrl")))
-				.restTemplateFactory(new LoggingRestTemplateFactory())
-				.build());
+		clientFactory = new Configuration()
+				.setBaseUri(System.getProperty("baseUrl"))
+				.setRestTemplateFactory(new LoggingRestTemplateFactory())
+				.buildClientFactory();
 	}
 }
