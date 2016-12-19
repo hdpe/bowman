@@ -82,7 +82,14 @@ class GetterMethodHandler<T> implements MethodHandler {
 	private Object resolveLinkedResource(Object self, Method method, Method proceed)
 			throws IllegalAccessException, InvocationTargetException {
 		
-		URI associationResource = URI.create(resource.getLink(toLinkName(method.getName())).getHref());
+		String linkName = toLinkName(method.getName());
+		Link link = resource.getLink(linkName);
+		
+		if (link == null) {
+			throw new ClientProxyException(String.format("Link '%s' could not be found!", linkName));
+		}
+		
+		URI associationResource = URI.create(link.getHref());
 		
 		if (Collection.class.isAssignableFrom(method.getReturnType())) {
 			Class<?> linkedEntityType = (Class<?>) ((ParameterizedType) method.getGenericReturnType())
