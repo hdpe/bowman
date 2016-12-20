@@ -1,6 +1,7 @@
 package uk.co.blackpepper.halclient;
 
 import java.net.URI;
+import java.util.Collections;
 
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
@@ -43,7 +44,18 @@ class RestOperations {
 	}
 
 	public <T> Resources<Resource<T>> getResources(URI uri, Class<T> entityType) {
-		ObjectNode node = restTemplate.getForObject(uri, ObjectNode.class);
+		ObjectNode node;
+		
+		try {
+			node = restTemplate.getForObject(uri, ObjectNode.class);
+		}
+		catch (HttpClientErrorException exception) {
+			if (exception.getStatusCode() == HttpStatus.NOT_FOUND) {
+				return Resources.wrap(Collections.<T>emptyList());
+			}
+			
+			throw exception;
+		}
 		
 		JavaType innerType = objectMapper.getTypeFactory().constructParametricType(Resource.class, entityType);
 		JavaType targetType = objectMapper.getTypeFactory().constructParametricType(Resources.class, innerType);
