@@ -32,6 +32,10 @@ public class Client<T> {
 	public T get(URI uri) {
 		Resource<T> resource = restOperations.getResource(uri, entityType);
 		
+		if (resource == null) {
+			return null;
+		}
+		
 		return proxyFactory.create(resource, entityType, restOperations);
 	}
 	
