@@ -22,7 +22,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class DefaultRestTemplateFactory implements RestTemplateFactory {
+class DefaultRestTemplateFactory implements RestTemplateFactory {
 
 	@Override
 	public RestTemplate create(ObjectMapper objectMapper) {

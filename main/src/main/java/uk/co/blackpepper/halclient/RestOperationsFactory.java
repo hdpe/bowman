@@ -41,10 +41,11 @@ class RestOperationsFactory {
 		
 		private final Map<Class<?>, Object> handlerMap = new HashMap<>();
 		
-		RestOperationsInstantiation(Configuration configuration, ClientProxyFactory proxyFactory) {
+		RestOperationsInstantiation(Configuration configuration, ClientProxyFactory proxyFactory,
+				ObjectMapperFactory objectMapperFactory, RestTemplateFactory restTemplateFactory) {
 			
-			ObjectMapper objectMapper = configuration.getObjectMapperFactory().create(this);
-			RestTemplate restTemplate = configuration.getRestTemplateFactory().create(objectMapper);
+			ObjectMapper objectMapper = objectMapperFactory.create(this);
+			RestTemplate restTemplate = restTemplateFactory.create(objectMapper);
 			
 			restOperations = new RestOperations(restTemplate, objectMapper);
 			
@@ -95,13 +96,25 @@ class RestOperationsFactory {
 	private final Configuration configuration;
 	
 	private final ClientProxyFactory proxyFactory;
+
+	private ObjectMapperFactory objectMapperFactory;
+
+	private RestTemplateFactory restTemplateFactory;
 	
 	RestOperationsFactory(Configuration configuration, ClientProxyFactory proxyFactory) {
+		this(configuration, proxyFactory, new DefaultObjectMapperFactory(), new DefaultRestTemplateFactory());
+	}
+	
+	RestOperationsFactory(Configuration configuration, ClientProxyFactory proxyFactory,
+			ObjectMapperFactory objectMapperFactory, RestTemplateFactory restTemplateFactory) {
 		this.configuration = configuration;
 		this.proxyFactory = proxyFactory;
+		this.objectMapperFactory = objectMapperFactory;
+		this.restTemplateFactory = restTemplateFactory;
 	}
 	
 	public RestOperations create() {
-		return new RestOperationsInstantiation(configuration, proxyFactory).getRestOperations();
+		return new RestOperationsInstantiation(configuration, proxyFactory, objectMapperFactory, restTemplateFactory)
+				.getRestOperations();
 	}
 }

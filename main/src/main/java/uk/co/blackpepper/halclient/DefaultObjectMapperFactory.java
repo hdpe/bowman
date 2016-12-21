@@ -21,7 +21,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.cfg.HandlerInstantiator;
 
-public class DefaultObjectMapperFactory implements ObjectMapperFactory {
+class DefaultObjectMapperFactory implements ObjectMapperFactory {
 	
 	@Override
 	public ObjectMapper create(HandlerInstantiator instantiator) {

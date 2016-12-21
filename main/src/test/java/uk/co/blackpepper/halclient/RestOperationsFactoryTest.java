@@ -50,10 +50,8 @@ public class RestOperationsFactoryTest {
 		mapperFactory = mock(ObjectMapperFactory.class);
 		proxyFactory = mock(ClientProxyFactory.class);
 
-		factory = new RestOperationsFactory(new Configuration()
-				.setRestTemplateFactory(restTemplateFactory)
-				.setObjectMapperFactory(mapperFactory),
-				proxyFactory);
+		factory = new RestOperationsFactory(new Configuration(),
+				proxyFactory, mapperFactory, restTemplateFactory);
 	}
 	
 	@Test
