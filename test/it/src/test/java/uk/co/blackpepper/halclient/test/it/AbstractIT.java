@@ -63,8 +63,9 @@ public class AbstractIT {
 	// CHECKSTYLE:ON
 	
 	protected AbstractIT() {
-		clientFactory = new Configuration()
+		clientFactory = Configuration.builder()
 				.setBaseUri(System.getProperty("baseUrl"))
+				.build()
 				.buildClientFactory();
 	}
 }

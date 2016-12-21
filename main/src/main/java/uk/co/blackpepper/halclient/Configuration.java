@@ -19,7 +19,37 @@ import java.net.URI;
 
 public final class Configuration {
 	
-	private URI baseUri = URI.create("http://localhost:8080");
+	public static final class Builder {
+
+		private URI baseUri = URI.create("http://localhost:8080");
+		
+		private Builder() {
+		}
+		
+		public Configuration build() {
+			return new Configuration(this);
+		}
+		
+		public Builder setBaseUri(String baseUri) {
+			this.baseUri = URI.create(baseUri);
+			return this;
+		}
+
+		public Builder setBaseUri(URI baseUri) {
+			this.baseUri = baseUri;
+			return this;
+		}
+	}
+	
+	private final URI baseUri;
+	
+	private Configuration(Builder builder) {
+		baseUri = builder.baseUri;
+	}
+	
+	public static Builder builder() {
+		return new Builder();
+	}
 	
 	public ClientFactory buildClientFactory() {
 		return new ClientFactory(this);
@@ -27,15 +57,5 @@ public final class Configuration {
 	
 	public URI getBaseUri() {
 		return baseUri;
-	}
-	
-	public Configuration setBaseUri(String baseUri) {
-		this.baseUri = URI.create(baseUri);
-		return this;
-	}
-
-	public Configuration setBaseUri(URI baseUri) {
-		this.baseUri = baseUri;
-		return this;
 	}
 }
