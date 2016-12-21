@@ -25,7 +25,7 @@ public class EmbeddedChildDeserializerTest {
 
 	private static class SerializeParent {
 		
-		private List<Resource<Child>> children = new ArrayList<Resource<Child>>();
+		private List<Resource<Child>> children = new ArrayList<>();
 
 		@SuppressWarnings("unused")
 		public List<Resource<Child>> getChildren() {
@@ -35,7 +35,7 @@ public class EmbeddedChildDeserializerTest {
 	
 	private static class DeserializeParent {
 		
-		private List<Child> children = new ArrayList<Child>();
+		private List<Child> children = new ArrayList<>();
 
 		@JsonDeserialize(contentUsing = EmbeddedChildDeserializer.class)
 		public List<Child> getChildren() {
@@ -88,7 +88,7 @@ public class EmbeddedChildDeserializerTest {
 	@Test
 	public void deserializeReturnsObject() throws Exception {
 		SerializeParent out = new SerializeParent();
-		out.children.add(new Resource<Child>(new Child("x")));
+		out.children.add(new Resource<>(new Child("x")));
 		String json = mapper.writeValueAsString(out);
 		
 		DeserializeParent parent = mapper.readValue(json, DeserializeParent.class);

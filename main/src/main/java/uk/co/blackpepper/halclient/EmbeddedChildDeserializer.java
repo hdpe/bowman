@@ -48,4 +48,12 @@ public class EmbeddedChildDeserializer extends StdDeserializer<Object> implement
 			throws JsonMappingException {
 		return new EmbeddedChildDeserializer(ctxt.getContextualType().getRawClass(), restOperations, proxyFactory);
 	}
+	
+	RestOperations getRestOperations() {
+		return restOperations;
+	}
+	
+	ClientProxyFactory getProxyFactory() {
+		return proxyFactory;
+	}
 }

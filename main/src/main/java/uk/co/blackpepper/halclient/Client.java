@@ -44,7 +44,7 @@ public class Client<T> {
 	}
 	
 	public Iterable<T> getAll(URI uri) {
-		List<T> result = new ArrayList<T>();
+		List<T> result = new ArrayList<>();
 
 		Resources<Resource<T>> resources = restOperations.getResources(uri, entityType);
 

@@ -12,6 +12,6 @@ public class ClientFactory {
 	}
 
 	public <T> Client<T> create(Class<T> entityType) {
-		return new Client<T>(entityType, configuration, restOperations);
+		return new Client<>(entityType, configuration, restOperations);
 	}
 }

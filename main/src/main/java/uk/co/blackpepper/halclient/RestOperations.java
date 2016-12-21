@@ -70,4 +70,12 @@ class RestOperations {
 	public void deleteResource(URI uri) {
 		restTemplate.delete(uri);
 	}
+	
+	RestTemplate getRestTemplate() {
+		return restTemplate;
+	}
+	
+	ObjectMapper getObjectMapper() {
+		return objectMapper;
+	}
 }

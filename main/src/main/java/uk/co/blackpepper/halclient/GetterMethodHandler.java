@@ -30,7 +30,7 @@ class GetterMethodHandler<T> implements MethodHandler {
 	
 	private final ClientProxyFactory proxyFactory;
 	
-	private final Map<String, Object> linkedResourceResults = new HashMap<String, Object>();
+	private final Map<String, Object> linkedResourceResults = new HashMap<>();
 	
 	GetterMethodHandler(Resource<T> resource, Class<T> entityType, RestOperations restOperations,
 		ClientProxyFactory proxyFactory) {

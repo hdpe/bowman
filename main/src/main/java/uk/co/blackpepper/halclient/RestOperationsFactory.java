@@ -24,7 +24,7 @@ class RestOperationsFactory {
 		
 		private final RestOperations restOperations;
 		
-		private final Map<Class<?>, Object> handlerMap = new HashMap<Class<?>, Object>();
+		private final Map<Class<?>, Object> handlerMap = new HashMap<>();
 		
 		RestOperationsInstantiation(Configuration configuration) {
 			

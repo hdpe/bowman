@@ -22,7 +22,7 @@ class JavassistClientProxyFactory implements ClientProxyFactory {
 
 	@Override
 	public <T> T create(Resource<T> resource, Class<T> entityType, RestOperations restOperations) {
-		return createProxyInstance(entityType, new GetterMethodHandler<T>(resource, entityType, restOperations, this));
+		return createProxyInstance(entityType, new GetterMethodHandler<>(resource, entityType, restOperations, this));
 	}
 
 	private static <T> T createProxyInstance(Class<T> entityType, MethodHandler methodHandler) {
