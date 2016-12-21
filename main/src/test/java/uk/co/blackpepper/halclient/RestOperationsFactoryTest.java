@@ -52,8 +52,8 @@ public class RestOperationsFactoryTest {
 
 		factory = new RestOperationsFactory(new Configuration()
 				.setRestTemplateFactory(restTemplateFactory)
-				.setObjectMapperFactory(mapperFactory)
-				.setProxyFactory(proxyFactory));
+				.setObjectMapperFactory(mapperFactory),
+				proxyFactory);
 	}
 	
 	@Test

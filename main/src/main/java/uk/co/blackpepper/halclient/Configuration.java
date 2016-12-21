@@ -25,8 +25,6 @@ public final class Configuration {
 	
 	private RestTemplateFactory restTemplateFactory = new DefaultRestTemplateFactory();
 	
-	private ClientProxyFactory proxyFactory = new JavassistClientProxyFactory();
-	
 	public ClientFactory buildClientFactory() {
 		return new ClientFactory(this);
 	}
@@ -60,15 +58,6 @@ public final class Configuration {
 
 	public Configuration setRestTemplateFactory(RestTemplateFactory restTemplateFactory) {
 		this.restTemplateFactory = restTemplateFactory;
-		return this;
-	}
-	
-	public ClientProxyFactory getProxyFactory() {
-		return proxyFactory;
-	}
-
-	public Configuration setProxyFactory(ClientProxyFactory proxyFactory) {
-		this.proxyFactory = proxyFactory;
 		return this;
 	}
 }

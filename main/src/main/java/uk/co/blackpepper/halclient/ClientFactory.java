@@ -18,15 +18,23 @@ package uk.co.blackpepper.halclient;
 public class ClientFactory {
 	
 	private final Configuration configuration;
+	
+	private final ClientProxyFactory proxyFactory;
 
 	private final RestOperations restOperations;
 
 	ClientFactory(Configuration configuration) {
+		this(configuration, new JavassistClientProxyFactory());
+	}
+	
+	ClientFactory(Configuration configuration, ClientProxyFactory proxyFactory) {
 		this.configuration = configuration;
-		this.restOperations = new RestOperationsFactory(configuration).create();
+		
+		this.proxyFactory = proxyFactory;
+		this.restOperations = new RestOperationsFactory(configuration, proxyFactory).create();
 	}
 
 	public <T> Client<T> create(Class<T> entityType) {
-		return new Client<>(entityType, configuration, restOperations);
+		return new Client<>(entityType, configuration, restOperations, proxyFactory);
 	}
 }

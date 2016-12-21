@@ -62,10 +62,9 @@ public class ClientTest {
 		proxyFactory = mock(ClientProxyFactory.class);
 		
 		Configuration config = new Configuration()
-				.setBaseUri(BASE_URI)
-				.setProxyFactory(proxyFactory);
+				.setBaseUri(BASE_URI);
 		
-		client = new Client<>(Entity.class, config, restOperations);
+		client = new Client<>(Entity.class, config, restOperations, proxyFactory);
 	}
 	
 	@Test

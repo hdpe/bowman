@@ -41,7 +41,7 @@ class RestOperationsFactory {
 		
 		private final Map<Class<?>, Object> handlerMap = new HashMap<>();
 		
-		RestOperationsInstantiation(Configuration configuration) {
+		RestOperationsInstantiation(Configuration configuration, ClientProxyFactory proxyFactory) {
 			
 			ObjectMapper objectMapper = configuration.getObjectMapperFactory().create(this);
 			RestTemplate restTemplate = configuration.getRestTemplateFactory().create(objectMapper);
@@ -49,7 +49,7 @@ class RestOperationsFactory {
 			restOperations = new RestOperations(restTemplate, objectMapper);
 			
 			handlerMap.put(EmbeddedChildDeserializer.class,
-					new EmbeddedChildDeserializer<>(restOperations, configuration.getProxyFactory()));
+					new EmbeddedChildDeserializer<>(restOperations, proxyFactory));
 		}
 		
 		public RestOperations getRestOperations() {
@@ -94,11 +94,14 @@ class RestOperationsFactory {
 
 	private final Configuration configuration;
 	
-	RestOperationsFactory(Configuration configuration) {
+	private final ClientProxyFactory proxyFactory;
+	
+	RestOperationsFactory(Configuration configuration, ClientProxyFactory proxyFactory) {
 		this.configuration = configuration;
+		this.proxyFactory = proxyFactory;
 	}
 	
 	public RestOperations create() {
-		return new RestOperationsInstantiation(configuration).getRestOperations();
+		return new RestOperationsInstantiation(configuration, proxyFactory).getRestOperations();
 	}
 }

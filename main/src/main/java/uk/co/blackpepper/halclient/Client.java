@@ -37,10 +37,11 @@ public class Client<T> {
 
 	private final RestOperations restOperations;
 
-	Client(Class<T> entityType, Configuration configuration, RestOperations restOperations) {
+	Client(Class<T> entityType, Configuration configuration, RestOperations restOperations,
+			ClientProxyFactory proxyFactory) {
 		this.entityType = entityType;
 		this.baseUri = configuration.getBaseUri();
-		this.proxyFactory = configuration.getProxyFactory();
+		this.proxyFactory = proxyFactory;
 		this.restOperations = restOperations;
 	}
 
