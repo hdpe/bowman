@@ -91,7 +91,7 @@ public class EmbeddedChildDeserializerTest {
 		
 		instantiator = mock(HandlerInstantiator.class);
 		
-		doReturn(new EmbeddedChildDeserializer(restOperations, proxyFactory))
+		doReturn(new EmbeddedChildDeserializer<>(restOperations, proxyFactory))
 			.when(instantiator).deserializerInstance(any(DeserializationConfig.class),
 					any(Annotated.class), eq(EmbeddedChildDeserializer.class));
 				

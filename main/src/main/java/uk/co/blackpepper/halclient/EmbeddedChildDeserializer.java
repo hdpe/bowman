@@ -29,39 +29,41 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.deser.ContextualDeserializer;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 
-public class EmbeddedChildDeserializer extends StdDeserializer<Object> implements ContextualDeserializer {
+public class EmbeddedChildDeserializer<T> extends StdDeserializer<T> implements ContextualDeserializer {
 	
 	private static final long serialVersionUID = -8694505834979017488L;
+	
+	private Class<T> type;
 
 	private RestOperations restOperations;
 
 	private ClientProxyFactory proxyFactory;
 	
 	public EmbeddedChildDeserializer(RestOperations restOperations, ClientProxyFactory proxyFactory) {
-		this(Object.class, restOperations, proxyFactory);
+		this(null, restOperations, proxyFactory);
 	}
 	
-	private EmbeddedChildDeserializer(Class<?> type, RestOperations restOperations, ClientProxyFactory proxyFactory) {
+	private EmbeddedChildDeserializer(Class<T> type, RestOperations restOperations, ClientProxyFactory proxyFactory) {
 		super(type);
 		
+		this.type = type;
 		this.restOperations = restOperations;
 		this.proxyFactory = proxyFactory;
 	}
 
 	@Override
-	public Object deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
-		JavaType resourceType = ctxt.getTypeFactory().constructParametrizedType(Resource.class, Resource.class,
-				handledType());
+	public T deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+		JavaType resourceType = ctxt.getTypeFactory().constructParametrizedType(Resource.class, Resource.class, type);
 		
-		Object resource = p.getCodec().readValue(p, resourceType);
+		Resource<T> resource = p.getCodec().readValue(p, resourceType);
 		
-		return proxyFactory.create((Resource) resource, (Class) handledType(), restOperations);
+		return proxyFactory.create(resource, type, restOperations);
 	}
 
 	@Override
 	public JsonDeserializer<?> createContextual(DeserializationContext ctxt, BeanProperty property)
 			throws JsonMappingException {
-		return new EmbeddedChildDeserializer(ctxt.getContextualType().getRawClass(), restOperations, proxyFactory);
+		return new EmbeddedChildDeserializer<>(ctxt.getContextualType().getRawClass(), restOperations, proxyFactory);
 	}
 	
 	RestOperations getRestOperations() {

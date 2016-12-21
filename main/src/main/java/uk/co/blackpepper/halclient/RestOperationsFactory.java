@@ -49,7 +49,7 @@ class RestOperationsFactory {
 			restOperations = new RestOperations(restTemplate, objectMapper);
 			
 			handlerMap.put(EmbeddedChildDeserializer.class,
-					new EmbeddedChildDeserializer(restOperations, configuration.getProxyFactory()));
+					new EmbeddedChildDeserializer<>(restOperations, configuration.getProxyFactory()));
 		}
 		
 		public RestOperations getRestOperations() {
