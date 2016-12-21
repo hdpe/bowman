@@ -17,6 +17,9 @@ package uk.co.blackpepper.halclient;
 
 import java.net.URI;
 
+import org.springframework.http.client.ClientHttpRequestFactory;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+
 public final class Configuration {
 	
 	public static final class Builder {
@@ -24,6 +27,8 @@ public final class Configuration {
 		private URI baseUri = URI.create("http://localhost:8080");
 		
 		private RestTemplateConfigurer restTemplateConfigurer;
+
+		private ClientHttpRequestFactory clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory();
 		
 		private Builder() {
 		}
@@ -46,15 +51,23 @@ public final class Configuration {
 			this.restTemplateConfigurer = restTemplateConfigurer;
 			return this;
 		}
+
+		public Builder setClientHttpRequestFactory(ClientHttpRequestFactory clientHttpRequestFactory) {
+			this.clientHttpRequestFactory = clientHttpRequestFactory;
+			return this;
+		}
 	}
 	
 	private final URI baseUri;
 	
 	private final RestTemplateConfigurer restTemplateConfigurer;
 	
+	private final ClientHttpRequestFactory clientHttpRequestFactory;
+	
 	private Configuration(Builder builder) {
 		baseUri = builder.baseUri;
 		restTemplateConfigurer = builder.restTemplateConfigurer;
+		clientHttpRequestFactory = builder.clientHttpRequestFactory;
 	}
 	
 	public static Builder builder() {
@@ -71,5 +84,9 @@ public final class Configuration {
 	
 	public RestTemplateConfigurer getRestTemplateConfigurer() {
 		return restTemplateConfigurer;
+	}
+	
+	public ClientHttpRequestFactory getClientHttpRequestFactory() {
+		return clientHttpRequestFactory;
 	}
 }

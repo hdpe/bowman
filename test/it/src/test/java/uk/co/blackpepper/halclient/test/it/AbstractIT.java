@@ -21,9 +21,11 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpRequest;
+import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
 import uk.co.blackpepper.halclient.ClientFactory;
@@ -65,6 +67,8 @@ public class AbstractIT {
 	protected AbstractIT() {
 		clientFactory = Configuration.builder()
 				.setBaseUri(System.getProperty("baseUrl"))
+				.setClientHttpRequestFactory(new BufferingClientHttpRequestFactory(
+						new HttpComponentsClientHttpRequestFactory()))
 				.setRestTemplateConfigurer(new RestTemplateConfigurer() {
 					
 					@Override

@@ -15,11 +15,12 @@
  */
 package uk.co.blackpepper.halclient;
 
+import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 interface RestTemplateFactory {
 
-	RestTemplate create(ObjectMapper objectMapper);
+	RestTemplate create(ClientHttpRequestFactory clientHttpRequestFactory, ObjectMapper objectMapper);
 }

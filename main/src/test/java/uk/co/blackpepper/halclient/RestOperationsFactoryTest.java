@@ -21,6 +21,7 @@ import org.hamcrest.TypeSafeMatcher;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.JsonDeserializer;
@@ -42,6 +43,8 @@ public class RestOperationsFactoryTest {
 	
 	private ClientProxyFactory proxyFactory;
 	
+	private ClientHttpRequestFactory clientHttpRequestFactory;
+	
 	private RestOperationsFactory factory;
 
 	@Before
@@ -50,8 +53,14 @@ public class RestOperationsFactoryTest {
 		mapperFactory = mock(ObjectMapperFactory.class);
 		proxyFactory = mock(ClientProxyFactory.class);
 
-		factory = new RestOperationsFactory(Configuration.builder().build(),
-				proxyFactory, mapperFactory, restTemplateFactory);
+		clientHttpRequestFactory = mock(ClientHttpRequestFactory.class);
+		
+		Configuration configuration = Configuration.builder()
+				.setRestTemplateConfigurer(null)
+				.setClientHttpRequestFactory(clientHttpRequestFactory)
+				.build();
+		
+		factory = new RestOperationsFactory(configuration, proxyFactory, mapperFactory, restTemplateFactory);
 	}
 	
 	@Test
@@ -60,7 +69,7 @@ public class RestOperationsFactoryTest {
 		RestTemplate restTemplate = new RestTemplate();
 		
 		when(mapperFactory.create(any(HandlerInstantiator.class))).thenReturn(mapper);
-		when(restTemplateFactory.create(mapper)).thenReturn(restTemplate);
+		when(restTemplateFactory.create(clientHttpRequestFactory, mapper)).thenReturn(restTemplate);
 		
 		RestOperations restOperations = factory.create();
 		
@@ -73,7 +82,8 @@ public class RestOperationsFactoryTest {
 		RestTemplate restTemplate = new RestTemplate();
 		
 		when(mapperFactory.create(any(HandlerInstantiator.class))).thenReturn(mapper);
-		when(restTemplateFactory.create(mapper)).thenReturn(restTemplate);
+		when(restTemplateFactory.create(any(ClientHttpRequestFactory.class), any(ObjectMapper.class)))
+			.thenReturn(restTemplate);
 		
 		factory.create();
 	
@@ -92,7 +102,8 @@ public class RestOperationsFactoryTest {
 				.build();
 		
 		RestTemplate restTemplate = new RestTemplate();
-		when(restTemplateFactory.create(any(ObjectMapper.class))).thenReturn(restTemplate);
+		when(restTemplateFactory.create(any(ClientHttpRequestFactory.class), any(ObjectMapper.class)))
+			.thenReturn(restTemplate);
 		
 		new RestOperationsFactory(configuration, proxyFactory, mapperFactory, restTemplateFactory)
 			.create();

@@ -45,7 +45,8 @@ class RestOperationsFactory {
 				ObjectMapperFactory objectMapperFactory, RestTemplateFactory restTemplateFactory) {
 			
 			ObjectMapper objectMapper = objectMapperFactory.create(this);
-			RestTemplate restTemplate = restTemplateFactory.create(objectMapper);
+			RestTemplate restTemplate = restTemplateFactory.create(configuration.getClientHttpRequestFactory(),
+					objectMapper);
 			
 			if (configuration.getRestTemplateConfigurer() != null) {
 				configuration.getRestTemplateConfigurer().configure(restTemplate);
