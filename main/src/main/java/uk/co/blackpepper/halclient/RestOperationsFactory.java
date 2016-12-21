@@ -47,6 +47,10 @@ class RestOperationsFactory {
 			ObjectMapper objectMapper = objectMapperFactory.create(this);
 			RestTemplate restTemplate = restTemplateFactory.create(objectMapper);
 			
+			if (configuration.getRestTemplateConfigurer() != null) {
+				configuration.getRestTemplateConfigurer().configure(restTemplate);
+			}
+			
 			restOperations = new RestOperations(restTemplate, objectMapper);
 			
 			handlerMap.put(EmbeddedChildDeserializer.class,

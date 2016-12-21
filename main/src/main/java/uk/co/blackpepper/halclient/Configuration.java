@@ -23,6 +23,8 @@ public final class Configuration {
 
 		private URI baseUri = URI.create("http://localhost:8080");
 		
+		private RestTemplateConfigurer restTemplateConfigurer;
+		
 		private Builder() {
 		}
 		
@@ -39,12 +41,20 @@ public final class Configuration {
 			this.baseUri = baseUri;
 			return this;
 		}
+		
+		public Builder setRestTemplateConfigurer(RestTemplateConfigurer restTemplateConfigurer) {
+			this.restTemplateConfigurer = restTemplateConfigurer;
+			return this;
+		}
 	}
 	
 	private final URI baseUri;
 	
+	private final RestTemplateConfigurer restTemplateConfigurer;
+	
 	private Configuration(Builder builder) {
 		baseUri = builder.baseUri;
+		restTemplateConfigurer = builder.restTemplateConfigurer;
 	}
 	
 	public static Builder builder() {
@@ -57,5 +67,9 @@ public final class Configuration {
 	
 	public URI getBaseUri() {
 		return baseUri;
+	}
+	
+	public RestTemplateConfigurer getRestTemplateConfigurer() {
+		return restTemplateConfigurer;
 	}
 }

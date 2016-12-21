@@ -24,14 +24,14 @@ import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
+import org.springframework.web.client.RestTemplate;
 
 import uk.co.blackpepper.halclient.ClientFactory;
 import uk.co.blackpepper.halclient.Configuration;
+import uk.co.blackpepper.halclient.RestTemplateConfigurer;
 
 public class AbstractIT {
 	
-	@SuppressWarnings("unused")
-	// pending reinstatement when ClientFactory api allows configuring the RestTemplate again
 	private static class LoggingClientHttpRequestInterceptor implements ClientHttpRequestInterceptor {
 
 		private static final Logger LOG = LoggerFactory.getLogger(LoggingClientHttpRequestInterceptor.class);
@@ -65,6 +65,13 @@ public class AbstractIT {
 	protected AbstractIT() {
 		clientFactory = Configuration.builder()
 				.setBaseUri(System.getProperty("baseUrl"))
+				.setRestTemplateConfigurer(new RestTemplateConfigurer() {
+					
+					@Override
+					public void configure(RestTemplate restTemplate) {
+						restTemplate.getInterceptors().add(new LoggingClientHttpRequestInterceptor());
+					}
+				})
 				.build()
 				.buildClientFactory();
 	}

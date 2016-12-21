@@ -83,6 +83,22 @@ public class RestOperationsFactoryTest {
 		assertThat(handlerInstantiator.getValue().deserializerInstance(null, null, EmbeddedChildDeserializer.class),
 				is(anEmbeddedChildDeserializerMatching(aRestOperationsMatching(restTemplate, mapper), proxyFactory)));
 	}
+	
+	@Test
+	public void createInvokesConfigurerOnRestTemplateIfPresent() {
+		RestTemplateConfigurer restTemplateConfigurer = mock(RestTemplateConfigurer.class);
+		Configuration configuration = Configuration.builder()
+				.setRestTemplateConfigurer(restTemplateConfigurer)
+				.build();
+		
+		RestTemplate restTemplate = new RestTemplate();
+		when(restTemplateFactory.create(any(ObjectMapper.class))).thenReturn(restTemplate);
+		
+		new RestOperationsFactory(configuration, proxyFactory, mapperFactory, restTemplateFactory)
+			.create();
+		
+		verify(restTemplateConfigurer).configure(restTemplate);
+	}
 
 	private static Matcher<RestOperations> aRestOperationsMatching(final RestTemplate restTemplate,
 			final ObjectMapper mapper) {
