@@ -32,10 +32,6 @@ class GetterMethodHandler<T> implements MethodHandler {
 	
 	private final Map<String, Object> linkedResourceResults = new HashMap<String, Object>();
 	
-	GetterMethodHandler(URI uri, Class<T> entityType, RestOperations restOperations, ClientProxyFactory proxyFactory) {
-		this(uri, null, entityType, restOperations, proxyFactory);
-	}
-	
 	GetterMethodHandler(Resource<T> resource, Class<T> entityType, RestOperations restOperations,
 		ClientProxyFactory proxyFactory) {
 		this(getResourceURI(resource), resource, entityType, restOperations, proxyFactory);

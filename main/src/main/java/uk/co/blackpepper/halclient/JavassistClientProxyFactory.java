@@ -1,7 +1,6 @@
 package uk.co.blackpepper.halclient;
 
 import java.lang.reflect.Method;
-import java.net.URI;
 
 import org.springframework.hateoas.Resource;
 
@@ -20,11 +19,6 @@ class JavassistClientProxyFactory implements ClientProxyFactory {
 	}
 	
 	private static final MethodFilter FILTER_INSTANCE = new GetterMethodFilter();
-
-	@Override
-	public <T> T create(URI uri, Class<T> entityType, RestOperations restOperations) {
-		return createProxyInstance(entityType, new GetterMethodHandler<T>(uri, entityType, restOperations, this));
-	}
 
 	@Override
 	public <T> T create(Resource<T> resource, Class<T> entityType, RestOperations restOperations) {
