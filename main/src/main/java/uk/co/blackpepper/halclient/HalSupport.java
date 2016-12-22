@@ -17,7 +17,7 @@ package uk.co.blackpepper.halclient;
 
 import java.beans.Introspector;
 
-public final class HalSupport {
+final class HalSupport {
 	
 	private HalSupport() {
 	}

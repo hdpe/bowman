@@ -23,7 +23,7 @@ import org.springframework.util.ReflectionUtils;
 
 import uk.co.blackpepper.halclient.annotation.ResourceId;
 
-public final class ReflectionSupport {
+final class ReflectionSupport {
 
 	private ReflectionSupport() {
 	}

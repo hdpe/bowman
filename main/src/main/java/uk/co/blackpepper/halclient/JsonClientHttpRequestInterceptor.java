@@ -26,7 +26,7 @@ import org.springframework.http.client.support.HttpRequestWrapper;
 
 import static java.util.Arrays.asList;
 
-public class JsonClientHttpRequestInterceptor implements ClientHttpRequestInterceptor {
+class JsonClientHttpRequestInterceptor implements ClientHttpRequestInterceptor {
 
 	@Override
 	public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution)
