@@ -102,9 +102,9 @@ class RestOperationsFactory {
 	
 	private final ClientProxyFactory proxyFactory;
 
-	private ObjectMapperFactory objectMapperFactory;
+	private final ObjectMapperFactory objectMapperFactory;
 
-	private RestTemplateFactory restTemplateFactory;
+	private final RestTemplateFactory restTemplateFactory;
 	
 	RestOperationsFactory(Configuration configuration, ClientProxyFactory proxyFactory) {
 		this(configuration, proxyFactory, new DefaultObjectMapperFactory(), new DefaultRestTemplateFactory());
