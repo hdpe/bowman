@@ -27,6 +27,7 @@ import javax.persistence.OneToOne;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+@SuppressWarnings("unused")
 @Entity
 public class EmbeddedBidiParentEntity {
 

@@ -22,4 +22,5 @@ import uk.co.blackpepper.halclient.test.server.model.SimpleEntity;
 
 @RepositoryRestResource(path = "/simple-entities")
 public interface SimpleEntityRepository extends CrudRepository<SimpleEntity, Integer> {
+	// no additional methods
 }

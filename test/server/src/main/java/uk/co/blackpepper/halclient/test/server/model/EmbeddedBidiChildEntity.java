@@ -23,6 +23,7 @@ import javax.persistence.ManyToOne;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
+@SuppressWarnings("unused")
 @Entity
 public class EmbeddedBidiChildEntity {
 

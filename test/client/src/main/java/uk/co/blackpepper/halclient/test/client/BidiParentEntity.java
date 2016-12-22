@@ -32,7 +32,7 @@ public class BidiParentEntity {
 	
 	private String name;
 	
-	private Set<BidiChildEntity> children = new LinkedHashSet<BidiChildEntity>();
+	private Set<BidiChildEntity> children = new LinkedHashSet<>();
 	
 	@ResourceId
 	@JsonIgnore

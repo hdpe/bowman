@@ -22,4 +22,5 @@ import uk.co.blackpepper.halclient.test.server.model.BidiChildEntity;
 
 @RepositoryRestResource(path = "/bidi-children")
 public interface BidiChildEntityRepository extends CrudRepository<BidiChildEntity, Integer> {
+	// no additional methods
 }

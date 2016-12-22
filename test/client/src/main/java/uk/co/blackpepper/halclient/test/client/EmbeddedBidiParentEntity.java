@@ -33,7 +33,7 @@ public class EmbeddedBidiParentEntity {
 	
 	private String name;
 
-	private Set<EmbeddedBidiChildEntity> children = new LinkedHashSet<EmbeddedBidiChildEntity>();
+	private Set<EmbeddedBidiChildEntity> children = new LinkedHashSet<>();
 	
 	private EmbeddedBidiChildEntity child;
 	
