@@ -39,7 +39,7 @@ public class EmbeddedChildDeserializer<T> extends StdDeserializer<T> implements 
 
 	private ClientProxyFactory proxyFactory;
 	
-	public EmbeddedChildDeserializer(RestOperations restOperations, ClientProxyFactory proxyFactory) {
+	EmbeddedChildDeserializer(RestOperations restOperations, ClientProxyFactory proxyFactory) {
 		this(null, restOperations, proxyFactory);
 	}
 	
