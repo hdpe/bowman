@@ -47,7 +47,6 @@
 	</properties>
 
 	<modules>
-		<module>annotation</module>
 		<module>main</module>
 		<module>test</module>
 	</modules>
@@ -57,11 +56,6 @@
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>hal-client</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>${project.groupId}</groupId>
-				<artifactId>hal-client-annotation</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			
