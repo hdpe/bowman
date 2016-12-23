@@ -64,11 +64,6 @@
 				<artifactId>hal-client-annotation</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-			<dependency>
-				<groupId>${project.groupId}</groupId>
-				<artifactId>hal-client-gen-annotation</artifactId>
-				<version>${project.version}</version>
-			</dependency>
 			
 			<dependency>
 				<groupId>org.springframework</groupId>
