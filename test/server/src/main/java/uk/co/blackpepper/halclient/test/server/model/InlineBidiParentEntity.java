@@ -15,28 +15,32 @@
  */
 package uk.co.blackpepper.halclient.test.server.model;
 
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @SuppressWarnings("unused")
 @Entity
-public class EmbeddedBidiChildEntity {
+public class InlineBidiParentEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	
-	@ManyToOne
-	@JsonBackReference
-	private EmbeddedBidiParentEntity parent;
-	
 	private String name;
 
-	@ManyToOne
-	private SimpleEntity related;
+	@OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
+	@JsonManagedReference
+	private Set<InlineBidiChildEntity> children;
+	
+	@OneToOne(cascade = CascadeType.ALL)
+	private InlineBidiChildEntity child;
 }

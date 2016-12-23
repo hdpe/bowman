@@ -21,22 +21,22 @@ import org.junit.Before;
 import org.junit.Test;
 
 import uk.co.blackpepper.halclient.Client;
-import uk.co.blackpepper.halclient.test.client.EmbeddedBidiChildEntity;
-import uk.co.blackpepper.halclient.test.client.EmbeddedBidiParentEntity;
+import uk.co.blackpepper.halclient.test.client.InlineBidiChildEntity;
+import uk.co.blackpepper.halclient.test.client.InlineBidiParentEntity;
 import uk.co.blackpepper.halclient.test.client.SimpleEntity;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
-public class EmbeddedBidiIT extends AbstractIT {
+public class InlineBidiIT extends AbstractIT {
 
-	private Client<EmbeddedBidiParentEntity> client;
+	private Client<InlineBidiParentEntity> client;
 	
 	private Client<SimpleEntity> simpleEntityClient;
 	
 	@Before
 	public void setup() {
-		client = clientFactory.create(EmbeddedBidiParentEntity.class);
+		client = clientFactory.create(InlineBidiParentEntity.class);
 		simpleEntityClient = clientFactory.create(SimpleEntity.class);
 	}
 	
@@ -46,9 +46,9 @@ public class EmbeddedBidiIT extends AbstractIT {
 		related.setName("related");
 		simpleEntityClient.post(related);
 		
-		EmbeddedBidiParentEntity parent = new EmbeddedBidiParentEntity();
+		InlineBidiParentEntity parent = new InlineBidiParentEntity();
 		
-		EmbeddedBidiChildEntity child = new EmbeddedBidiChildEntity();
+		InlineBidiChildEntity child = new InlineBidiChildEntity();
 		child.setName("x");
 		child.setRelated(related);
 //		child.setParent(parent);
@@ -57,9 +57,9 @@ public class EmbeddedBidiIT extends AbstractIT {
 		
 		URI location = client.post(parent);
 		
-		EmbeddedBidiParentEntity retrieved = client.get(location);
+		InlineBidiParentEntity retrieved = client.get(location);
 		
-		EmbeddedBidiChildEntity retrievedItem = retrieved.getChild();
+		InlineBidiChildEntity retrievedItem = retrieved.getChild();
 		assertThat(retrievedItem.getName(), is("x"));
 		assertThat(retrievedItem.getRelated().getName(), is("related"));
 	}
@@ -70,9 +70,9 @@ public class EmbeddedBidiIT extends AbstractIT {
 		related.setName("related");
 		simpleEntityClient.post(related);
 		
-		EmbeddedBidiParentEntity parent = new EmbeddedBidiParentEntity();
+		InlineBidiParentEntity parent = new InlineBidiParentEntity();
 		
-		EmbeddedBidiChildEntity child = new EmbeddedBidiChildEntity();
+		InlineBidiChildEntity child = new InlineBidiChildEntity();
 		child.setName("x");
 		child.setRelated(related);
 //		child.setParent(parent);
@@ -81,9 +81,9 @@ public class EmbeddedBidiIT extends AbstractIT {
 		
 		URI location = client.post(parent);
 		
-		EmbeddedBidiParentEntity retrieved = client.get(location);
+		InlineBidiParentEntity retrieved = client.get(location);
 		
-		EmbeddedBidiChildEntity retrievedItem = retrieved.getChildren().iterator().next();
+		InlineBidiChildEntity retrievedItem = retrieved.getChildren().iterator().next();
 		assertThat(retrievedItem.getName(), is("x"));
 		assertThat(retrievedItem.getRelated().getName(), is("related"));
 	}

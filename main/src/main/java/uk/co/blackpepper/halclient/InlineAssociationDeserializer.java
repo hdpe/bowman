@@ -34,7 +34,7 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
  * will be created for the annotated property, allowing the resolution of further linked associations.
  * 
  * Assign this deserializer to a property with
- * <code>@JsonDeserialize(contentUsing = EmbeddedChildDeserializer.class)</code>.
+ * <code>@JsonDeserialize(contentUsing = InlineAssociationDeserializer.class)</code>.
  * 
  * @param <T> the type or a supertype of the type that this deserializer is intended for - not needed by 
  * client code
@@ -42,7 +42,7 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
  * @author Ryan Pickett
  * 
  */
-public class EmbeddedChildDeserializer<T> extends StdDeserializer<T> implements ContextualDeserializer {
+public class InlineAssociationDeserializer<T> extends StdDeserializer<T> implements ContextualDeserializer {
 	
 	private static final long serialVersionUID = -8694505834979017488L;
 	
@@ -52,11 +52,12 @@ public class EmbeddedChildDeserializer<T> extends StdDeserializer<T> implements 
 
 	private ClientProxyFactory proxyFactory;
 	
-	EmbeddedChildDeserializer(RestOperations restOperations, ClientProxyFactory proxyFactory) {
+	InlineAssociationDeserializer(RestOperations restOperations, ClientProxyFactory proxyFactory) {
 		this(null, restOperations, proxyFactory);
 	}
 	
-	private EmbeddedChildDeserializer(Class<T> type, RestOperations restOperations, ClientProxyFactory proxyFactory) {
+	private InlineAssociationDeserializer(Class<T> type, RestOperations restOperations,
+			ClientProxyFactory proxyFactory) {
 		super(type);
 		
 		this.type = type;
@@ -76,7 +77,8 @@ public class EmbeddedChildDeserializer<T> extends StdDeserializer<T> implements 
 	@Override
 	public JsonDeserializer<?> createContextual(DeserializationContext ctxt, BeanProperty property)
 			throws JsonMappingException {
-		return new EmbeddedChildDeserializer<>(ctxt.getContextualType().getRawClass(), restOperations, proxyFactory);
+		return new InlineAssociationDeserializer<>(ctxt.getContextualType().getRawClass(), restOperations,
+				proxyFactory);
 	}
 	
 	RestOperations getRestOperations() {

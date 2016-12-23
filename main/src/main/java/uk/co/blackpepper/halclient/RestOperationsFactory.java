@@ -54,8 +54,8 @@ class RestOperationsFactory {
 			
 			restOperations = new RestOperations(restTemplate, objectMapper);
 			
-			handlerMap.put(EmbeddedChildDeserializer.class,
-					new EmbeddedChildDeserializer<>(restOperations, proxyFactory));
+			handlerMap.put(InlineAssociationDeserializer.class,
+					new InlineAssociationDeserializer<>(restOperations, proxyFactory));
 		}
 		
 		public RestOperations getRestOperations() {

@@ -77,7 +77,7 @@ public class RestOperationsFactoryTest {
 	}
 	
 	@Test
-	public void createInstantiatesObjectMapperWithEmbeddedChildDeserializerAwareHandlerInstantiator() {
+	public void createInstantiatesObjectMapperWithInlineAssociationDeserializerAwareHandlerInstantiator() {
 		ObjectMapper mapper = new ObjectMapper();
 		RestTemplate restTemplate = new RestTemplate();
 		
@@ -90,8 +90,9 @@ public class RestOperationsFactoryTest {
 		ArgumentCaptor<HandlerInstantiator> handlerInstantiator = ArgumentCaptor.forClass(HandlerInstantiator.class);
 		verify(mapperFactory).create(handlerInstantiator.capture());
 
-		assertThat(handlerInstantiator.getValue().deserializerInstance(null, null, EmbeddedChildDeserializer.class),
-				is(anEmbeddedChildDeserializerMatching(aRestOperationsMatching(restTemplate, mapper), proxyFactory)));
+		assertThat(handlerInstantiator.getValue().deserializerInstance(null, null, InlineAssociationDeserializer.class),
+				is(anInlineAssociationDeserializerMatching(aRestOperationsMatching(restTemplate, mapper),
+						proxyFactory)));
 	}
 	
 	@Test
@@ -130,17 +131,17 @@ public class RestOperationsFactoryTest {
 	}
 
 	@SuppressWarnings("rawtypes")
-	private static Matcher<JsonDeserializer> anEmbeddedChildDeserializerMatching(
+	private static Matcher<JsonDeserializer> anInlineAssociationDeserializerMatching(
 			final Matcher<RestOperations> restOperations, final ClientProxyFactory proxyFactory) {
 		return new TypeSafeMatcher<JsonDeserializer>() {
 
 			@Override
 			public boolean matchesSafely(JsonDeserializer item) {
-				if (!(item instanceof EmbeddedChildDeserializer)) {
+				if (!(item instanceof InlineAssociationDeserializer)) {
 					return false;
 				}
 				
-				EmbeddedChildDeserializer other = (EmbeddedChildDeserializer) item;
+				InlineAssociationDeserializer other = (InlineAssociationDeserializer) item;
 				
 				return restOperations.matches(other.getRestOperations())
 						&& proxyFactory == other.getProxyFactory();
@@ -148,7 +149,7 @@ public class RestOperationsFactoryTest {
 
 			@Override
 			public void describeTo(Description description) {
-				description.appendText("instanceof ").appendValue(EmbeddedChildDeserializer.class)
+				description.appendText("instanceof ").appendValue(InlineAssociationDeserializer.class)
 					.appendText(", restOperations ").appendValue(restOperations)
 					.appendText(", proxyFactory ").appendValue(proxyFactory);
 			}

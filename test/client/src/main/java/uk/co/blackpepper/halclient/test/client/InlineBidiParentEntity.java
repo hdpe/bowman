@@ -16,35 +16,31 @@
 package uk.co.blackpepper.halclient.test.client;
 
 import java.net.URI;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-import uk.co.blackpepper.halclient.annotation.LinkedResource;
+import uk.co.blackpepper.halclient.InlineAssociationDeserializer;
+import uk.co.blackpepper.halclient.annotation.RemoteResource;
 import uk.co.blackpepper.halclient.annotation.ResourceId;
 
-public class EmbeddedBidiChildEntity {
+@RemoteResource("/inline-bidi-parents")
+public class InlineBidiParentEntity {
 
 	private URI id;
 	
-	private EmbeddedBidiParentEntity parent;
-	
 	private String name;
 
-	private SimpleEntity related;
+	private Set<InlineBidiChildEntity> children = new LinkedHashSet<>();
+	
+	private InlineBidiChildEntity child;
 	
 	@ResourceId
 	@JsonIgnore
 	public URI getId() {
 		return id;
-	}
-
-	@LinkedResource
-	public EmbeddedBidiParentEntity getParent() {
-		return parent;
-	}
-
-	public void setParent(EmbeddedBidiParentEntity parent) {
-		this.parent = parent;
 	}
 
 	public String getName() {
@@ -55,12 +51,17 @@ public class EmbeddedBidiChildEntity {
 		this.name = name;
 	}
 
-	@LinkedResource
-	public SimpleEntity getRelated() {
-		return related;
+	@JsonDeserialize(using = InlineAssociationDeserializer.class)
+	public InlineBidiChildEntity getChild() {
+		return child;
 	}
 
-	public void setRelated(SimpleEntity related) {
-		this.related = related;
+	public void setChild(InlineBidiChildEntity child) {
+		this.child = child;
+	}
+
+	@JsonDeserialize(contentUsing = InlineAssociationDeserializer.class)
+	public Set<InlineBidiChildEntity> getChildren() {
+		return children;
 	}
 }

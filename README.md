@@ -25,7 +25,7 @@ To run the integration tests:
 #### Field level ####
 
 * `@ResourceId` - mark a `java.net.URI` accessor as the resource ID. The underlying field will be populated with the resource URI on retrieval.
-* `@LinkedResource` - mark an association accessor as *linked* rather than *embedded*.
+* `@LinkedResource` - mark an association accessor as *linked* rather than *inline*.
 
 ### Client API ###
 

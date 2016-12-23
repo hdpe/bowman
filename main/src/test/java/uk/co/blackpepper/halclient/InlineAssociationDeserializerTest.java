@@ -36,7 +36,7 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
-public class EmbeddedChildDeserializerTest {
+public class InlineAssociationDeserializerTest {
 
 	private static class SerializeParent {
 		
@@ -52,7 +52,7 @@ public class EmbeddedChildDeserializerTest {
 		
 		private List<Child> children = new ArrayList<>();
 
-		@JsonDeserialize(contentUsing = EmbeddedChildDeserializer.class)
+		@JsonDeserialize(contentUsing = InlineAssociationDeserializer.class)
 		public List<Child> getChildren() {
 			return children;
 		}
@@ -91,9 +91,9 @@ public class EmbeddedChildDeserializerTest {
 		
 		instantiator = mock(HandlerInstantiator.class);
 		
-		doReturn(new EmbeddedChildDeserializer<>(restOperations, proxyFactory))
+		doReturn(new InlineAssociationDeserializer<>(restOperations, proxyFactory))
 			.when(instantiator).deserializerInstance(any(DeserializationConfig.class),
-					any(Annotated.class), eq(EmbeddedChildDeserializer.class));
+					any(Annotated.class), eq(InlineAssociationDeserializer.class));
 				
 		mapper = new ObjectMapper();
 		mapper.setHandlerInstantiator(instantiator);
