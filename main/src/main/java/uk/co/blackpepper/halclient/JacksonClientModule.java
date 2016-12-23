@@ -30,6 +30,17 @@ import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
 import uk.co.blackpepper.halclient.annotation.LinkedResource;
 
+/**
+ * A module for handling serialization of hal-client annotated classes.
+ * 
+ * Registering this module with an {@link com.fasterxml.jackson.databind.ObjectMapper}
+ * will cause properties annotated with {@link LinkedResource} to be serialized as
+ * URI strings (single-valued associations) or arrays of URI strings (collection-valued
+ * associations).
+ * 
+ * @author Ryan Pickett
+ * 
+ */
 public class JacksonClientModule extends SimpleModule {
 
 	private static final long serialVersionUID = 3399166531461618498L;

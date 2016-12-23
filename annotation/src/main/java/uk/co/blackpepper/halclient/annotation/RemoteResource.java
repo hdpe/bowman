@@ -20,9 +20,18 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Class-level annotation to define the path of an entity's collection resource.
+ * 
+ * @author Ryan Pickett
+ * 
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface RemoteResource {
 
+	/**
+	 * @return the collection resource path, relative to the client base URI. 
+	 */
 	String value();
 }

@@ -29,6 +29,19 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.deser.ContextualDeserializer;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 
+/**
+ * A Jackson deserializer to properly handle inline associations in an annotated entity type. A proxy
+ * will be created for the annotated property, allowing the resolution of further linked associations.
+ * 
+ * Assign this deserializer to a property with
+ * <code>@JsonDeserialize(contentUsing = EmbeddedChildDeserializer.class)</code>.
+ * 
+ * @param <T> the type or a supertype of the type that this deserializer is intended for - not needed by 
+ * client code
+ * 
+ * @author Ryan Pickett
+ * 
+ */
 public class EmbeddedChildDeserializer<T> extends StdDeserializer<T> implements ContextualDeserializer {
 	
 	private static final long serialVersionUID = -8694505834979017488L;

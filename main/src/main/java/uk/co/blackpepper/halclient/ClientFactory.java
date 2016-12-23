@@ -15,6 +15,14 @@
  */
 package uk.co.blackpepper.halclient;
 
+/**
+ * Factory class for creating {@link Client}s.
+ * 
+ * <code>ClientFactories</code> are created via {@link Configuration#buildClientFactory()}.
+ *
+ * @author Ryan Pickett
+ * 
+ */
 public class ClientFactory {
 	
 	private final Configuration configuration;
@@ -34,6 +42,13 @@ public class ClientFactory {
 		this.restOperations = new RestOperationsFactory(configuration, proxyFactory).create();
 	}
 
+	/**
+	 * Create a <code>Client</code> for the given annotated entity type.
+	 * 
+	 * @param <T> the entity type of the required client
+	 * @param entityType the entity type of the required client
+	 * @return the created client
+	 */
 	public <T> Client<T> create(Class<T> entityType) {
 		return new Client<>(entityType, configuration, restOperations, proxyFactory);
 	}

@@ -27,6 +27,20 @@ import uk.co.blackpepper.halclient.annotation.RemoteResource;
 
 import static uk.co.blackpepper.halclient.ReflectionSupport.setId;
 
+/**
+ * Class for retrieving, persisting and deleting annotated entity instances via remote
+ * hal+json resources.
+ *
+ * Entities can contain simple (directly mappable to JSON) properties, and inline or
+ * linked associations to further objects.
+ * 
+ * <code>Client</code>s are created via {@link ClientFactory#create}.
+ *
+ * @param <T> the entity type for this client
+ * 
+ * @author Ryan Pickett
+ * 
+ */
 public class Client<T> {
 
 	private final Class<T> entityType;
@@ -44,7 +58,13 @@ public class Client<T> {
 		this.proxyFactory = proxyFactory;
 		this.restOperations = restOperations;
 	}
-
+	
+	/**
+	 * GET a single entity located at the given URI. 
+	 * 
+	 * @param uri the URI from which to retrieve the entity
+	 * @return the entity, or null if not found
+	 */
 	public T get(URI uri) {
 		Resource<T> resource = restOperations.getResource(uri, entityType);
 		
@@ -54,11 +74,23 @@ public class Client<T> {
 		
 		return proxyFactory.create(resource, entityType, restOperations);
 	}
-	
+
+	/**
+	 * GET all the entities at the entity's collection resource (determined by the class's
+	 * {@link uk.co.blackpepper.halclient.annotation.RemoteResource} annotation). 
+	 * 
+	 * @return the entities retrieved
+	 */
 	public Iterable<T> getAll() {
 		return getAll(getEntityBaseUri());
 	}
 	
+	/**
+	 * GET all the entities at the given URI.
+	 * 
+	 * @param uri the URI from which to retrieve the entities
+	 * @return the entities retrieved
+	 */
 	public Iterable<T> getAll(URI uri) {
 		List<T> result = new ArrayList<>();
 
@@ -70,7 +102,15 @@ public class Client<T> {
 
 		return result;
 	}
-
+	
+	/**
+	 * POST the given entity to the entity's collection resource.
+	 * 
+	 * The entity will be updated with the URI ID the remote service has assigned it.
+	 * 
+	 * @param object the entity to submit
+	 * @return the URI ID of the newly created remote entity
+	 */
 	public URI post(T object) {
 		URI resourceUri = restOperations.postObject(getEntityBaseUri(), object);
 		
@@ -79,6 +119,11 @@ public class Client<T> {
 		return resourceUri;
 	}
 
+	/**
+	 * DELETE the entity at the given URI.
+	 * 
+	 * @param uri a URI of the entity to delete 
+	 */
 	public void delete(URI uri) {
 		restOperations.deleteResource(uri);
 	}
