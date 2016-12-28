@@ -1,5 +1,7 @@
 # HAL Client #
 
+[![Build Status](https://travis-ci.org/BlackPepperSoftware/hal-client.svg?branch=master)](https://travis-ci.org/BlackPepperSoftware/hal-client)
+
 A Java library for accessing a JSON+HAL REST API, supporting the mapping of a client-side
 model to HTTP resources with automatic link traversal into associated resources.
 
