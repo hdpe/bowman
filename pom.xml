@@ -28,6 +28,10 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
+	<description>
+		A Java library for accessing a JSON+HAL REST API
+	</description>
+
 	<inceptionYear>2016</inceptionYear>
 	
 	<licenses>
