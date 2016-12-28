@@ -24,7 +24,7 @@
 	</parent>
 	
 	<artifactId>hal-client-parent</artifactId>
-	<version>0.1.0</version>
+	<version>0.1.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<description>
@@ -46,7 +46,7 @@
 	<scm>
 	    <connection>scm:git:git@github.com:BlackPepperSoftware/hal-client.git</connection>
 	    <developerConnection>scm:git:git@github.com:BlackPepperSoftware/hal-client.git</developerConnection>
-	    <tag>0.1.0</tag>
+	    <tag>HEAD</tag>
 	    <url>https://github.com/BlackPepperSoftware/hal-client</url>
 	</scm>
 	
