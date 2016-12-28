@@ -13,8 +13,7 @@
 	See the License for the specific language governing permissions and
 	limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 
@@ -25,7 +24,7 @@
 	</parent>
 	
 	<artifactId>hal-client-parent</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.1.0</version>
 	<packaging>pom</packaging>
 
 	<description>
@@ -47,7 +46,7 @@
 	<scm>
 	    <connection>scm:git:git@github.com:BlackPepperSoftware/hal-client.git</connection>
 	    <developerConnection>scm:git:git@github.com:BlackPepperSoftware/hal-client.git</developerConnection>
-	    <tag>HEAD</tag>
+	    <tag>0.1.0</tag>
 	    <url>https://github.com/BlackPepperSoftware/hal-client</url>
 	</scm>
 	
