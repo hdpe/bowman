@@ -55,6 +55,11 @@
 	    <system>GitHub</system>
 	    <url>https://github.com/BlackPepperSoftware/hal-client/issues</url>
 	</issueManagement>
+	
+	<ciManagement>
+	    <system>Travis CI</system>
+	    <url>https://travis-ci.org/BlackPepperSoftware/hal-client</url>
+	</ciManagement>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
