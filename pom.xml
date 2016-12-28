@@ -32,6 +32,8 @@
 		A Java library for accessing a JSON+HAL REST API
 	</description>
 
+	<url>https://github.com/BlackPepperSoftware/hal-client</url>
+	
 	<inceptionYear>2016</inceptionYear>
 	
 	<licenses>
@@ -41,6 +43,18 @@
 	        <distribution>repo</distribution>
 	    </license>
 	</licenses>
+
+	<scm>
+	    <connection>scm:git:git@github.com:BlackPepperSoftware/hal-client.git</connection>
+	    <developerConnection>scm:git:git@github.com:BlackPepperSoftware/hal-client.git</developerConnection>
+	    <tag>HEAD</tag>
+	    <url>https://github.com/BlackPepperSoftware/hal-client</url>
+	</scm>
+	
+	<issueManagement>
+	    <system>GitHub</system>
+	    <url>https://github.com/BlackPepperSoftware/hal-client/issues</url>
+	</issueManagement>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
