@@ -9,16 +9,6 @@ The motivation for this library was to make it easier to write clients for Sprin
 REST-exposed JPA repositories, supporting lazy-loading of associations in a similar style
 to JPA.
 
-## Building ##
-
-To build and install into the local Maven repository:
-
-`mvn install`
-
-To run the integration tests:
-
-`mvn verify -PrunITs`
-
 ## Add to your project ##
 
 Add the Maven dependency:
@@ -31,7 +21,7 @@ Add the Maven dependency:
 </dependency>
 ```
 
-## Usage ##
+## Usage Example ##
 
 Given the following annotated model objects:
 
@@ -42,9 +32,9 @@ import uk.co.blackpepper.halclient.annotation.ResourceId;
 @RemoteResource("/people")
 public class Person {
 
-	private URI id;	
+	private URI id;
 	private String name;
-	
+
 	public Person() {}
 	public Person(String name) { this.name = name; }
 
@@ -62,7 +52,7 @@ import uk.co.blackpepper.halclient.annotation.ResourceId;
 
 @RemoteResource("/greetings")
 public class Greeting {
-	
+
 	private URI id;
 	private Person recipient;
 	private String message;
@@ -70,7 +60,7 @@ public class Greeting {
 	public Greeting() {}
 	public Greeting(String message, Person recipient)
 		{ this.message = message; this.recipient = recipient; }
-	
+
 	@ResourceId public URI getId() { return id; }
 	@LinkedResource public Person getRecipient() { return recipient; }
 	public String getMessage() { return message; }
@@ -80,7 +70,7 @@ public class Greeting {
 Client instances can be constructed and used as demonstrated below.
 
 The HTTP requests/responses corresponding to each instruction are shown in a comment
-beneath. 
+beneath.
 
 
 ```java
@@ -126,17 +116,74 @@ assertThat(recipient.getName(), is("Bob"));
 
 ## API Usage ##
 
-### Model associations ###
-
-#### Class level ####
-
-* `@RemoteResource(path)` - the path to the remote resource
-
-#### Field level ####
-
-* `@ResourceId` - mark a `java.net.URI` accessor as the resource ID. The underlying field will be populated with the resource URI on retrieval.
-* `@LinkedResource` - mark an association accessor as *linked* rather than *inline*.
-
 ### Client API ###
 
-The client supports `get`, `getAll`, `post` and `delete` operations. `put`/`patch` are not currently supported.
+Clients are created through `ClientFactory.create(clazz)`. ClientFactory instances are created through `Configuration.builder().getClientFactory()` with the configuration builder allowing various further configuration.
+
+Clients support:
+
+* `get(URI id)` - GET the item with the given ID
+* `getAll()` - GET all items from the collection resource
+* `getAll(URI location)` - GET all items from the given endpoint
+* `post(T object)` - POST the item to the collection resource
+* `delete(URI id)` - DELETE the item with the given ID
+
+PUT/PATCH are not currently supported: there is currently a whole category of Spring Data REST limitations interacting via PUT/PATCH with JPA repositories due to attempts to replace persistent collections and state merge occurring outside of a transaction.
+
+### Model Classes ###
+
+Annotate your model classes with `@RemoteResource(path)`. `path` is the path of the class's collection resource, relative to the base URI set when building the `ClientFactory`.
+
+```java
+@RemoteResource("/things")
+public class Thing { ... }
+```
+
+#### ID Property ####
+
+Use `@ResourceId` to mark a `java.net.URI` accessor as the resource ID. This is the canonical URI for the resource - its 'self' link.
+
+```java
+private URI id;
+
+@ResourceId public URI getId() { return id; }
+```
+
+#### Value Properties ####
+
+Simple properties (Strings, primitives) will be mapped to JSON automatically.
+
+#### Linked Resources ####
+
+Mark a resource as *linked* with `@LinkedResource` on its accessor. Invoking this accessor will automatically query its associated linked remote resource to populate the model.
+
+```java
+private Related related;
+private Set<Related> relatedSet = new HashSet<>();
+
+@LinkedResource public Related getRelated() { return related; }
+@LinkedResource public Set<Related> getRelatedSet() { return relatedSet; }
+```
+
+#### Inline Resources ####
+
+Mark a resource as *inline* with the `InlineAssociationDeserializer` Jackson deserializer. Invoking this accessor will create and return a proxy that is aware of the inline object's links, and so is able to resolve nested linked resources.
+
+```java
+private Related related;
+private Set<Related> relatedSet = new HashSet<>();
+
+@JsonDeserialize(using = InlineAssociationDeserializer.class)
+public Related getRelated() { return related; }
+
+@JsonDeserialize(contentUsing = InlineAssociationDeserializer.class)
+public Set<Related> getRelatedSet() { return relatedSet; }
+```
+
+#### Embedded Resources ####
+
+Subresources are loaded from the `_embedded` property of a HAL response when querying a collection resource. For single-valued resources, embedded resources are currently disregarded: PRs welcome!
+
+## Development ##
+
+* [Development Guide](./development.md)
