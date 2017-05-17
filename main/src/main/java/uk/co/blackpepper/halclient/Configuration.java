@@ -132,6 +132,15 @@ public final class Configuration {
 	}
 	
 	/**
+	 * Create a configuration with default settings.
+	 * 
+	 * @return the configuration
+	 */
+	public static Configuration build() {
+		return new Builder().build();
+	}
+	
+	/**
 	 * Build a {@link ClientFactory} for this configuration.
 	 * 
 	 * @return the created <code>ClientFactory</code>
