@@ -19,11 +19,11 @@
 
 	<parent>
 		<groupId>uk.co.blackpepper</groupId>
-		<artifactId>hal-client-parent</artifactId>
+		<artifactId>bowman-parent</artifactId>
 		<version>0.1.2-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>hal-client-test-parent</artifactId>
+	<artifactId>bowman-test-parent</artifactId>
 	<packaging>pom</packaging>
 
 	<properties>

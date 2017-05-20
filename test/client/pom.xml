@@ -19,16 +19,16 @@
 
 	<parent>
 		<groupId>uk.co.blackpepper</groupId>
-		<artifactId>hal-client-test-parent</artifactId>
+		<artifactId>bowman-test-parent</artifactId>
 		<version>0.1.2-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>hal-client-test-client</artifactId>
+	<artifactId>bowman-test-client</artifactId>
 
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>hal-client</artifactId>
+			<artifactId>bowman</artifactId>
 		</dependency>
 	</dependencies>
 	

@@ -19,11 +19,11 @@
 
 	<parent>
 		<groupId>uk.co.blackpepper</groupId>
-		<artifactId>hal-client-test-parent</artifactId>
+		<artifactId>bowman-test-parent</artifactId>
 		<version>0.1.2-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>hal-client-test-server</artifactId>
+	<artifactId>bowman-test-server</artifactId>
 
 	<build>
 		<plugins>
@@ -31,7 +31,7 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
-					<mainClass>uk.co.blackpepper.halclient.test.server.Application</mainClass>
+					<mainClass>uk.co.blackpepper.bowman.test.server.Application</mainClass>
 				</configuration>
 				<executions>
 					<execution>

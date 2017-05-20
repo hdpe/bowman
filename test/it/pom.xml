@@ -19,11 +19,11 @@
 
 	<parent>
 		<groupId>uk.co.blackpepper</groupId>
-		<artifactId>hal-client-test-parent</artifactId>
+		<artifactId>bowman-test-parent</artifactId>
 		<version>0.1.2-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>hal-client-test-it</artifactId>
+	<artifactId>bowman-test-it</artifactId>
 
 	<profiles>
 		<profile>
@@ -43,7 +43,7 @@
 									<artifactItems>
 										<artifactItem>
 											<groupId>${project.groupId}</groupId>
-											<artifactId>hal-client-test-server</artifactId>
+											<artifactId>bowman-test-server</artifactId>
 											<version>${project.version}</version>
 											<classifier>jar</classifier>
 											<outputDirectory>${project.build.directory}</outputDirectory>
@@ -85,7 +85,7 @@
 									<goal>start</goal>
 								</goals>
 								<configuration>
-									<name>hal-client-test-server</name>
+									<name>bowman-test-server</name>
 									<waitForInterrupt>false</waitForInterrupt>
 									<healthcheckUrl>http://localhost:${tomcat.http.port}</healthcheckUrl>
 									<arguments>
@@ -133,12 +133,12 @@
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>hal-client</artifactId>
+			<artifactId>bowman</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>hal-client-test-client</artifactId>
+			<artifactId>bowman-test-client</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 
