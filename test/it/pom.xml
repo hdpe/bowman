@@ -133,11 +133,6 @@
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>bowman</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
 			<artifactId>bowman-test-client</artifactId>
 			<version>${project.version}</version>
 		</dependency>

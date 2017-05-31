@@ -28,7 +28,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>bowman</artifactId>
+			<artifactId>bowman-client</artifactId>
 		</dependency>
 	</dependencies>
 	

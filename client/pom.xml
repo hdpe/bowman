@@ -23,7 +23,7 @@
 		<version>0.1.2-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>bowman</artifactId>
+	<artifactId>bowman-client</artifactId>
 
 	<dependencies>
 		<dependency>
