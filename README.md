@@ -1,6 +1,6 @@
 # HAL Client #
 
-[![Build Status](https://travis-ci.org/BlackPepperSoftware/hal-client.svg?branch=master)](https://travis-ci.org/BlackPepperSoftware/hal-client)
+[![Build Status](https://travis-ci.org/BlackPepperSoftware/bowman.svg?branch=master)](https://travis-ci.org/BlackPepperSoftware/bowman)
 
 A Java library for accessing a JSON+HAL REST API, supporting the mapping of a client-side
 model to HTTP resources with automatic link traversal into associated resources.
@@ -15,9 +15,9 @@ Add the Maven dependency:
 
 ```
 <dependency>
-	<groupId>uk.co.blackpepper</groupId>
-	<artifactId>hal-client</artifactId>
-	<version>0.1.1</version>
+	<groupId>uk.co.blackpepper.bowman</groupId>
+	<artifactId>bowman-client</artifactId>
+	<version>0.2.0</version>
 </dependency>
 ```
 
@@ -26,8 +26,8 @@ Add the Maven dependency:
 Given the following annotated model objects:
 
 ```java
-import uk.co.blackpepper.halclient.annotation.RemoteResource;
-import uk.co.blackpepper.halclient.annotation.ResourceId;
+import uk.co.blackpepper.bowman.annotation.RemoteResource;
+import uk.co.blackpepper.bowman.annotation.ResourceId;
 
 @RemoteResource("/people")
 public class Person {
@@ -46,9 +46,9 @@ public class Person {
 and
 
 ```java
-import uk.co.blackpepper.halclient.annotation.LinkedResource;
-import uk.co.blackpepper.halclient.annotation.RemoteResource;
-import uk.co.blackpepper.halclient.annotation.ResourceId;
+import uk.co.blackpepper.bowman.annotation.LinkedResource;
+import uk.co.blackpepper.bowman.annotation.RemoteResource;
+import uk.co.blackpepper.bowman.annotation.ResourceId;
 
 @RemoteResource("/greetings")
 public class Greeting {
@@ -74,9 +74,9 @@ beneath.
 
 
 ```java
-import uk.co.blackpepper.halclient.Client;
-import uk.co.blackpepper.halclient.ClientFactory;
-import uk.co.blackpepper.halclient.Configuration;
+import uk.co.blackpepper.bowman.Client;
+import uk.co.blackpepper.bowman.ClientFactory;
+import uk.co.blackpepper.bowman.Configuration;
 
 ...
 
