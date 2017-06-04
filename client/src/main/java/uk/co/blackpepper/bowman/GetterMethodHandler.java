@@ -93,7 +93,7 @@ class GetterMethodHandler<T> implements MethodHandler {
 	private Object resolveLinkedResource(Object self, Method method, Method proceed)
 			throws IllegalAccessException, InvocationTargetException {
 		
-		String linkName = toLinkName(method.getName());
+		String linkName = getLinkName(method);
 		Link link = resource.getLink(linkName);
 		
 		if (link == null) {
@@ -136,6 +136,16 @@ class GetterMethodHandler<T> implements MethodHandler {
 		}
 		
 		return collection;
+	}
+	
+	private static String getLinkName(Method method) {
+		String rel = method.getAnnotation(LinkedResource.class).rel();
+		
+		if ("".equals(rel)) {
+			rel = toLinkName(method.getName());
+		}
+		
+		return rel;
 	}
 
 	private static <T> URI getResourceURI(Resource<T> resource) {

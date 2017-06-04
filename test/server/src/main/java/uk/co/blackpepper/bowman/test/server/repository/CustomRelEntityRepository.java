@@ -13,22 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.co.blackpepper.bowman.annotation;
+package uk.co.blackpepper.bowman.test.server.repository;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
-/**
- * Annotation to mark a property as a linked rather than inline assocation.
- * 
- * @author Ryan Pickett
- * 
- */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface LinkedResource {
-	
-	String rel() default "";
+import uk.co.blackpepper.bowman.test.server.model.CustomRelEntity;
+
+@RepositoryRestResource(path = "/custom-rel-entities")
+public interface CustomRelEntityRepository extends CrudRepository<CustomRelEntity, Integer> {
+	// no additional methods
 }

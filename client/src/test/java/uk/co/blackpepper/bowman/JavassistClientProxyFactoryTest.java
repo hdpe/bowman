@@ -57,6 +57,11 @@ public class JavassistClientProxyFactoryTest {
 			return linked;
 		}
 		
+		@LinkedResource(rel = "a:b")
+		public Entity getLinkedWithCustomRel() {
+			return linked;
+		}
+		
 		@LinkedResource
 		public List<Entity> getLinkedCollection() {
 			return linkedCollection;
@@ -97,6 +102,20 @@ public class JavassistClientProxyFactoryTest {
 		Entity proxy = proxyFactory.create(resource, Entity.class, restOperations);
 		
 		assertThat(proxy.getLinked().getId(), is(URI.create("http://www.example.com/1")));
+	}
+	
+	@Test
+	public void createReturnsProxyWithLinkedResourceWithCustomRel() {
+		Resource<Entity> resource = new Resource<>(new Entity(),
+				new Link("http://www.example.com/association/linked", "a:b"));
+		
+		when(restOperations.getResource(URI.create("http://www.example.com/association/linked"),
+				Entity.class)).thenReturn(new Resource<>(new Entity(),
+						new Link("http://www.example.com/1", Link.REL_SELF)));
+		
+		Entity proxy = proxyFactory.create(resource, Entity.class, restOperations);
+		
+		assertThat(proxy.getLinkedWithCustomRel().getId(), is(URI.create("http://www.example.com/1")));
 	}
 	
 	@Test
