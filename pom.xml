@@ -32,7 +32,7 @@
 		A Java library for accessing a JSON+HAL REST API
 	</description>
 
-	<url>https://github.com/BlackPepperSoftware/hal-client</url>
+	<url>https://github.com/BlackPepperSoftware/bowman</url>
 	
 	<inceptionYear>2016</inceptionYear>
 	
@@ -45,20 +45,20 @@
 	</licenses>
 
 	<scm>
-	    <connection>scm:git:git@github.com:BlackPepperSoftware/hal-client.git</connection>
-	    <developerConnection>scm:git:git@github.com:BlackPepperSoftware/hal-client.git</developerConnection>
+	    <connection>scm:git:git@github.com:BlackPepperSoftware/bowman.git</connection>
+	    <developerConnection>scm:git:git@github.com:BlackPepperSoftware/bowman.git</developerConnection>
 	    <tag>HEAD</tag>
-	    <url>https://github.com/BlackPepperSoftware/hal-client</url>
+	    <url>https://github.com/BlackPepperSoftware/bowman</url>
 	</scm>
 	
 	<issueManagement>
 	    <system>GitHub</system>
-	    <url>https://github.com/BlackPepperSoftware/hal-client/issues</url>
+	    <url>https://github.com/BlackPepperSoftware/bowman/issues</url>
 	</issueManagement>
 	
 	<ciManagement>
 	    <system>Travis CI</system>
-	    <url>https://travis-ci.org/BlackPepperSoftware/hal-client</url>
+	    <url>https://travis-ci.org/BlackPepperSoftware/bowman</url>
 	</ciManagement>
 
 	<properties>
