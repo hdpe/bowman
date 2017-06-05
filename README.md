@@ -1,4 +1,4 @@
-# HAL Client #
+# Bowman #
 
 [![Build Status](https://travis-ci.org/BlackPepperSoftware/bowman.svg?branch=master)](https://travis-ci.org/BlackPepperSoftware/bowman)
 
