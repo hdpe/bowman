@@ -72,6 +72,7 @@
 	<modules>
 		<module>client</module>
 		<module>test</module>
+		<module>deploy</module>
 	</modules>
 	
 	<dependencyManagement>

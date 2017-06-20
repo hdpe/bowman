@@ -24,7 +24,11 @@
 	</parent>
 
 	<artifactId>bowman-test-server</artifactId>
-
+	
+	<properties>
+		<skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>
+	</properties>
+	
 	<build>
 		<plugins>
 			<plugin>

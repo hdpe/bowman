@@ -25,6 +25,10 @@
 
 	<artifactId>bowman-test-it</artifactId>
 
+	<properties>
+		<skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>
+	</properties>
+
 	<profiles>
 		<profile>
 			<id>runITs</id>
