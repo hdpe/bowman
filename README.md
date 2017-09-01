@@ -17,7 +17,7 @@ Add the Maven dependency:
 <dependency>
 	<groupId>uk.co.blackpepper.bowman</groupId>
 	<artifactId>bowman-client</artifactId>
-	<version>0.2.1</version>
+	<version>0.2.2</version>
 </dependency>
 ```
 
