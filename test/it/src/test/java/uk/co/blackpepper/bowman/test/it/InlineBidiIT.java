@@ -41,7 +41,7 @@ public class InlineBidiIT extends AbstractIT {
 	}
 	
 	@Test
-	public void canGetChildAssocation() {
+	public void canGetChildAssociation() {
 		SimpleEntity related = new SimpleEntity();
 		related.setName("related");
 		simpleEntityClient.post(related);
@@ -51,7 +51,6 @@ public class InlineBidiIT extends AbstractIT {
 		InlineBidiChildEntity child = new InlineBidiChildEntity();
 		child.setName("x");
 		child.setRelated(related);
-//		child.setParent(parent);
 
 		parent.setChild(child);
 		
@@ -65,7 +64,7 @@ public class InlineBidiIT extends AbstractIT {
 	}
 	
 	@Test
-	public void canGetChildrenAssocation() {
+	public void canGetChildrenAssociation() {
 		SimpleEntity related = new SimpleEntity();
 		related.setName("related");
 		simpleEntityClient.post(related);
@@ -75,7 +74,6 @@ public class InlineBidiIT extends AbstractIT {
 		InlineBidiChildEntity child = new InlineBidiChildEntity();
 		child.setName("x");
 		child.setRelated(related);
-//		child.setParent(parent);
 
 		parent.getChildren().add(child);
 		

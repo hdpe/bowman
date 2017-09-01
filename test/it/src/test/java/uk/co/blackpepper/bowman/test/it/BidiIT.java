@@ -55,7 +55,7 @@ public class BidiIT extends AbstractIT {
 	}
 	
 	@Test
-	public void canGetChildrenAssocation() {
+	public void canGetChildrenAssociation() {
 		BidiParentEntity parent = new BidiParentEntity();
 		URI location = parentClient.post(parent);
 		
