@@ -29,7 +29,7 @@ class JavassistClientProxyFactory implements ClientProxyFactory {
 	private static final class GetterMethodFilter implements MethodFilter {
 		@Override
 		public boolean isHandled(Method method) {
-			return method.getName().startsWith("get");
+			return method.getName().startsWith("get") || method.getName().startsWith("is");
 		}
 	}
 	
