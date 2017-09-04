@@ -67,7 +67,7 @@ public class InlineAssociationDeserializer<T> extends StdDeserializer<T> impleme
 
 	@Override
 	public T deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
-		JavaType resourceType = ctxt.getTypeFactory().constructParametrizedType(Resource.class, Resource.class, type);
+		JavaType resourceType = ctxt.getTypeFactory().constructParametricType(Resource.class, type);
 		
 		Resource<T> resource = p.getCodec().readValue(p, resourceType);
 		
