@@ -124,7 +124,6 @@ public class Client<T> {
 	 * PUT the given entity to the entity's collection resource.
 	 *
 	 * @param object the entity to submit
-	 * @return the URI ID of the newly created remote entity
 	 */
 	public void put(T object) {
 		restOperations.putObject(getId(object), object);
