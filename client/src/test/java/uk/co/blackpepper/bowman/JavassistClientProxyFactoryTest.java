@@ -45,6 +45,8 @@ public class JavassistClientProxyFactoryTest {
 		
 		private Entity linked;
 		
+		private boolean active;
+		
 		private List<Entity> linkedCollection = new ArrayList<>();
 		
 		@ResourceId
@@ -65,6 +67,14 @@ public class JavassistClientProxyFactoryTest {
 		@LinkedResource
 		public List<Entity> getLinkedCollection() {
 			return linkedCollection;
+		}
+		
+		public boolean isActive() {
+			return active;
+		}
+		
+		public void setActive(boolean active) {
+			this.active = active;
 		}
 	}
 	
@@ -130,5 +140,20 @@ public class JavassistClientProxyFactoryTest {
 		Entity proxy = proxyFactory.create(resource, Entity.class, restOperations);
 		
 		assertThat(proxy.getLinkedCollection().get(0).getId(), is(URI.create("http://www.example.com/1")));
+	}
+	
+	@Test
+	public void createReturnsProxyWithActive() {
+		Entity entity = new Entity();
+		entity.setActive(true);
+		
+		Resource<Entity> resource = new Resource<>(entity,
+			new Link("http://www.example.com/1", Link.REL_SELF));
+		
+		Entity proxy = proxyFactory.create(resource,
+			Entity.class, mock(RestOperations.class));
+		
+		assertThat(proxy.getId(), is(URI.create("http://www.example.com/1")));
+		assertThat(proxy.isActive(), is(true));
 	}
 }
