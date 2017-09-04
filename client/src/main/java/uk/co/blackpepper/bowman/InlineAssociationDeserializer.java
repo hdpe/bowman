@@ -52,11 +52,7 @@ public class InlineAssociationDeserializer<T> extends StdDeserializer<T> impleme
 
 	private ClientProxyFactory proxyFactory;
 	
-	InlineAssociationDeserializer(RestOperations restOperations, ClientProxyFactory proxyFactory) {
-		this(null, restOperations, proxyFactory);
-	}
-	
-	private InlineAssociationDeserializer(Class<T> type, RestOperations restOperations,
+	InlineAssociationDeserializer(Class<T> type, RestOperations restOperations,
 			ClientProxyFactory proxyFactory) {
 		super(type);
 		

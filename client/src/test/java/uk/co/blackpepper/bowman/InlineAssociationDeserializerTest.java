@@ -91,7 +91,7 @@ public class InlineAssociationDeserializerTest {
 		
 		instantiator = mock(HandlerInstantiator.class);
 		
-		doReturn(new InlineAssociationDeserializer<>(restOperations, proxyFactory))
+		doReturn(new InlineAssociationDeserializer<>(Object.class, restOperations, proxyFactory))
 			.when(instantiator).deserializerInstance(any(DeserializationConfig.class),
 					any(Annotated.class), eq(InlineAssociationDeserializer.class));
 				
