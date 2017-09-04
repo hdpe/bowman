@@ -151,6 +151,14 @@ public class RestOperationsTest {
 	}
 	
 	@Test
+	public void putObjectPutsObject() {
+		Entity entity = new Entity();
+		restOperations.putObject(URI.create("http://example.com/1"), entity);
+		
+		verify(restTemplate).put(URI.create("http://example.com/1"), entity);
+	}
+	
+	@Test
 	public void deleteResourceDeletesResource() {
 		restOperations.deleteResource(URI.create("http://example.com/1"));
 		
