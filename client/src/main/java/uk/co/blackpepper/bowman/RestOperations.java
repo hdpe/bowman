@@ -82,6 +82,10 @@ class RestOperations {
 		return restTemplate.postForLocation(uri, object);
 	}
 	
+	public void putObject(URI uri, Object object) {
+		restTemplate.put(uri, object);
+	}
+	
 	public void deleteResource(URI uri) {
 		restTemplate.delete(uri);
 	}

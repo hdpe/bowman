@@ -25,6 +25,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import uk.co.blackpepper.bowman.annotation.RemoteResource;
 
+import static uk.co.blackpepper.bowman.ReflectionSupport.getId;
 import static uk.co.blackpepper.bowman.ReflectionSupport.setId;
 
 /**
@@ -117,6 +118,16 @@ public class Client<T> {
 		setId(object, resourceUri);
 		
 		return resourceUri;
+	}
+	
+	/**
+	 * PUT the given entity to the entity's collection resource.
+	 *
+	 * @param object the entity to submit
+	 * @return the URI ID of the newly created remote entity
+	 */
+	public void put(T object) {
+		restOperations.putObject(getId(object), object);
 	}
 
 	/**
