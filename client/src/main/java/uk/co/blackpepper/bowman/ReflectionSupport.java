@@ -25,6 +25,8 @@ import uk.co.blackpepper.bowman.annotation.ResourceId;
 
 final class ReflectionSupport {
 
+	private static final Class<ResourceId> ID_ACCESSOR_ANNOTATION = ResourceId.class;
+	
 	private ReflectionSupport() {
 	}
 	
@@ -41,12 +43,13 @@ final class ReflectionSupport {
 	
 	private static Method getIdAccessor(Class<?> clazz) {
 		for (Method method : ReflectionUtils.getAllDeclaredMethods(clazz)) {
-			if (method.getAnnotation(ResourceId.class) != null) {
+			if (method.getAnnotation(ID_ACCESSOR_ANNOTATION) != null) {
 				return method;
 			}
 		}
 		
-		throw new IllegalArgumentException("No @IdAccessor found for " + clazz);
+		throw new IllegalArgumentException(String.format("No @%s found for %s",
+			ID_ACCESSOR_ANNOTATION.getSimpleName(), clazz.getName()));
 	}
 
 	private static Field getIdField(Class<?> clazz) {
