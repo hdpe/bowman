@@ -33,7 +33,7 @@ import uk.co.blackpepper.bowman.annotation.LinkedResource;
 /**
  * A module for handling serialization of Bowman annotated classes.
  * 
- * Registering this module with an {@link com.fasterxml.jackson.databind.ObjectMapper}
+ * <p>Registering this module with an {@link com.fasterxml.jackson.databind.ObjectMapper}
  * will cause properties annotated with {@link LinkedResource} to be serialized as
  * URI strings (single-valued associations) or arrays of URI strings (collection-valued
  * associations).

@@ -67,7 +67,7 @@ public final class Configuration {
 		/**
 		 * Set the base URI of the created configuration.
 		 * 
-		 * Collection resource paths specified on entity classes with
+		 * <p>Collection resource paths specified on entity classes with
 		 * {@link uk.co.blackpepper.bowman.annotation.RemoteResource} annotations
 		 * will be resolved relative to this URI. 
 		 * 
@@ -94,7 +94,7 @@ public final class Configuration {
 		/**
 		 * Set the <code>ClientHttpRequestFactory</code> for the created configuration.
 		 * 
-		 * <b>N.B.</b> this MUST be an implementation that throws a 
+		 * <p><b>N.B.</b> this MUST be an implementation that throws a 
 		 * {@link org.springframework.web.client.HttpClientErrorException} when a HTTP 404 is returned
 		 * accessing the remote resource, as this fact is used internally to distinguish between
 		 * empty results and other client error conditions. The Spring implementations that satisfy this

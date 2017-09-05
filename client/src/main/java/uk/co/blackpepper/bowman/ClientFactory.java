@@ -18,7 +18,7 @@ package uk.co.blackpepper.bowman;
 /**
  * Factory class for creating {@link Client}s.
  * 
- * <code>ClientFactories</code> are created via {@link Configuration#buildClientFactory()}.
+ * <p><code>ClientFactories</code> are created via {@link Configuration#buildClientFactory()}.
  *
  * @author Ryan Pickett
  * 

@@ -33,7 +33,7 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
  * A Jackson deserializer to properly handle inline associations in an annotated entity type. A proxy
  * will be created for the annotated property, allowing the resolution of further linked associations.
  * 
- * Assign this deserializer to a property with
+ * <p>Assign this deserializer to a property with
  * <code>@JsonDeserialize(contentUsing = InlineAssociationDeserializer.class)</code>.
  * 
  * @param <T> the type or a supertype of the type that this deserializer is intended for - not needed by 

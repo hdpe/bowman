@@ -32,10 +32,10 @@ import static uk.co.blackpepper.bowman.ReflectionSupport.setId;
  * Class for retrieving, persisting and deleting annotated entity instances via remote
  * hal+json resources.
  *
- * Entities can contain simple (directly mappable to JSON) properties, and inline or
+ * <p>Entities can contain simple (directly mappable to JSON) properties, and inline or
  * linked associations to further objects.
  * 
- * <code>Client</code>s are created via {@link ClientFactory#create}.
+ * <p><code>Client</code>s are created via {@link ClientFactory#create}.
  *
  * @param <T> the entity type for this client
  * 
