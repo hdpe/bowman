@@ -26,18 +26,20 @@ import javassist.util.proxy.ProxyFactory;
 
 class JavassistClientProxyFactory implements ClientProxyFactory {
 
-	private static final class GetterMethodFilter implements MethodFilter {
+	private static final class GetterSetterMethodFilter implements MethodFilter {
 		@Override
 		public boolean isHandled(Method method) {
-			return method.getName().startsWith("get") || method.getName().startsWith("is");
+			return method.getName().startsWith("get")
+				|| method.getName().startsWith("is") || method.getName().startsWith("set");
 		}
 	}
 	
-	private static final MethodFilter FILTER_INSTANCE = new GetterMethodFilter();
+	private static final MethodFilter FILTER_INSTANCE = new GetterSetterMethodFilter();
 
 	@Override
 	public <T> T create(Resource<T> resource, Class<T> entityType, RestOperations restOperations) {
-		return createProxyInstance(entityType, new GetterMethodHandler<>(resource, entityType, restOperations, this));
+		return createProxyInstance(entityType,
+			new GetterSetterMethodHandler<>(resource, entityType, restOperations, this));
 	}
 
 	private static <T> T createProxyInstance(Class<T> entityType, MethodHandler methodHandler) {

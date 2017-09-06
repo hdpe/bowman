@@ -156,4 +156,20 @@ public class JavassistClientProxyFactoryTest {
 		assertThat(proxy.getId(), is(URI.create("http://www.example.com/1")));
 		assertThat(proxy.isActive(), is(true));
 	}
+	
+	@Test
+	public void createReturnsProxyWithSettingValuesPossible() {
+		Entity entity = new Entity();
+		entity.setActive(true);
+		
+		Resource<Entity> resource = new Resource<>(entity,
+			new Link("http://www.example.com/1", Link.REL_SELF));
+		
+		Entity proxy = proxyFactory.create(resource,
+			Entity.class, mock(RestOperations.class));
+		
+		proxy.setActive(false);
+		
+		assertThat(proxy.isActive(), is(false));
+	}
 }

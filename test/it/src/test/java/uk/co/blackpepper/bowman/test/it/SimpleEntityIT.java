@@ -114,4 +114,25 @@ public class SimpleEntityIT extends AbstractIT {
 		assertThat(updated.getId(), is(posted));
 		assertThat(updated.getName(), is("updated"));
 	}
+	
+	@Test
+	public void canGetAndPutEntity() {
+		SimpleEntity sent = new SimpleEntity();
+		sent.setName("current");
+		
+		URI posted = client.post(sent);
+		
+		assertThat(sent.getId(), is(posted));
+		assertThat(sent.getName(), is("current"));
+		
+		sent = client.get(posted);
+		
+		sent.setName("updated");
+		client.put(sent);
+		
+		SimpleEntity updated = client.get(sent.getId());
+		
+		assertThat(updated.getId(), is(posted));
+		assertThat(updated.getName(), is("updated"));
+	}
 }

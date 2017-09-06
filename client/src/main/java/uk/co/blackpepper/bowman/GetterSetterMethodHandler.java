@@ -27,13 +27,16 @@ import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreType;
+
 import javassist.util.proxy.MethodHandler;
 import uk.co.blackpepper.bowman.annotation.LinkedResource;
 import uk.co.blackpepper.bowman.annotation.ResourceId;
 
 import static uk.co.blackpepper.bowman.HalSupport.toLinkName;
 
-class GetterMethodHandler<T> implements MethodHandler {
+@JsonIgnoreType
+class GetterSetterMethodHandler<T> implements MethodHandler {
 	
 	private final URI uri;
 	
@@ -47,12 +50,12 @@ class GetterMethodHandler<T> implements MethodHandler {
 	
 	private final Map<String, Object> linkedResourceResults = new HashMap<>();
 	
-	GetterMethodHandler(Resource<T> resource, Class<T> entityType, RestOperations restOperations,
+	GetterSetterMethodHandler(Resource<T> resource, Class<T> entityType, RestOperations restOperations,
 		ClientProxyFactory proxyFactory) {
 		this(getResourceURI(resource), resource, entityType, restOperations, proxyFactory);
 	}
 
-	private GetterMethodHandler(URI uri, Resource<T> resource, Class<T> entityType, RestOperations restOperations,
+	private GetterSetterMethodHandler(URI uri, Resource<T> resource, Class<T> entityType, RestOperations restOperations,
 		ClientProxyFactory proxyFactory) {
 		this.uri = uri;
 		this.resource = resource;
@@ -67,6 +70,10 @@ class GetterMethodHandler<T> implements MethodHandler {
 	public Object invoke(Object self, Method method, Method proceed, Object[] args) throws Throwable {
 		
 		// CHECKSTYLE:ON
+		
+		if (method.getName().startsWith("set")) {
+			return method.invoke(resource.getContent(), args);
+		}
 		
 		if (method.isAnnotationPresent(ResourceId.class)) {
 			return uri;
