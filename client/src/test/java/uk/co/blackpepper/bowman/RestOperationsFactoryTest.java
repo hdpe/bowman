@@ -111,6 +111,23 @@ public class RestOperationsFactoryTest {
 		
 		verify(restTemplateConfigurer).configure(restTemplate);
 	}
+	
+	@Test
+	public void createInvokesConfigurerOnObjectMapperIfPresent() {
+		ObjectMapperConfigurer objectMapperConfigurer = mock(ObjectMapperConfigurer.class);
+		Configuration configuration = Configuration.builder()
+			.setObjectMapperConfigurer(objectMapperConfigurer)
+			.build();
+		
+		ObjectMapper objectMapper = new ObjectMapper();
+		when(mapperFactory.create(any(HandlerInstantiator.class)))
+			.thenReturn(objectMapper);
+		
+		new RestOperationsFactory(configuration, proxyFactory, mapperFactory, restTemplateFactory)
+			.create();
+		
+		verify(objectMapperConfigurer).configure(objectMapper);
+	}
 
 	private static Matcher<RestOperations> aRestOperationsMatching(final RestTemplate restTemplate,
 			final ObjectMapper mapper) {

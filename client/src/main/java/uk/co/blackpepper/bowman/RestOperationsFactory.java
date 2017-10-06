@@ -52,6 +52,10 @@ class RestOperationsFactory {
 				configuration.getRestTemplateConfigurer().configure(restTemplate);
 			}
 			
+			if (configuration.getObjectMapperConfigurer() != null) {
+				configuration.getObjectMapperConfigurer().configure(objectMapper);
+			}
+			
 			restOperations = new RestOperations(restTemplate, objectMapper);
 			
 			handlerMap.put(InlineAssociationDeserializer.class,
