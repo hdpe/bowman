@@ -39,6 +39,8 @@ public final class Configuration {
 		private URI baseUri = URI.create("http://localhost:8080");
 		
 		private RestTemplateConfigurer restTemplateConfigurer;
+		
+		private ObjectMapperConfigurer objectMapperConfigurer;
 
 		private ClientHttpRequestFactory clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory();
 		
@@ -108,6 +110,18 @@ public final class Configuration {
 			this.clientHttpRequestFactory = clientHttpRequestFactory;
 			return this;
 		}
+		
+		/**
+		 * Set the <code>ObjectMapperConfigurer</code> for the created configuration. Allows
+		 * further configuration of the Jackson <code>ObjectMapper</code> used internally.
+		 *
+		 * @param objectMapperConfigurer the <code>ObjectMapperConfigurer</code>
+		 * @return this builder
+		 */
+		public Builder setObjectMapperConfigurer(ObjectMapperConfigurer objectMapperConfigurer) {
+			this.objectMapperConfigurer = objectMapperConfigurer;
+			return this;
+		}
 	}
 	
 	private final URI baseUri;
@@ -116,10 +130,13 @@ public final class Configuration {
 	
 	private final ClientHttpRequestFactory clientHttpRequestFactory;
 	
+	private final ObjectMapperConfigurer objectMapperConfigurer;
+	
 	private Configuration(Builder builder) {
 		baseUri = builder.baseUri;
 		restTemplateConfigurer = builder.restTemplateConfigurer;
 		clientHttpRequestFactory = builder.clientHttpRequestFactory;
+		objectMapperConfigurer = builder.objectMapperConfigurer;
 	}
 	
 	/**
@@ -174,5 +191,14 @@ public final class Configuration {
 	 */
 	public ClientHttpRequestFactory getClientHttpRequestFactory() {
 		return clientHttpRequestFactory;
+	}
+	
+	/**
+	 * Get the <code>ObjectMapperConfigurer</code> for this configuration.
+	 *
+	 * @return the configuration's <code>ObjectMapperConfigurer</code>.
+	 */
+	public ObjectMapperConfigurer getObjectMapperConfigurer() {
+		return objectMapperConfigurer;
 	}
 }
