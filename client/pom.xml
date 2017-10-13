@@ -20,7 +20,7 @@
 	<parent>
 		<groupId>uk.co.blackpepper.bowman</groupId>
 		<artifactId>bowman-parent</artifactId>
-		<version>0.2.5</version>
+		<version>0.2.6-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>bowman-client</artifactId>
