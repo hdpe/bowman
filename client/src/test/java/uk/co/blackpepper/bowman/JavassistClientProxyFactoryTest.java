@@ -49,6 +49,8 @@ public class JavassistClientProxyFactoryTest {
 		
 		private List<Entity> linkedCollection = new ArrayList<>();
 		
+		private List<Entity> nullLinkedCollection;
+		
 		@ResourceId
 		public URI getId() {
 			return id;
@@ -69,6 +71,15 @@ public class JavassistClientProxyFactoryTest {
 			return linkedCollection;
 		}
 		
+		@LinkedResource
+		public List<Entity> getNullLinkedCollection() {
+			return nullLinkedCollection;
+		}
+
+		public void setNullLinkedCollection(List<Entity> nullLinkedCollection) {
+			this.nullLinkedCollection = nullLinkedCollection;
+		}
+
 		public boolean isActive() {
 			return active;
 		}
@@ -140,6 +151,20 @@ public class JavassistClientProxyFactoryTest {
 		Entity proxy = proxyFactory.create(resource, Entity.class, restOperations);
 		
 		assertThat(proxy.getLinkedCollection().get(0).getId(), is(URI.create("http://www.example.com/1")));
+	}
+
+	@Test
+	public void createWithNullLinkedCollectionReturnsProxyWithLinkedResources() {
+		Resource<Entity> resource = new Resource<>(new Entity(),
+				new Link("http://www.example.com/association/linked", "nullLinkedCollection"));
+		
+		when(restOperations.getResources(URI.create("http://www.example.com/association/linked"),
+				Entity.class)).thenReturn(new Resources<>(asList(new Resource<>(new Entity(),
+						new Link("http://www.example.com/1", Link.REL_SELF)))));
+		
+		Entity proxy = proxyFactory.create(resource, Entity.class, restOperations);
+		
+		assertThat(proxy.getNullLinkedCollection().get(0).getId(), is(URI.create("http://www.example.com/1")));
 	}
 	
 	@Test

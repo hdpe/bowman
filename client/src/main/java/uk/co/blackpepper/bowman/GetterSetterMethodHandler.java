@@ -48,6 +48,8 @@ class GetterSetterMethodHandler<T> implements MethodHandler {
 	
 	private final ClientProxyFactory proxyFactory;
 	
+	private final PropertyValueFactory propertyValueFactory = new DefaultPropertyValueFactory();
+	
 	private final Map<String, Object> linkedResourceResults = new HashMap<>();
 	
 	GetterSetterMethodHandler(Resource<T> resource, Class<T> entityType, RestOperations restOperations,
@@ -136,7 +138,13 @@ class GetterSetterMethodHandler<T> implements MethodHandler {
 		
 		@SuppressWarnings("unchecked")
 		Collection<F> collection = (Collection<F>) originalMethod.invoke(contextEntity);
-		collection.clear();
+		
+		if (collection == null) {
+			collection = propertyValueFactory.createCollection(originalMethod.getReturnType());
+		}
+		else {
+			collection.clear();
+		}
 		
 		for (Resource<F> resource : resources) {
 			collection.add(proxyFactory.create(resource, linkedEntityType, restOperations));
