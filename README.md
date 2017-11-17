@@ -10,6 +10,8 @@ The motivation for this library was to make it easier to write clients for Sprin
 REST-exposed JPA repositories, supporting lazy-loading of associations in a similar style
 to JPA.
 
+Built on [Spring HATEOAS](http://projects.spring.io/spring-hateoas/) and [Jackson](https://github.com/FasterXML/jackson).
+
 ## Add to your project ##
 
 Add the Maven dependency:
