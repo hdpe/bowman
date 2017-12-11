@@ -66,14 +66,15 @@ public class Client<T> {
 	 * @param uri the URI from which to retrieve the entity
 	 * @return the entity, or null if not found
 	 */
-	public T get(URI uri) {
+	@SuppressWarnings("unchecked")
+    public T get(URI uri) {
 		Resource<T> resource = restOperations.getResource(uri, entityType);
 		
 		if (resource == null) {
 			return null;
 		}
 		
-		return proxyFactory.create(resource, entityType, restOperations);
+		return proxyFactory.create(resource, (Class<T>) resource.getContent().getClass(), restOperations);
 	}
 
 	/**
