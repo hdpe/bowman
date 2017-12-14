@@ -81,8 +81,8 @@ public class RestOperationsTest {
 	@Test
 	public void getResourceReturnsResource() throws Exception {
 		when(restTemplate.getForObject(URI.create("http://example.com"), ObjectNode.class))
-                .thenReturn(createObjectNode("{\"field\":\"value\",\"_links\" : {\"self\" : {"
-                        + "  \"href\" : \"http://example.com/Service/entities/id\"}}}"));
+				.thenReturn(createObjectNode("{\"field\":\"value\",\"_links\" : {\"self\" : {"
+						+ "  \"href\" : \"http://example.com/Service/entities/id\"}}}"));
 		
 		Resource<Entity> resource = restOperations.getResource(URI.create("http://example.com"), Entity.class);
 		

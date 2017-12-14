@@ -20,16 +20,14 @@ import java.lang.annotation.RetentionPolicy;
 
 import uk.co.blackpepper.bowman.AbstractResource;
 
-
 /**
  * Indicates that annotated class has children classes which need to be
- * instantiated during calls by parent interface
+ * instantiated during calls by parent interface.
  */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Children {
-    /**
-     * Children classes of this resource
-     */
-    Class<? extends AbstractResource<?>>[] value();
-
+	/**
+	 * Children classes of this resource.
+	 */
+	Class<? extends AbstractResource<?>>[] value();
 }

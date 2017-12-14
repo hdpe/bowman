@@ -22,16 +22,16 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import uk.co.blackpepper.bowman.annotation.ResourceId;
 
 /**
- * Provides generic interface and functionality for remote resources
+ * Provides generic interface and functionality for remote resources.
  * 
  * @param <T>
  */
 public abstract class AbstractResource<T extends AbstractResource<T>> {
-    private URI id;
+	private URI id;
 
-    @ResourceId
-    @JsonIgnore
-    public URI getId() {
-        return id;
-    }
+	@ResourceId
+	@JsonIgnore
+	public URI getId() {
+		return id;
+	}
 }
