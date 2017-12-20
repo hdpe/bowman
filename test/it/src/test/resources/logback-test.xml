@@ -23,9 +23,9 @@
 		</encoder>
 	</appender>
 
-<!--  	<logger -->
-<!--  		name="uk.co.blackpepper.bowman.test.it.AbstractIT$LoggingClientHttpRequestInterceptor" -->
-<!--  		level="trace"/> -->
+  	<logger
+ 		name="uk.co.blackpepper.bowman.test.it.AbstractIT$LoggingClientHttpRequestInterceptor"
+ 		level="trace"/>
 
 	<root level="info">
 		<appender-ref ref="STDOUT" />
