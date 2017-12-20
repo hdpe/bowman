@@ -74,7 +74,7 @@ public class ClientTest {
 		
 		Resource<Entity> resource = new Resource<>(new Entity());
 		when(restOperations.getResource(URI.create("http://www.example.com/1"), Entity.class)).thenReturn(resource);
-		when(proxyFactory.create(resource, Entity.class, restOperations)).thenReturn(expected);
+		when(proxyFactory.create(resource, restOperations)).thenReturn(expected);
 		
 		Entity proxy = client.get(URI.create("http://www.example.com/1"));
 		
@@ -97,7 +97,7 @@ public class ClientTest {
 		Resource<Entity> resource = new Resource<>(new Entity());
 		when(restOperations.getResources(URI.create(BASE_URI + "/entities"), Entity.class)).thenReturn(
 				new Resources<>(asList(resource)));
-		when(proxyFactory.create(resource, Entity.class, restOperations)).thenReturn(expected);
+		when(proxyFactory.create(resource, restOperations)).thenReturn(expected);
 		
 		Iterable<Entity> proxies = client.getAll();
 		

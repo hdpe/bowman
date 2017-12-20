@@ -37,7 +37,10 @@ class JavassistClientProxyFactory implements ClientProxyFactory {
 	private static final MethodFilter FILTER_INSTANCE = new GetterSetterMethodFilter();
 
 	@Override
-	public <T> T create(Resource<T> resource, Class<T> entityType, RestOperations restOperations) {
+	public <T> T create(Resource<T> resource, RestOperations restOperations) {
+		@SuppressWarnings("unchecked")
+		Class<T> entityType = (Class<T>) resource.getContent().getClass();
+		
 		return createProxyInstance(entityType,
 			new GetterSetterMethodHandler<>(resource, entityType, restOperations, this));
 	}

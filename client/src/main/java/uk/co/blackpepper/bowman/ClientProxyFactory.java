@@ -19,5 +19,5 @@ import org.springframework.hateoas.Resource;
 
 interface ClientProxyFactory {
 	
-	<T> T create(Resource<T> resource, Class<T> entityType, RestOperations restOperations);
+	<T> T create(Resource<T> resource, RestOperations restOperations);
 }

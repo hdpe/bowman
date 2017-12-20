@@ -67,7 +67,7 @@ public class InlineAssociationDeserializer<T> extends StdDeserializer<T> impleme
 		
 		Resource<T> resource = p.getCodec().readValue(p, resourceType);
 		
-		return proxyFactory.create(resource, type, restOperations);
+		return proxyFactory.create(resource, restOperations);
 	}
 
 	@Override

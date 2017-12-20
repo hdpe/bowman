@@ -18,11 +18,14 @@ package uk.co.blackpepper.bowman;
 import java.io.IOException;
 import java.util.List;
 
+import org.springframework.hateoas.Resource;
+
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.SerializationConfig;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.BeanPropertyWriter;
 import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
@@ -43,8 +46,16 @@ import uk.co.blackpepper.bowman.annotation.LinkedResource;
  */
 public class JacksonClientModule extends SimpleModule {
 
-	private static final long serialVersionUID = 3399166531461618498L;
+	private static final long serialVersionUID = 5622234359343391536L;
 
+	@JsonDeserialize(using = ResourceDeserializer.class)
+	public abstract static class ResourceMixin extends Resource<Object> {
+
+		ResourceMixin() {
+			super(new Object());
+		}
+	}
+	
 	private static class LinkedResourceUriSerializer extends StdSerializer<Object> {
 
 		private static final long serialVersionUID = -5901774722661025524L;
@@ -89,5 +100,7 @@ public class JacksonClientModule extends SimpleModule {
 				return beanProperties;
 			}
 		});
+		
+		setMixInAnnotation(Resource.class, ResourceMixin.class);
 	}
 }

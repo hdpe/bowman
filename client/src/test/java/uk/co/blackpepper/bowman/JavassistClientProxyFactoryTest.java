@@ -105,8 +105,7 @@ public class JavassistClientProxyFactoryTest {
 		Resource<Entity> resource = new Resource<>(new Entity(),
 				new Link("http://www.example.com/1", Link.REL_SELF));
 		
-		Entity proxy = proxyFactory.create(resource,
-				Entity.class, mock(RestOperations.class));
+		Entity proxy = proxyFactory.create(resource, mock(RestOperations.class));
 		
 		assertThat(proxy.getId(), is(URI.create("http://www.example.com/1")));
 	}
@@ -120,7 +119,7 @@ public class JavassistClientProxyFactoryTest {
 				Entity.class)).thenReturn(new Resource<>(new Entity(),
 						new Link("http://www.example.com/1", Link.REL_SELF)));
 		
-		Entity proxy = proxyFactory.create(resource, Entity.class, restOperations);
+		Entity proxy = proxyFactory.create(resource, restOperations);
 		
 		assertThat(proxy.getLinked().getId(), is(URI.create("http://www.example.com/1")));
 	}
@@ -134,7 +133,7 @@ public class JavassistClientProxyFactoryTest {
 				Entity.class)).thenReturn(new Resource<>(new Entity(),
 						new Link("http://www.example.com/1", Link.REL_SELF)));
 		
-		Entity proxy = proxyFactory.create(resource, Entity.class, restOperations);
+		Entity proxy = proxyFactory.create(resource, restOperations);
 		
 		assertThat(proxy.getLinkedWithCustomRel().getId(), is(URI.create("http://www.example.com/1")));
 	}
@@ -148,7 +147,7 @@ public class JavassistClientProxyFactoryTest {
 				Entity.class)).thenReturn(new Resources<>(asList(new Resource<>(new Entity(),
 						new Link("http://www.example.com/1", Link.REL_SELF)))));
 		
-		Entity proxy = proxyFactory.create(resource, Entity.class, restOperations);
+		Entity proxy = proxyFactory.create(resource, restOperations);
 		
 		assertThat(proxy.getLinkedCollection().get(0).getId(), is(URI.create("http://www.example.com/1")));
 	}
@@ -162,7 +161,7 @@ public class JavassistClientProxyFactoryTest {
 				Entity.class)).thenReturn(new Resources<>(asList(new Resource<>(new Entity(),
 						new Link("http://www.example.com/1", Link.REL_SELF)))));
 		
-		Entity proxy = proxyFactory.create(resource, Entity.class, restOperations);
+		Entity proxy = proxyFactory.create(resource, restOperations);
 		
 		assertThat(proxy.getNullLinkedCollection().get(0).getId(), is(URI.create("http://www.example.com/1")));
 	}
@@ -175,8 +174,7 @@ public class JavassistClientProxyFactoryTest {
 		Resource<Entity> resource = new Resource<>(entity,
 			new Link("http://www.example.com/1", Link.REL_SELF));
 		
-		Entity proxy = proxyFactory.create(resource,
-			Entity.class, mock(RestOperations.class));
+		Entity proxy = proxyFactory.create(resource, mock(RestOperations.class));
 		
 		assertThat(proxy.getId(), is(URI.create("http://www.example.com/1")));
 		assertThat(proxy.isActive(), is(true));
@@ -190,8 +188,7 @@ public class JavassistClientProxyFactoryTest {
 		Resource<Entity> resource = new Resource<>(entity,
 			new Link("http://www.example.com/1", Link.REL_SELF));
 		
-		Entity proxy = proxyFactory.create(resource,
-			Entity.class, mock(RestOperations.class));
+		Entity proxy = proxyFactory.create(resource, mock(RestOperations.class));
 		
 		proxy.setActive(false);
 		
