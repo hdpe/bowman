@@ -34,6 +34,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.cfg.HandlerInstantiator;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import uk.co.blackpepper.bowman.annotation.RemoteResource;
+
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
@@ -54,6 +56,7 @@ public class RestOperationsTest {
 	
 	private ExpectedException thrown = ExpectedException.none();
 
+	@RemoteResource("/entities")
 	private static class Entity {
 		private String field;
 		
@@ -78,7 +81,8 @@ public class RestOperationsTest {
 	@Test
 	public void getResourceReturnsResource() throws Exception {
 		when(restTemplate.getForObject(URI.create("http://example.com"), ObjectNode.class))
-			.thenReturn(createObjectNode("{\"field\":\"value\"}"));
+				.thenReturn(createObjectNode("{\"field\":\"value\",\"_links\" : {\"self\" : {"
+						+ "  \"href\" : \"http://example.com/Service/entities/id\"}}}"));
 		
 		Resource<Entity> resource = restOperations.getResource(URI.create("http://example.com"), Entity.class);
 		

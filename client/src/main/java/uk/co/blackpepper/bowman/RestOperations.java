@@ -16,8 +16,16 @@
 package uk.co.blackpepper.bowman;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.PagedResources;
+import org.springframework.hateoas.PagedResources.PageMetadata;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
 import org.springframework.http.HttpStatus;
@@ -25,8 +33,12 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import uk.co.blackpepper.bowman.annotation.Children;
+import uk.co.blackpepper.bowman.annotation.RemoteResource;
 
 class RestOperations {
 
@@ -54,7 +66,14 @@ class RestOperations {
 		}
 		
 		JavaType targetType = objectMapper.getTypeFactory().constructParametricType(Resource.class, entityType);
-		
+
+		Resource<T> rawResource = objectMapper.convertValue(node, targetType);
+		String selfLink = rawResource.getLink("self").getHref();
+
+		Class<?> actualEntityType = getActualEntityClass(selfLink, entityType);
+
+		targetType = objectMapper.getTypeFactory().constructParametricType(Resource.class, actualEntityType);
+
 		return objectMapper.convertValue(node, targetType);
 	}
 
@@ -72,12 +91,80 @@ class RestOperations {
 			throw exception;
 		}
 		
-		JavaType innerType = objectMapper.getTypeFactory().constructParametricType(Resource.class, entityType);
-		JavaType targetType = objectMapper.getTypeFactory().constructParametricType(Resources.class, innerType);
-		
-		return objectMapper.convertValue(node, targetType);
+		if (entityType.getAnnotation(Children.class) != null) {
+			return convertChildResources(node, entityType);
+		}
+		else {
+			JavaType targetType = constructResourcesType(entityType);
+			return objectMapper.convertValue(node, targetType);
+		}
 	}
-	
+
+	/**
+	 * Besides of obvious, modifies input "node" object.
+	 */
+	protected <T> Resources<Resource<T>> convertChildResources(ObjectNode resourceListNode, Class<T> parentEntityType) {
+		Collection<Resource<T>> resources = new ArrayList<>();
+		Collection<Link> links = new ArrayList<>();
+		PageMetadata pageMetadata = null;
+
+		Map<Class<?>, JsonNode> map = cutChildrenNodes(resourceListNode, parentEntityType);
+
+		for (Entry<Class<?>, JsonNode> childEntry : map.entrySet()) {
+			String childNodeName = getJsonNodeName(childEntry.getKey());
+
+			((ObjectNode) resourceListNode.get("_embedded")).set(childNodeName, childEntry.getValue());
+
+			// Here only instances of child type is expected to be present in
+			// the list of resources inside "node"
+			JavaType childTargetType = constructResourcesType(childEntry.getKey());
+
+			PagedResources<Resource<T>> childArray = objectMapper.convertValue(resourceListNode, childTargetType);
+
+			resources.addAll(childArray.getContent());
+			links = childArray.getLinks();
+			pageMetadata = childArray.getMetadata();
+
+			((ObjectNode) resourceListNode.get("_embedded")).remove(childNodeName);
+		}
+		return new PagedResources<>(resources, pageMetadata, links);
+	}
+
+	protected <T> Map<Class<?>, JsonNode> cutChildrenNodes(ObjectNode resourceListNode, Class<T> parentEntityType) {
+		Map<Class<?>, JsonNode> chilredNodeMap = new HashMap<>();
+		for (Class<?> child : parentEntityType.getAnnotation(Children.class).value()) {
+			String childNodeName = getJsonNodeName(child);
+			JsonNode childNodeValue = ((ObjectNode) resourceListNode.get("_embedded")).remove(childNodeName);
+			if (childNodeValue != null) {
+				chilredNodeMap.put(child, childNodeValue);
+			}
+		}
+		return chilredNodeMap;
+	}
+
+	protected String getJsonNodeName(Class<?> resourceClass) {
+		// Expected correct resource annotation e.g.
+		// @RemoteResource("/internalUser")
+		return resourceClass.getAnnotation(RemoteResource.class).value().substring(1);
+	}
+
+	protected JavaType constructResourcesType(Class<?> targetClass) {
+		JavaType childType = objectMapper.getTypeFactory().constructParametricType(Resource.class, targetClass);
+		return objectMapper.getTypeFactory().constructParametricType(PagedResources.class, childType);
+	}
+
+	protected Class<?> getActualEntityClass(String selfLink, Class<?> parentEntityType) {
+		if (parentEntityType.getAnnotation(Children.class) != null) {
+			for (Class<?> child : parentEntityType.getAnnotation(Children.class).value()) {
+				String childRootURI = child.getAnnotation(RemoteResource.class).value();
+				if (selfLink.substring(0, selfLink.lastIndexOf("/")).endsWith(childRootURI)) {
+					return child;
+				}
+			}
+		}
+		return parentEntityType;
+	}
+
 	public URI postObject(URI uri, Object object) {
 		return restTemplate.postForLocation(uri, object);
 	}

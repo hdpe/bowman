@@ -128,7 +128,7 @@ class GetterSetterMethodHandler<T> implements MethodHandler {
 			return null;
 		}
 		
-		return proxyFactory.create(linkedResource, linkedEntityType, restOperations);
+		return proxyFactory.create(linkedResource, (Class<F>) linkedResource.getContent().getClass(), restOperations);
 	}
 
 	private <F> Collection<F> resolveCollectionLinkedResource(URI associationResource, Class<F> linkedEntityType,
@@ -147,7 +147,7 @@ class GetterSetterMethodHandler<T> implements MethodHandler {
 		}
 		
 		for (Resource<F> resource : resources) {
-			collection.add(proxyFactory.create(resource, linkedEntityType, restOperations));
+			collection.add(proxyFactory.create(resource, (Class<F>) resource.getContent().getClass(), restOperations));
 		}
 		
 		return collection;

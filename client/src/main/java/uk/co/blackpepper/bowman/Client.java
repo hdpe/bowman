@@ -73,7 +73,7 @@ public class Client<T> {
 			return null;
 		}
 		
-		return proxyFactory.create(resource, entityType, restOperations);
+		return proxyFactory.create(resource, (Class<T>) resource.getContent().getClass(), restOperations);
 	}
 
 	/**
@@ -98,7 +98,7 @@ public class Client<T> {
 		Resources<Resource<T>> resources = restOperations.getResources(uri, entityType);
 
 		for (Resource<T> resource : resources) {
-			result.add(proxyFactory.create(resource, entityType, restOperations));
+			result.add(proxyFactory.create(resource, (Class<T>) resource.getContent().getClass(), restOperations));
 		}
 
 		return result;
