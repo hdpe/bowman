@@ -13,7 +13,6 @@ import uk.co.blackpepper.bowman.test.client.HierarchyBaseEntity;
 import uk.co.blackpepper.bowman.test.client.HierarchyDerivedEntity1;
 import uk.co.blackpepper.bowman.test.client.HierarchyDerivedEntity2;
 
-import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;

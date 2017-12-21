@@ -2,7 +2,7 @@ package uk.co.blackpepper.bowman.test.client;
 
 import uk.co.blackpepper.bowman.annotation.RemoteResource;
 
-@RemoteResource("/hierarchy-derived-entity-ones")
+@RemoteResource("/hierarchyDerivedEntity1s")
 public class HierarchyDerivedEntity1 extends HierarchyBaseEntity {
 
 	private String entity1Field;
