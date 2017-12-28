@@ -121,11 +121,21 @@ public class DefaultTypeResolverTest {
 	}
 
 	@Test
-	public void resolveTypeWithSubtypesAndMatchingSubtypeReturnsSubtype() {
+	public void resolveTypeWithSubtypesAndMatchingAbsoluteUriSubtypeReturnsSubtype() {
 		Configuration config = Configuration.builder().setBaseUri("http://x.com").build();
 		
 		Class<?> type = resolver.resolveType(TypeWithSubtypes.class,
 			new Links(new Link("http://x.com/2/1", Link.REL_SELF)), config);
+		
+		assertThat(type, Matchers.<Class<?>>equalTo(TypeWithSubtypesSubtype2.class));
+	}
+	
+	@Test
+	public void resolveTypeWithSubtypesAndMatchingAbsolutePathReferenceUriSubtypeReturnsSubtype() {
+		Configuration config = Configuration.builder().setBaseUri("http://x.com").build();
+		
+		Class<?> type = resolver.resolveType(TypeWithSubtypes.class,
+			new Links(new Link("/2/1", Link.REL_SELF)), config);
 		
 		assertThat(type, Matchers.<Class<?>>equalTo(TypeWithSubtypesSubtype2.class));
 	}

@@ -1,5 +1,7 @@
 package uk.co.blackpepper.bowman;
 
+import java.net.URI;
+
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Links;
@@ -37,11 +39,23 @@ class SelfLinkTypeResolver implements TypeResolver {
 				.path(resourcePath)
 				.toUriString();
 			
-			if (self.getHref().startsWith(resourceBaseUriString)) {
+			String selfLinkUriString = toAbsoluteUriString(self.getHref(), configuration.getBaseUri());
+			
+			if (selfLinkUriString.startsWith(resourceBaseUriString + "/")) {
 				return candidateClass;
 			}
 		}
 		
 		return declaredType;
+	}
+	
+	private static String toAbsoluteUriString(String uri, URI baseUri) {
+		if (UriComponentsBuilder.fromUriString(uri).build().getHost() != null) {
+			return uri;
+		}
+		
+		return UriComponentsBuilder.fromUri(baseUri)
+			.path(uri)
+			.toUriString();
 	}
 }
