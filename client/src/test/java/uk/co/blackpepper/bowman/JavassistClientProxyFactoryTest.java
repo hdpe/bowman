@@ -20,7 +20,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
@@ -89,9 +91,22 @@ public class JavassistClientProxyFactoryTest {
 		}
 	}
 	
+	public static class UnconstructableEntity {
+		
+		public UnconstructableEntity(Object argument) {
+		}
+	}
+	
 	private JavassistClientProxyFactory proxyFactory;
 	
 	private RestOperations restOperations;
+	
+	private ExpectedException thrown = ExpectedException.none();
+	
+	@Rule
+	public ExpectedException getThrown() {
+		return thrown;
+	}
 	
 	@Before
 	public void setup() {
@@ -193,5 +208,13 @@ public class JavassistClientProxyFactoryTest {
 		proxy.setActive(false);
 		
 		assertThat(proxy.isActive(), is(false));
+	}
+	
+	@Test
+	public void createWithUnconstructableEntityResourceThrowsException() {
+		thrown.expect(ClientProxyException.class);
+		thrown.expectMessage("couldn't create proxy instance of " + UnconstructableEntity.class);
+		
+		proxyFactory.create(new Resource<>(new UnconstructableEntity(new Object())), mock(RestOperations.class));
 	}
 }

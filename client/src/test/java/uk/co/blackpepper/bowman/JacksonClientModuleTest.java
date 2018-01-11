@@ -39,11 +39,17 @@ public class JacksonClientModuleTest {
 				
 		private URI id;
 		
+		private String simple;
+		
 		private Entity linked;
 		
 		private List<Entity> linkedCollection = new ArrayList<>();
 		
 		Entity() {
+		}
+		
+		Entity(String simple) {
+			this.simple = simple;
 		}
 		
 		Entity(URI id) {
@@ -58,6 +64,10 @@ public class JacksonClientModuleTest {
 		@JsonIgnore
 		public URI getId() {
 			return id;
+		}
+		
+		public String getSimple() {
+			return simple;
 		}
 		
 		@LinkedResource
@@ -95,5 +105,12 @@ public class JacksonClientModuleTest {
 		String json = mapper.writeValueAsString(entity);
 		
 		assertThat(json, containsString("\"linkedCollection\":[\"http://www.example.com/1\"]"));
+	}
+	
+	@Test
+	public void unannotatedPropertiesAreSerializedAsNormal() throws Exception {
+		String json = mapper.writeValueAsString(new Entity("x"));
+		
+		assertThat(json, containsString("\"simple\":\"x\""));
 	}
 }

@@ -42,6 +42,13 @@ public class ClientTest {
 		
 		private URI id;
 		
+		Entity() {
+		}
+		
+		Entity(URI id) {
+			this.id = id;
+		}
+		
 		@ResourceId
 		public URI getId() {
 			return id;
@@ -124,6 +131,15 @@ public class ClientTest {
 		client.post(entity);
 		
 		assertThat(entity.getId(), is(URI.create("http://www.example.com/1")));
+	}
+	
+	@Test
+	public void putInvokesRestOperations() {
+		Entity entity = new Entity(URI.create("http://www.example.com/1"));
+		
+		client.put(entity);
+		
+		verify(restOperations).putObject(URI.create("http://www.example.com/1"), entity);
 	}
 	
 	@Test
