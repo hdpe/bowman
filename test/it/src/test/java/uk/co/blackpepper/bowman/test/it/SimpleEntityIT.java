@@ -23,7 +23,7 @@ import org.junit.Test;
 import com.google.common.collect.Lists;
 
 import uk.co.blackpepper.bowman.Client;
-import uk.co.blackpepper.bowman.test.client.SimpleEntity;
+import uk.co.blackpepper.bowman.test.it.model.SimpleEntity;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;

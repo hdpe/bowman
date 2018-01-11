@@ -13,34 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.co.blackpepper.bowman.test.client;
+package uk.co.blackpepper.bowman.test.it.model;
 
 import java.net.URI;
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-import uk.co.blackpepper.bowman.InlineAssociationDeserializer;
+import uk.co.blackpepper.bowman.annotation.LinkedResource;
 import uk.co.blackpepper.bowman.annotation.RemoteResource;
 import uk.co.blackpepper.bowman.annotation.ResourceId;
 
-@RemoteResource("/inline-bidi-parents")
-public class InlineBidiParentEntity {
+@RemoteResource("/bidi-children")
+public class BidiChildEntity {
 
 	private URI id;
 	
-	private String name;
-
-	private Set<InlineBidiChildEntity> children = new LinkedHashSet<>();
+	private BidiParentEntity parent;
 	
-	private InlineBidiChildEntity child;
+	private String name;
 	
 	@ResourceId
 	@JsonIgnore
 	public URI getId() {
 		return id;
+	}
+
+	@LinkedResource
+	public BidiParentEntity getParent() {
+		return parent;
+	}
+
+	public void setParent(BidiParentEntity parent) {
+		this.parent = parent;
 	}
 
 	public String getName() {
@@ -49,19 +53,5 @@ public class InlineBidiParentEntity {
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	@JsonDeserialize(using = InlineAssociationDeserializer.class)
-	public InlineBidiChildEntity getChild() {
-		return child;
-	}
-
-	public void setChild(InlineBidiChildEntity child) {
-		this.child = child;
-	}
-
-	@JsonDeserialize(contentUsing = InlineAssociationDeserializer.class)
-	public Set<InlineBidiChildEntity> getChildren() {
-		return children;
 	}
 }

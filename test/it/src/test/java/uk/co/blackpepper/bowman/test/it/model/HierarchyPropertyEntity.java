@@ -1,4 +1,4 @@
-package uk.co.blackpepper.bowman.test.client;
+package uk.co.blackpepper.bowman.test.it.model;
 
 import java.net.URI;
 import java.util.ArrayList;

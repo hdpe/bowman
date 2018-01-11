@@ -13,31 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.co.blackpepper.bowman.test.client;
+package uk.co.blackpepper.bowman.test.it.model;
 
 import java.net.URI;
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import uk.co.blackpepper.bowman.annotation.LinkedResource;
-import uk.co.blackpepper.bowman.annotation.RemoteResource;
 import uk.co.blackpepper.bowman.annotation.ResourceId;
 
-@RemoteResource("/bidi-parents")
-public class BidiParentEntity {
+public class InlineBidiChildEntity {
 
-	private URI entityId;
+	private URI id;
+	
+	private InlineBidiParentEntity parent;
 	
 	private String name;
-	
-	private Set<BidiChildEntity> children = new LinkedHashSet<>();
+
+	private SimpleEntity related;
 	
 	@ResourceId
 	@JsonIgnore
-	public URI getEntityId() {
-		return entityId;
+	public URI getId() {
+		return id;
+	}
+
+	@LinkedResource
+	public InlineBidiParentEntity getParent() {
+		return parent;
+	}
+
+	public void setParent(InlineBidiParentEntity parent) {
+		this.parent = parent;
 	}
 
 	public String getName() {
@@ -49,7 +56,11 @@ public class BidiParentEntity {
 	}
 
 	@LinkedResource
-	public Set<BidiChildEntity> getChildren() {
-		return children;
+	public SimpleEntity getRelated() {
+		return related;
+	}
+
+	public void setRelated(SimpleEntity related) {
+		this.related = related;
 	}
 }

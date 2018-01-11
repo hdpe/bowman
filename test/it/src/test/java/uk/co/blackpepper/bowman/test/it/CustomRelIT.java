@@ -18,12 +18,12 @@ package uk.co.blackpepper.bowman.test.it;
 import org.junit.Before;
 import org.junit.Test;
 
+import uk.co.blackpepper.bowman.Client;
+import uk.co.blackpepper.bowman.test.it.model.CustomRelEntity;
+import uk.co.blackpepper.bowman.test.it.model.SimpleEntity;
+
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
-
-import uk.co.blackpepper.bowman.Client;
-import uk.co.blackpepper.bowman.test.client.CustomRelEntity;
-import uk.co.blackpepper.bowman.test.client.SimpleEntity;
 
 public class CustomRelIT extends AbstractIT {
 	

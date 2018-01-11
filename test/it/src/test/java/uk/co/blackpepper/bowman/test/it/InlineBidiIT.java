@@ -21,9 +21,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import uk.co.blackpepper.bowman.Client;
-import uk.co.blackpepper.bowman.test.client.InlineBidiChildEntity;
-import uk.co.blackpepper.bowman.test.client.InlineBidiParentEntity;
-import uk.co.blackpepper.bowman.test.client.SimpleEntity;
+import uk.co.blackpepper.bowman.test.it.model.InlineBidiChildEntity;
+import uk.co.blackpepper.bowman.test.it.model.InlineBidiParentEntity;
+import uk.co.blackpepper.bowman.test.it.model.SimpleEntity;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;

@@ -1,4 +1,4 @@
-package uk.co.blackpepper.bowman.test.client;
+package uk.co.blackpepper.bowman.test.it.model;
 
 import uk.co.blackpepper.bowman.annotation.RemoteResource;
 

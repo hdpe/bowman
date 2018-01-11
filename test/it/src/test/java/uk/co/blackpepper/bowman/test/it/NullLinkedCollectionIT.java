@@ -8,8 +8,8 @@ import org.junit.Test;
 import com.google.common.collect.Sets;
 
 import uk.co.blackpepper.bowman.Client;
-import uk.co.blackpepper.bowman.test.client.NullLinkedCollectionEntity;
-import uk.co.blackpepper.bowman.test.client.SimpleEntity;
+import uk.co.blackpepper.bowman.test.it.model.NullLinkedCollectionEntity;
+import uk.co.blackpepper.bowman.test.it.model.SimpleEntity;
 
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasProperty;

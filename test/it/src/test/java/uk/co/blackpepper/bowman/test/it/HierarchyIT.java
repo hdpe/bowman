@@ -9,10 +9,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import uk.co.blackpepper.bowman.Client;
-import uk.co.blackpepper.bowman.test.client.HierarchyBaseEntity;
-import uk.co.blackpepper.bowman.test.client.HierarchyDerivedEntity1;
-import uk.co.blackpepper.bowman.test.client.HierarchyDerivedEntity2;
-import uk.co.blackpepper.bowman.test.client.HierarchyPropertyEntity;
+import uk.co.blackpepper.bowman.test.it.model.HierarchyBaseEntity;
+import uk.co.blackpepper.bowman.test.it.model.HierarchyDerivedEntity1;
+import uk.co.blackpepper.bowman.test.it.model.HierarchyDerivedEntity2;
+import uk.co.blackpepper.bowman.test.it.model.HierarchyPropertyEntity;
 
 import static java.util.Arrays.asList;
 
