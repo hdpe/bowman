@@ -40,11 +40,9 @@ class GetterSetterMethodHandler<T> implements MethodHandler {
 	
 	private final URI uri;
 	
-	private final Class<T> entityType;
-	
 	private final RestOperations restOperations;
 
-	private Resource<T> resource;
+	private final Resource<T> resource;
 	
 	private final ClientProxyFactory proxyFactory;
 	
@@ -52,16 +50,9 @@ class GetterSetterMethodHandler<T> implements MethodHandler {
 	
 	private final Map<String, Object> linkedResourceResults = new HashMap<>();
 	
-	GetterSetterMethodHandler(Resource<T> resource, Class<T> entityType, RestOperations restOperations,
-		ClientProxyFactory proxyFactory) {
-		this(getResourceURI(resource), resource, entityType, restOperations, proxyFactory);
-	}
-
-	private GetterSetterMethodHandler(URI uri, Resource<T> resource, Class<T> entityType, RestOperations restOperations,
-		ClientProxyFactory proxyFactory) {
-		this.uri = uri;
+	GetterSetterMethodHandler(Resource<T> resource, RestOperations restOperations, ClientProxyFactory proxyFactory) {
+		this.uri = getResourceURI(resource);
 		this.resource = resource;
-		this.entityType = entityType;
 		this.restOperations = restOperations;
 		this.proxyFactory = proxyFactory;
 	}
@@ -79,10 +70,6 @@ class GetterSetterMethodHandler<T> implements MethodHandler {
 		
 		if (method.isAnnotationPresent(ResourceId.class)) {
 			return uri;
-		}
-		
-		if (resource == null) {
-			resource = restOperations.getResource(uri, entityType);
 		}
 
 		if (method.isAnnotationPresent(LinkedResource.class)) {

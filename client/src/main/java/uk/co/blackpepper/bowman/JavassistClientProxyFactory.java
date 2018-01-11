@@ -42,7 +42,7 @@ class JavassistClientProxyFactory implements ClientProxyFactory {
 		Class<T> entityType = (Class<T>) resource.getContent().getClass();
 		
 		return createProxyInstance(entityType,
-			new GetterSetterMethodHandler<>(resource, entityType, restOperations, this));
+			new GetterSetterMethodHandler<>(resource, restOperations, this));
 	}
 
 	private static <T> T createProxyInstance(Class<T> entityType, MethodHandler methodHandler) {
