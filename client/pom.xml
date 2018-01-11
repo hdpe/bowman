@@ -24,7 +24,19 @@
 	</parent>
 
 	<artifactId>bowman-client</artifactId>
-
+	
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.eluder.coveralls</groupId>
+				<artifactId>coveralls-maven-plugin</artifactId>
+				<configuration>
+					<repoToken>${env.COVERALLS_TOKEN}</repoToken>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework</groupId>

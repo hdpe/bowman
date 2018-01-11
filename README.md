@@ -1,6 +1,7 @@
 # Bowman #
 
 [![Build Status](https://travis-ci.org/BlackPepperSoftware/bowman.svg?branch=master)](https://travis-ci.org/BlackPepperSoftware/bowman)
+[![Coverage Status](https://coveralls.io/repos/github/BlackPepperSoftware/bowman/badge.svg?branch=master)](https://coveralls.io/github/BlackPepperSoftware/bowman?branch=master)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/uk.co.blackpepper.bowman/bowman-client/badge.svg)](https://maven-badges.herokuapp.com/maven-central/uk.co.blackpepper.bowman/bowman-client)
 
 A Java library for accessing a JSON+HAL REST API, supporting the mapping of a client-side

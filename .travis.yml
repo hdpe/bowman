@@ -1,3 +1,4 @@
 language: java
 install: true
 script: mvn -s config/settings.ci.xml verify -PrunITs && { [ "${TRAVIS_PULL_REQUEST}" != "false" ] || mvn -s config/settings.ci.xml deploy; }
+after_success: mvn coveralls:report -pl :bowman-client
