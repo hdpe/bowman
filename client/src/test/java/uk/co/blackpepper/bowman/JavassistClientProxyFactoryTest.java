@@ -33,6 +33,7 @@ import uk.co.blackpepper.bowman.annotation.ResourceId;
 
 import static java.util.Arrays.asList;
 
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
@@ -152,6 +153,29 @@ public class JavassistClientProxyFactoryTest {
 		Entity proxy = proxyFactory.create(resource, restOperations);
 		
 		assertThat(proxy.getLinkedWithCustomRel().getId(), is(URI.create("http://www.example.com/1")));
+	}
+
+	@Test
+	public void createWithLinkedResourceLinkNotPresentReturnsProxyThrowingException() {
+		Entity entity = proxyFactory.create(new Resource<>(new Entity()), restOperations);
+		
+		thrown.expect(ClientProxyException.class);
+		thrown.expectMessage("Link 'linked' could not be found!");
+		
+		entity.getLinked();
+	}
+	
+	@Test
+	public void createWithLinkedResourceTargetNotPresentReturnsProxyReturningNull() {
+		Resource<Entity> resource = new Resource<>(new Entity(),
+			new Link("http://www.example.com/association/linked", "linked"));
+	
+		when(restOperations.getResource(URI.create("http://www.example.com/association/linked"),
+				Entity.class)).thenReturn(null);
+		
+		Entity proxy = proxyFactory.create(resource, restOperations);
+		
+		assertThat(proxy.getLinked(), is(nullValue()));
 	}
 	
 	@Test
