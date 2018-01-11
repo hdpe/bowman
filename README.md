@@ -189,6 +189,31 @@ public Set<Related> getRelatedSet() { return relatedSet; }
 
 Subresources are loaded from the `_embedded` property of a HAL response when querying a collection resource. For single-valued resources, embedded resources are currently disregarded: PRs welcome!
 
+#### Polymorphism ####
+
+Use `@ResourceTypeInfo` to declare a type's subtypes. On deserialization, the type of the resource will be determined using the `self` link of the resource.
+
+```java
+@ResourceTypeInfo(subtypes = {OneThing.class, AnotherThing.class})
+class Thing { }
+
+class OneThing extends Thing { }
+class AnotherThing extends Thing { }
+```
+
+Alternatively you can register your own `TypeResolver` to provide custom subtype resolution, perhaps using alternative resource links.
+
+```java
+@ResourceTypeInfo(typeResolver = MyTypeResolver.class)
+class Thing { }
+
+class MyTypeResolver implements TypeResolver {
+	Class<?> resolveType(Class<?> declaredType, Links resourceLinks, Configuration configuration) {
+		// own type resolution code here...
+	}
+}
+```
+
 ## Development ##
 
 * [Development Guide](./development.md)
