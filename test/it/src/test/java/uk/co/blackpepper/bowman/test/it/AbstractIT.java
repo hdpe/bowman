@@ -16,21 +16,31 @@
 package uk.co.blackpepper.bowman.test.it;
 
 import java.io.IOException;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.io.IOUtils;
+import org.junit.After;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+
+import com.google.common.collect.Lists;
 
 import uk.co.blackpepper.bowman.ClientFactory;
 import uk.co.blackpepper.bowman.Configuration;
 import uk.co.blackpepper.bowman.RestTemplateConfigurer;
+
+import static java.util.Arrays.asList;
 
 public class AbstractIT {
 	
@@ -58,11 +68,36 @@ public class AbstractIT {
 		}
 	}
 	
+	private static class CreatedEntityRecordingClientHttpRequestInterceptor implements ClientHttpRequestInterceptor {
+		
+		private List<URI> createdEntities = new ArrayList<>();
+		
+		@Override
+		public ClientHttpResponse intercept(HttpRequest request, byte[] body,
+			ClientHttpRequestExecution execution) throws IOException {
+			
+			ClientHttpResponse response = execution.execute(request, body);
+			
+			if (request.getMethod() == HttpMethod.POST) {
+				createdEntities.add(response.getHeaders().getLocation());
+			}
+			
+			return response;
+		}
+		
+		List<URI> getCreatedEntities() {
+			return createdEntities;
+		}
+	}
+	
 	// CHECKSTYLE:OFF
 	
 	protected ClientFactory clientFactory;
 	
 	// CHECKSTYLE:ON
+	
+	private CreatedEntityRecordingClientHttpRequestInterceptor createdEntityRecordingInterceptor =
+		new CreatedEntityRecordingClientHttpRequestInterceptor();
 	
 	protected AbstractIT() {
 		clientFactory = Configuration.builder()
@@ -73,10 +108,27 @@ public class AbstractIT {
 					
 					@Override
 					public void configure(RestTemplate restTemplate) {
-						restTemplate.getInterceptors().add(new LoggingClientHttpRequestInterceptor());
+						restTemplate.getInterceptors().addAll(asList(
+							new LoggingClientHttpRequestInterceptor(),
+							createdEntityRecordingInterceptor
+						));
 					}
 				})
 				.build()
 				.buildClientFactory();
+	}
+	
+	@After
+	public void tearDown() {
+		RestTemplate cleanUpRestTemplate = new RestTemplate();
+		
+		for (URI createdEntity : Lists.reverse(createdEntityRecordingInterceptor.getCreatedEntities())) {
+			try {
+				cleanUpRestTemplate.delete(createdEntity);
+			}
+			catch (RestClientException exception) {
+				// perhaps already deleted; continue
+			}
+		}
 	}
 }

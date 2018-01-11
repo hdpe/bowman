@@ -1,17 +1,10 @@
 package uk.co.blackpepper.bowman.test.it;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -39,8 +32,6 @@ public class HierarchyIT extends AbstractIT {
 	
 	private Client<HierarchyPropertyEntity> propertyEntityClient;
 	
-	private Map<URI, Client<?>> createdEntities = new LinkedHashMap<>();
-	
 	@Before
 	public void setUp() {
 		baseEntityClient = clientFactory.create(HierarchyBaseEntity.class);
@@ -49,25 +40,15 @@ public class HierarchyIT extends AbstractIT {
 		propertyEntityClient = clientFactory.create(HierarchyPropertyEntity.class);
 	}
 	
-	@After
-	public void tearDown() {
-		List<Entry<URI, Client<?>>> createdEntities = new ArrayList<>(this.createdEntities.entrySet());
-		Collections.reverse(createdEntities);
-		
-		for (Map.Entry<URI, Client<?>> created : createdEntities) {
-			created.getValue().delete(created.getKey());
-		}
-	}
-	
 	@Test
 	public void testGetAllWithSubtypes() {
 		HierarchyDerivedEntity1 entity1 = new HierarchyDerivedEntity1();
 		entity1.setEntity1Field("x");
-		doPost(derivedEntity1Client, entity1);
+		derivedEntity1Client.post(entity1);
 		
 		HierarchyDerivedEntity2 entity2 = new HierarchyDerivedEntity2();
 		entity2.setEntity2Field("y");
-		doPost(derivedEntity2Client, entity2);
+		derivedEntity2Client.post(entity2);
 		
 		Iterable<HierarchyBaseEntity> retrieved = baseEntityClient.getAll();
 		
@@ -87,11 +68,11 @@ public class HierarchyIT extends AbstractIT {
 	public void testLinkedEntityWithSubtypes() {
 		HierarchyDerivedEntity1 entity1 = new HierarchyDerivedEntity1();
 		entity1.setEntity1Field("x");
-		doPost(derivedEntity1Client, entity1);
+		derivedEntity1Client.post(entity1);
 		
 		HierarchyPropertyEntity propertyEntity = new HierarchyPropertyEntity();
 		propertyEntity.setLinkedEntity(entity1);
-		URI propertyEntityUri = doPost(propertyEntityClient, propertyEntity);
+		URI propertyEntityUri = propertyEntityClient.post(propertyEntity);
 		
 		HierarchyPropertyEntity retrieved = propertyEntityClient.get(propertyEntityUri);
 		
@@ -105,15 +86,15 @@ public class HierarchyIT extends AbstractIT {
 	public void testLinkedEntityCollectionWithSubtypes() {
 		HierarchyDerivedEntity1 entity1 = new HierarchyDerivedEntity1();
 		entity1.setEntity1Field("x");
-		doPost(derivedEntity1Client, entity1);
+		derivedEntity1Client.post(entity1);
 		
 		HierarchyDerivedEntity2 entity2 = new HierarchyDerivedEntity2();
 		entity2.setEntity2Field("y");
-		doPost(derivedEntity2Client, entity2);
+		derivedEntity2Client.post(entity2);
 		
 		HierarchyPropertyEntity propertyEntity = new HierarchyPropertyEntity();
 		propertyEntity.setLinkedEntityCollection(asList(entity1, entity2));
-		URI propertyEntityUri = doPost(propertyEntityClient, propertyEntity);
+		URI propertyEntityUri = propertyEntityClient.post(propertyEntity);
 		
 		HierarchyPropertyEntity retrieved = propertyEntityClient.get(propertyEntityUri);
 		
@@ -128,13 +109,5 @@ public class HierarchyIT extends AbstractIT {
 					hasProperty("entity2Field", is("y"))
 				)
 			)));
-	}
-	
-	private <T> URI doPost(Client<T> client, T entity) {
-		URI location = client.post(entity);
-		
-		createdEntities.put(location, client);
-		
-		return location;
 	}
 }
