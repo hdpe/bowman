@@ -38,10 +38,6 @@ public class ResourceDeserializerTest {
 		public String getField() {
 			return field;
 		}
-
-		public void setField(String field) {
-			this.field = field;
-		}
 	}
 	
 	@SuppressWarnings("serial")
@@ -84,7 +80,7 @@ public class ResourceDeserializerTest {
 		
 		Resource<DeclaredType> resource = mapper.readValue(
 			"{\"field\":\"x\",\"_links\":{\"self\":{\"href\":\"http://x.com/1\"}}}",
-			new TypeReference<Resource<DeclaredType>>() { });
+			new TypeReference<Resource<DeclaredType>>() { /* generic type reference */ });
 		
 		assertThat("class", resource.getContent().getClass(), Matchers.<Class<?>>equalTo(ResolvedType.class));
 		assertThat("field", ((ResolvedType) resource.getContent()).getField(), is("x"));

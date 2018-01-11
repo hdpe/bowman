@@ -94,6 +94,7 @@ public class JavassistClientProxyFactoryTest {
 	public static class UnconstructableEntity {
 		
 		public UnconstructableEntity(Object argument) {
+			// unconstructable due to missing no-args constructor
 		}
 	}
 	
