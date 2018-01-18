@@ -55,6 +55,9 @@ public class ClientTest {
 		}
 	}
 	
+	public static class EntityPatch {
+	}
+
 	private static final String BASE_URI = "http://www.example.com";
 	
 	private Client<Entity> client;
@@ -96,7 +99,31 @@ public class ClientTest {
 		
 		assertThat(proxy, is(nullValue()));
 	}
+
+	@Test
+	public void patchReturnsProxy() {
+		Entity expected = new Entity();
+		EntityPatch patch = new EntityPatch();
+
+		Resource<Entity> resource = new Resource<>(new Entity());
+		when(restOperations.patchResource(URI.create("http://www.example.com/1"), patch, Entity.class)).thenReturn(resource);
+		when(proxyFactory.create(resource, restOperations)).thenReturn(expected);
+
+		Entity proxy = client.patch(URI.create("http://www.example.com/1"), patch);
+
+		assertThat(proxy, is(expected));
+	}
 	
+	@Test
+	public void patchReturnsNullWhenRestOperationsReturnsNull() {
+		EntityPatch patch = new EntityPatch();
+		when(restOperations.patchResource(URI.create("http://www.example.com/1"), patch, Entity.class)).thenReturn(null);
+
+		Entity proxy = client.patch(URI.create("http://www.example.com/1"), patch);
+
+		assertThat(proxy, is(nullValue()));
+	}
+
 	@Test
 	public void getAllWithNoArgumentsReturnsProxyIterable() {
 		Entity expected = new Entity();

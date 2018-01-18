@@ -70,11 +70,15 @@ public class RestOperationsTest {
 		}
 	}
 	
+	private static class EntityPatch {
+
+	}
+
 	@Rule
 	public ExpectedException getThrown() {
 		return thrown;
 	}
-	
+
 	@Before
 	public void setup() {
 		HandlerInstantiator instantiator = mock(HandlerInstantiator.class);
@@ -176,6 +180,42 @@ public class RestOperationsTest {
 		restOperations.deleteResource(URI.create("http://example.com/1"));
 		
 		verify(restTemplate).delete(URI.create("http://example.com/1"));
+	}
+
+	@Test
+	public void patchResourceReturnsResource() throws Exception {
+		EntityPatch patch = new EntityPatch();
+		when(restTemplate.patchForObject(URI.create("http://example.com"), patch, ObjectNode.class))
+			.thenReturn(createObjectNode("{\"field\":\"value\"}"));
+
+		Resource<Entity> resource = restOperations.patchResource(URI.create("http://example.com"), patch, Entity.class);
+
+		assertThat(resource.getContent().getField(), is("value"));
+	}
+
+	@Test
+	public void patchResourceOnNotFoundHttpClientExceptionReturnsNull() throws Exception {
+		EntityPatch patch = new EntityPatch();
+
+		when(restTemplate.patchForObject(URI.create("http://example.com"), patch, ObjectNode.class))
+			.thenThrow(new HttpClientErrorException(NOT_FOUND));
+
+		Resource<Entity> resource = restOperations.patchResource(URI.create("http://example.com"), patch, Entity.class);
+
+		assertThat(resource, is(nullValue()));
+	}
+
+	@Test
+	public void patchResourceOnOtherHttpClientExceptionThrowsException() throws Exception {
+		EntityPatch patch = new EntityPatch();
+
+		HttpClientErrorException exception = new HttpClientErrorException(I_AM_A_TEAPOT);
+		when(restTemplate.patchForObject(URI.create("http://example.com"), patch, ObjectNode.class))
+			.thenThrow(exception);
+
+		thrown.expect(is(exception));
+
+		restOperations.patchResource(URI.create("http://example.com"), patch, Entity.class);
 	}
 
 	private static ResourceDeserializer declaredTypeResourceDeserializer() {
