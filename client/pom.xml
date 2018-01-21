@@ -34,6 +34,19 @@
 					<repoToken>${env.COVERALLS_TOKEN}</repoToken>
 				</configuration>
 			</plugin>
+			
+			<plugin>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifestEntries>
+							<Implementation-Title>${project.name}</Implementation-Title>
+							<Implementation-Version>${project.version}</Implementation-Version>
+							<Automatic-Module-Name>uk.co.blackpepper.bowman</Automatic-Module-Name>
+						</manifestEntries>
+					</archive>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 	
