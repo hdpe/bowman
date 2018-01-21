@@ -18,19 +18,20 @@ class SelfLinkTypeResolver implements TypeResolver {
 	}
 	
 	@Override
-	public Class<?> resolveType(Class<?> declaredType, Links resourceLinks, Configuration configuration) {
+	public <T> Class<? extends T> resolveType(Class<T> declaredType, Links resourceLinks, Configuration configuration) {
 
 		Link self = resourceLinks.getLink(Link.REL_SELF);
 		
 		if (self == null) {
 			return declaredType;
 		}
-
+		
 		for (Class<?> candidateClass : subtypes) {
 			RemoteResource candidateClassInfo = AnnotationUtils.findAnnotation(candidateClass, RemoteResource.class);
 			
 			if (candidateClassInfo == null) {
-				continue;
+				throw new ClientProxyException(String.format("%s is not annotated with @%s", candidateClass.getName(),
+					RemoteResource.class.getSimpleName()));
 			}
 			
 			String resourcePath = candidateClassInfo.value();
@@ -42,7 +43,15 @@ class SelfLinkTypeResolver implements TypeResolver {
 			String selfLinkUriString = toAbsoluteUriString(self.getHref(), configuration.getBaseUri());
 			
 			if (selfLinkUriString.startsWith(resourceBaseUriString + "/")) {
-				return candidateClass;
+				if (!declaredType.isAssignableFrom(candidateClass)) {
+					throw new ClientProxyException(String.format("%s is not a subtype of %s", candidateClass.getName(),
+						declaredType.getName()));
+				}
+				
+				@SuppressWarnings("unchecked")
+				Class<? extends T> result = (Class<? extends T>) candidateClass;
+				
+				return result;
 			}
 		}
 		

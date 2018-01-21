@@ -24,7 +24,6 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.springframework.hateoas.Links;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
 import org.springframework.http.HttpStatus;
@@ -181,7 +180,7 @@ public class RestOperationsTest {
 	private static ResourceDeserializer declaredTypeResourceDeserializer() {
 		TypeResolver declaredTypeTypeResolver = mock(TypeResolver.class);
 		
-		when(declaredTypeTypeResolver.resolveType(any(Class.class), any(Links.class), any(Configuration.class)))
+		when(declaredTypeTypeResolver.resolveType(any(), any(), any()))
 			.then(new Answer<Class<?>>() {
 			
 				@Override
