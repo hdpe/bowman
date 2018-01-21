@@ -113,14 +113,16 @@ public class DefaultTypeResolverTest {
 	
 	@Test
 	public void resolveTypeWithUnderspecifiedResourceTypeInfoThrowsException() {
-		thrown.expect(IllegalStateException.class);
+		thrown.expect(ClientProxyException.class);
+		thrown.expectMessage("one of subtypes or typeResolver must be specified");
 	
 		resolver.resolveType(TypeWithUnderspecifiedInfo.class, new Links(), Configuration.build());
 	}
 	
 	@Test
 	public void resolveTypeWithOverspecifiedResourceTypeInfoThrowsException() {
-		thrown.expect(IllegalStateException.class);
+		thrown.expect(ClientProxyException.class);
+		thrown.expectMessage("one of subtypes or typeResolver must be specified");
 		
 		resolver.resolveType(TypeWithOverspecifiedInfo.class, new Links(), Configuration.build());
 	}
