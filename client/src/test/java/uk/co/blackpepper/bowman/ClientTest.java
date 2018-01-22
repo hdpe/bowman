@@ -106,7 +106,8 @@ public class ClientTest {
 		EntityPatch patch = new EntityPatch();
 
 		Resource<Entity> resource = new Resource<>(new Entity());
-		when(restOperations.patchResource(URI.create("http://www.example.com/1"), patch, Entity.class)).thenReturn(resource);
+		when(restOperations.patchResource(URI.create("http://www.example.com/1"), patch, Entity.class))
+			.thenReturn(resource);
 		when(proxyFactory.create(resource, restOperations)).thenReturn(expected);
 
 		Entity proxy = client.patch(URI.create("http://www.example.com/1"), patch);
@@ -117,7 +118,8 @@ public class ClientTest {
 	@Test
 	public void patchReturnsNullWhenRestOperationsReturnsNull() {
 		EntityPatch patch = new EntityPatch();
-		when(restOperations.patchResource(URI.create("http://www.example.com/1"), patch, Entity.class)).thenReturn(null);
+		when(restOperations.patchResource(URI.create("http://www.example.com/1"), patch, Entity.class))
+			.thenReturn(null);
 
 		Entity proxy = client.patch(URI.create("http://www.example.com/1"), patch);
 

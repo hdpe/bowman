@@ -69,9 +69,8 @@ public class RestOperationsTest {
 			return field;
 		}
 	}
-	
-	private static class EntityPatch {
 
+	private static class EntityPatch {
 	}
 
 	@Rule
