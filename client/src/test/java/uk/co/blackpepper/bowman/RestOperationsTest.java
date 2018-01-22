@@ -17,6 +17,8 @@ package uk.co.blackpepper.bowman;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -67,9 +69,6 @@ public class RestOperationsTest {
 		public String getField() {
 			return field;
 		}
-	}
-
-	private static class EntityPatch {
 	}
 
 	@Rule
@@ -182,18 +181,20 @@ public class RestOperationsTest {
 
 	@Test
 	public void patchResourceReturnsResource() throws Exception {
-		EntityPatch patch = new EntityPatch();
+		Map<String, String> patch = new HashMap<String, String>();
+		patch.put("field", "patchedValue");
+
 		when(restTemplate.patchForObject(URI.create("http://example.com"), patch, ObjectNode.class))
-			.thenReturn(createObjectNode("{\"field\":\"value\"}"));
+			.thenReturn(createObjectNode("{\"field\":\"patchedValue\"}"));
 
 		Resource<Entity> resource = restOperations.patchResource(URI.create("http://example.com"), patch, Entity.class);
 
-		assertThat(resource.getContent().getField(), is("value"));
+		assertThat(resource.getContent().getField(), is("patchedValue"));
 	}
 
 	@Test
 	public void patchResourceOnNotFoundHttpClientExceptionReturnsNull() throws Exception {
-		EntityPatch patch = new EntityPatch();
+		Map<String, String> patch = new HashMap<String, String>();
 
 		when(restTemplate.patchForObject(URI.create("http://example.com"), patch, ObjectNode.class))
 			.thenThrow(new HttpClientErrorException(NOT_FOUND));
@@ -205,7 +206,7 @@ public class RestOperationsTest {
 
 	@Test
 	public void patchResourceOnOtherHttpClientExceptionThrowsException() throws Exception {
-		EntityPatch patch = new EntityPatch();
+		Map<String, String> patch = new HashMap<String, String>();
 
 		HttpClientErrorException exception = new HttpClientErrorException(I_AM_A_TEAPOT);
 		when(restTemplate.patchForObject(URI.create("http://example.com"), patch, ObjectNode.class))

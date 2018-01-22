@@ -16,6 +16,8 @@
 package uk.co.blackpepper.bowman;
 
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -55,9 +57,6 @@ public class ClientTest {
 		}
 	}
 	
-	public static class EntityPatch {
-	}
-
 	private static final String BASE_URI = "http://www.example.com";
 	
 	private Client<Entity> client;
@@ -103,7 +102,7 @@ public class ClientTest {
 	@Test
 	public void patchReturnsProxy() {
 		Entity expected = new Entity();
-		EntityPatch patch = new EntityPatch();
+		Map<String, String> patch = new HashMap<String, String>();
 
 		Resource<Entity> resource = new Resource<>(new Entity());
 		when(restOperations.patchResource(URI.create("http://www.example.com/1"), patch, Entity.class))
@@ -117,7 +116,8 @@ public class ClientTest {
 	
 	@Test
 	public void patchReturnsNullWhenRestOperationsReturnsNull() {
-		EntityPatch patch = new EntityPatch();
+		Map<String, String> patch = new HashMap<String, String>();
+
 		when(restOperations.patchResource(URI.create("http://www.example.com/1"), patch, Entity.class))
 			.thenReturn(null);
 
