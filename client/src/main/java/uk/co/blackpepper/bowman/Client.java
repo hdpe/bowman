@@ -141,6 +141,8 @@ public class Client<T> {
 	/**
 	 * PATCH (partial update) of the entity at the given URI.
 	 *
+	 * @param uri a URI of the entity to update
+	 * @param patch any type that can be serialized to a set of changes, for example a Map
 	 * @return The patched entity, or null if not found
 	 */
 	public <P> T patch(URI uri, P patch) {
