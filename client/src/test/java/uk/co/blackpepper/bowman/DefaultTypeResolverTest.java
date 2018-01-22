@@ -37,12 +37,31 @@ public class DefaultTypeResolverTest {
 	}
 	
 	@RemoteResource("/1")
-	public static class TypeWithSubtypesSubtype1 {
+	public static class TypeWithSubtypesSubtype1 extends TypeWithSubtypes {
 		// no members
 	}
 	
 	@RemoteResource("/2")
-	public static class TypeWithSubtypesSubtype2 {
+	public static class TypeWithSubtypesSubtype2 extends TypeWithSubtypes {
+		// no members
+	}
+	
+	@ResourceTypeInfo(subtypes = TypeWithNonRemoteResourceSubtypeSubtype.class)
+	public static class TypeWithNonRemoteResourceSubtype {
+		// no members
+	}
+
+	public static class TypeWithNonRemoteResourceSubtypeSubtype extends TypeWithNonRemoteResourceSubtype {
+		// no members
+	}
+	
+	@ResourceTypeInfo(subtypes = TypeWithIllegalSubtypeSubtype.class)
+	public static class TypeWithIllegalSubtype {
+		// no members
+	}
+	
+	@RemoteResource("/x")
+	public static class TypeWithIllegalSubtypeSubtype {
 		// no members
 	}
 	
@@ -60,7 +79,8 @@ public class DefaultTypeResolverTest {
 		// CHECKSTYLE:ON
 		
 		@Override
-		public Class<?> resolveType(Class<?> declaredType, Links resourceLinks, Configuration configuration) {
+		public <T> Class<? extends T> resolveType(Class<T> declaredType, Links resourceLinks,
+			Configuration configuration) {
 			return mockResolver.resolveType(declaredType, resourceLinks, configuration);
 		}
 	}
@@ -93,14 +113,16 @@ public class DefaultTypeResolverTest {
 	
 	@Test
 	public void resolveTypeWithUnderspecifiedResourceTypeInfoThrowsException() {
-		thrown.expect(IllegalStateException.class);
+		thrown.expect(ClientProxyException.class);
+		thrown.expectMessage("one of subtypes or typeResolver must be specified");
 	
 		resolver.resolveType(TypeWithUnderspecifiedInfo.class, new Links(), Configuration.build());
 	}
 	
 	@Test
 	public void resolveTypeWithOverspecifiedResourceTypeInfoThrowsException() {
-		thrown.expect(IllegalStateException.class);
+		thrown.expect(ClientProxyException.class);
+		thrown.expectMessage("one of subtypes or typeResolver must be specified");
 		
 		resolver.resolveType(TypeWithOverspecifiedInfo.class, new Links(), Configuration.build());
 	}
@@ -138,6 +160,26 @@ public class DefaultTypeResolverTest {
 			new Links(new Link("/2/1", Link.REL_SELF)), config);
 		
 		assertThat(type, Matchers.<Class<?>>equalTo(TypeWithSubtypesSubtype2.class));
+	}
+	
+	@Test
+	public void resolveTypeWithNonRemoteResourceSubtypeThrowsException() {
+		thrown.expect(ClientProxyException.class);
+		thrown.expectMessage(TypeWithNonRemoteResourceSubtypeSubtype.class.getName()
+				+ " is not annotated with @RemoteResource");
+		
+		resolver.resolveType(TypeWithNonRemoteResourceSubtype.class,
+				new Links(new Link("/", Link.REL_SELF)), Configuration.build());
+	}
+	
+	@Test
+	public void resolveTypeWithIllegalSubtypeThrowsException() {
+		thrown.expect(ClientProxyException.class);
+		thrown.expectMessage(TypeWithIllegalSubtypeSubtype.class.getName()
+				+ " is not a subtype of " + TypeWithIllegalSubtype.class.getName());
+		
+		resolver.resolveType(TypeWithIllegalSubtype.class,
+				new Links(new Link("/x/1", Link.REL_SELF)), Configuration.build());
 	}
 	
 	@Test

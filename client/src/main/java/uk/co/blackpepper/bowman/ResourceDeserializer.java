@@ -7,11 +7,9 @@ import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.ResourceSupport;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.BeanProperty;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.deser.ContextualDeserializer;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
@@ -32,17 +30,14 @@ class ResourceDeserializer extends StdDeserializer<Resource<?>> implements Conte
 	}
 	
 	@Override
-	public JsonDeserializer<?> createContextual(DeserializationContext ctxt, BeanProperty property)
-		throws JsonMappingException {
-		
+	public JsonDeserializer<?> createContextual(DeserializationContext ctxt, BeanProperty property) {
 		Class<?> resourceContentType = ctxt.getContextualType().getBindings().getTypeParameters().get(0).getRawClass();
+		
 		return new ResourceDeserializer(resourceContentType, typeResolver, configuration);
 	}
 
 	@Override
-	public Resource<?> deserialize(JsonParser p, DeserializationContext ctxt) throws IOException,
-		JsonProcessingException {
-
+	public Resource<?> deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
 		ObjectNode node = p.readValueAs(ObjectNode.class);
 
 		ObjectMapper mapper = (ObjectMapper) p.getCodec();
@@ -51,13 +46,8 @@ class ResourceDeserializer extends StdDeserializer<Resource<?>> implements Conte
 		Links links = new Links(resource.getLinks());
 		
 		Class<?> resourceContentType = typeResolver.resolveType(handledType(), links, configuration);
-		return createResource(resourceContentType, node, links, mapper);
-	}
-	
-	private static <T> Resource<T> createResource(Class<T> contentType, ObjectNode sourceTree,
-		Links links, ObjectMapper mapper) {
 		
-		T content = mapper.convertValue(sourceTree, contentType);
+		Object content = mapper.convertValue(node, resourceContentType);
 		return new Resource<>(content, links);
 	}
 }

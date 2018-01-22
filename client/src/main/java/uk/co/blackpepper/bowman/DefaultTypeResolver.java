@@ -3,14 +3,13 @@ package uk.co.blackpepper.bowman;
 import org.springframework.beans.BeanUtils;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.hateoas.Links;
-import org.springframework.util.Assert;
 
 import uk.co.blackpepper.bowman.annotation.ResourceTypeInfo;
 
 class DefaultTypeResolver implements TypeResolver {
 	
 	@Override
-	public Class<?> resolveType(Class<?> declaredType, Links resourceLinks, Configuration configuration) {
+	public <T> Class<? extends T> resolveType(Class<T> declaredType, Links resourceLinks, Configuration configuration) {
 		
 		ResourceTypeInfo info = AnnotationUtils.findAnnotation(declaredType, ResourceTypeInfo.class);
 		
@@ -20,8 +19,9 @@ class DefaultTypeResolver implements TypeResolver {
 		
 		boolean customTypeResolverIsSpecified = info.typeResolver() != ResourceTypeInfo.NullTypeResolver.class;
 		
-		Assert.state(info.subtypes().length > 0 ^ customTypeResolverIsSpecified,
-			"one of subtypes or typeResolver must be specified");
+		if (!(info.subtypes().length > 0 ^ customTypeResolverIsSpecified)) {
+			throw new ClientProxyException("one of subtypes or typeResolver must be specified");
+		}
 		
 		TypeResolver delegateTypeResolver = customTypeResolverIsSpecified
 			? BeanUtils.instantiate(info.typeResolver())
