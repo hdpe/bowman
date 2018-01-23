@@ -23,6 +23,7 @@ import org.junit.Test;
 import com.google.common.collect.Lists;
 
 import uk.co.blackpepper.bowman.Client;
+import uk.co.blackpepper.bowman.annotation.LinkedResource;
 import uk.co.blackpepper.bowman.test.it.model.SimpleEntity;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -34,6 +35,20 @@ import static org.junit.Assert.assertThat;
 
 public class SimpleEntityIT extends AbstractIT {
 
+	private static class SimpleEntityPatch {
+		
+		private SimpleEntity related;
+		
+		SimpleEntityPatch(SimpleEntity related) {
+			this.related = related;
+		}
+		
+		@LinkedResource
+		public SimpleEntity getRelated() {
+			return related;
+		}
+	}
+	
 	private Client<SimpleEntity> client;
 
 	@Before
@@ -134,5 +149,26 @@ public class SimpleEntityIT extends AbstractIT {
 		
 		assertThat(updated.getId(), is(posted));
 		assertThat(updated.getName(), is("updated"));
+	}
+	
+	@Test
+	public void canPatchEntity() {
+		SimpleEntity entity = new SimpleEntity();
+		entity.setName("x");
+		URI entityUri = client.post(entity);
+		
+		SimpleEntity related = new SimpleEntity();
+		related.setName("y");
+		client.post(related);
+		
+		client.patch(entityUri, new SimpleEntityPatch(related));
+		
+		SimpleEntity updated = client.get(entityUri);
+		
+		assertThat(updated.getName(), is("x"));
+		assertThat(updated.getRelated().getName(), is("y"));
+		
+		// clean up
+		client.patch(entityUri, new SimpleEntityPatch(null));
 	}
 }
