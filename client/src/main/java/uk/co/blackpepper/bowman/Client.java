@@ -138,6 +138,19 @@ public class Client<T> {
 		restOperations.deleteResource(uri);
 	}
 
+	/**
+	 * PATCH (partial update) of the entity at the given URI.
+	 *
+	 * @param uri a URI of the entity to update
+	 * @param patch any type that can be serialized to a set of changes, for example a Map
+	 * @return The patched entity, or null if no response content was returned
+	 */
+	public T patch(URI uri, Object patch) {
+		Resource<T> resource = restOperations.patchResource(uri, patch, entityType);
+
+		return proxyFactory.create(resource, restOperations);
+	}
+
 	private URI getEntityBaseUri() {
 		String path = entityType.getAnnotation(RemoteResource.class).value();
 		

@@ -16,6 +16,8 @@
 package uk.co.blackpepper.bowman;
 
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -96,7 +98,34 @@ public class ClientTest {
 		
 		assertThat(proxy, is(nullValue()));
 	}
+
+	@Test
+	public void patchReturnsProxy() {
+		Entity expected = new Entity();
+		Map<String, String> patch = new HashMap<String, String>();
+
+		Resource<Entity> resource = new Resource<>(new Entity());
+		when(restOperations.patchResource(URI.create("http://www.example.com/1"), patch, Entity.class))
+			.thenReturn(resource);
+		when(proxyFactory.create(resource, restOperations)).thenReturn(expected);
+
+		Entity proxy = client.patch(URI.create("http://www.example.com/1"), patch);
+
+		assertThat(proxy, is(expected));
+	}
 	
+	@Test
+	public void patchReturnsNullWhenRestOperationsReturnsNull() {
+		Map<String, String> patch = new HashMap<String, String>();
+
+		when(restOperations.patchResource(URI.create("http://www.example.com/1"), patch, Entity.class))
+			.thenReturn(null);
+
+		Entity proxy = client.patch(URI.create("http://www.example.com/1"), patch);
+
+		assertThat(proxy, is(nullValue()));
+	}
+
 	@Test
 	public void getAllWithNoArgumentsReturnsProxyIterable() {
 		Entity expected = new Entity();

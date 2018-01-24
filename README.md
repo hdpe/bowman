@@ -131,6 +131,7 @@ Clients support:
 * `getAll(URI location)` - GET all items from the given endpoint
 * `post(T object)` - POST the item to the collection resource
 * `put(T object)` - PUT the item to its resource
+* `patch(URI id, P patch)` - PATCH the item with the given ID with a set of changes
 * `delete(URI id)` - DELETE the item with the given ID
 
 PUT is supported with caveats: there is currently a whole category of Spring Data REST limitations interacting via PUT/PATCH with JPA repositories due to attempts to replace persistent collections and state merge occurring outside of a transaction.
