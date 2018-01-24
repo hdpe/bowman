@@ -93,15 +93,9 @@ class RestOperations {
 	public <T> Resource<T> patchResource(URI uri, Object patch, Class<T> entityType) {
 		ObjectNode node;
 
-		try {
-			node = restTemplate.patchForObject(uri, patch, ObjectNode.class);
-		}
-		catch (HttpClientErrorException exception) {
-			if (exception.getStatusCode() == HttpStatus.NOT_FOUND) {
-				return null;
-			}
-
-			throw exception;
+		node = restTemplate.patchForObject(uri, patch, ObjectNode.class);
+		if (node == null) {
+			return null;
 		}
 
 		JavaType targetType = objectMapper.getTypeFactory().constructParametricType(Resource.class, entityType);

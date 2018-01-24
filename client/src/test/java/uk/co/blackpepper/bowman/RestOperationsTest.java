@@ -193,11 +193,11 @@ public class RestOperationsTest {
 	}
 
 	@Test
-	public void patchResourceOnNotFoundHttpClientExceptionReturnsNull() throws Exception {
+	public void patchResourceReturnsNull() throws Exception {
 		Map<String, String> patch = new HashMap<String, String>();
 
 		when(restTemplate.patchForObject(URI.create("http://example.com"), patch, ObjectNode.class))
-			.thenThrow(new HttpClientErrorException(NOT_FOUND));
+			.thenReturn(null);
 
 		Resource<Entity> resource = restOperations.patchResource(URI.create("http://example.com"), patch, Entity.class);
 
@@ -205,10 +205,10 @@ public class RestOperationsTest {
 	}
 
 	@Test
-	public void patchResourceOnOtherHttpClientExceptionThrowsException() throws Exception {
+	public void patchResourceOnHttpClientExceptionThrowsException() throws Exception {
 		Map<String, String> patch = new HashMap<String, String>();
 
-		HttpClientErrorException exception = new HttpClientErrorException(I_AM_A_TEAPOT);
+		HttpClientErrorException exception = new HttpClientErrorException(NOT_FOUND);
 		when(restTemplate.patchForObject(URI.create("http://example.com"), patch, ObjectNode.class))
 			.thenThrow(exception);
 

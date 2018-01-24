@@ -143,7 +143,7 @@ public class Client<T> {
 	 *
 	 * @param uri a URI of the entity to update
 	 * @param patch any type that can be serialized to a set of changes, for example a Map
-	 * @return The patched entity, or null if not found
+	 * @return The patched entity, or null if no response content was returned
 	 */
 	public <P> T patch(URI uri, P patch) {
 		Resource<T> resource = restOperations.patchResource(uri, patch, entityType);
