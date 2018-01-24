@@ -145,7 +145,7 @@ public class Client<T> {
 	 * @param patch any type that can be serialized to a set of changes, for example a Map
 	 * @return The patched entity, or null if no response content was returned
 	 */
-	public <P> T patch(URI uri, P patch) {
+	public T patch(URI uri, Object patch) {
 		Resource<T> resource = restOperations.patchResource(uri, patch, entityType);
 
 		return proxyFactory.create(resource, restOperations);
