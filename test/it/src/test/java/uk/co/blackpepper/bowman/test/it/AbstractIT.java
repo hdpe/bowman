@@ -101,7 +101,7 @@ public class AbstractIT {
 	
 	protected AbstractIT() {
 		clientFactory = Configuration.builder()
-				.setBaseUri(System.getProperty("baseUrl"))
+				.setBaseUri(System.getProperty("baseUrl", "http://localhost:8080"))
 				.setClientHttpRequestFactory(new BufferingClientHttpRequestFactory(
 						new HttpComponentsClientHttpRequestFactory()))
 				.setRestTemplateConfigurer(new RestTemplateConfigurer() {
