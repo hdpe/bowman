@@ -1,36 +1,24 @@
 package uk.co.blackpepper.bowman;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 public class HalSupportTest {
 	
-	private ExpectedException thrown = ExpectedException.none();
-	
-	@Rule
-	public ExpectedException getThrown() {
-		return thrown;
-	}
-	
 	@Test
-	public void toLinkNameWithIsMethodReturnsDecapitalizedString() {
+	public void toLinkNameWithIsMethodReturnsDecapitalizedMethodNameSubstring() {
 		assertThat(HalSupport.toLinkName("isTheProperty"), is("theProperty"));
 	}
 	
 	@Test
-	public void toLinkNameWithGetMethodReturnsDecapitalizedString() {
+	public void toLinkNameWithGetMethodReturnsDecapitalizedMethodNameSubstring() {
 		assertThat(HalSupport.toLinkName("getTheProperty"), is("theProperty"));
 	}
 	
 	@Test
-	public void toLinkNameWithNonAccessorMethodThrowsException() {
-		thrown.expect(IllegalArgumentException.class);
-		thrown.expectMessage("not a bean property getter: nonAccessor");
-		
-		HalSupport.toLinkName("nonAccessor");
+	public void toLinkNameWithOtherMethodReturnsMethodName() {
+		assertThat(HalSupport.toLinkName("aMethod"), is("aMethod"));
 	}
 }

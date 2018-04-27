@@ -27,6 +27,7 @@ import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
 
+import javassist.util.proxy.ProxyFactory;
 import uk.co.blackpepper.bowman.annotation.LinkedResource;
 import uk.co.blackpepper.bowman.annotation.RemoteResource;
 import uk.co.blackpepper.bowman.annotation.ResourceId;
@@ -34,7 +35,11 @@ import uk.co.blackpepper.bowman.annotation.ResourceId;
 import static java.util.Arrays.asList;
 
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -60,7 +65,7 @@ public class JavassistClientProxyFactoryTest {
 		}
 		
 		@LinkedResource
-		public Entity getLinked() {
+		public Entity linked() {
 			return linked;
 		}
 		
@@ -97,6 +102,9 @@ public class JavassistClientProxyFactoryTest {
 		public UnconstructableEntity(Object argument) {
 			// unconstructable due to missing no-args constructor
 		}
+	}
+	
+	public interface InterfaceTypeResource {
 	}
 	
 	private JavassistClientProxyFactory proxyFactory;
@@ -138,7 +146,7 @@ public class JavassistClientProxyFactoryTest {
 		
 		Entity proxy = proxyFactory.create(resource, restOperations);
 		
-		assertThat(proxy.getLinked().getId(), is(URI.create("http://www.example.com/1")));
+		assertThat(proxy.linked().getId(), is(URI.create("http://www.example.com/1")));
 	}
 	
 	@Test
@@ -162,7 +170,7 @@ public class JavassistClientProxyFactoryTest {
 		thrown.expect(ClientProxyException.class);
 		thrown.expectMessage("Link 'linked' could not be found!");
 		
-		entity.getLinked();
+		entity.linked();
 	}
 	
 	@Test
@@ -175,7 +183,7 @@ public class JavassistClientProxyFactoryTest {
 		
 		Entity proxy = proxyFactory.create(resource, restOperations);
 		
-		assertThat(proxy.getLinked(), is(nullValue()));
+		assertThat(proxy.linked(), is(nullValue()));
 	}
 	
 	@Test
@@ -236,10 +244,29 @@ public class JavassistClientProxyFactoryTest {
 	}
 	
 	@Test
+	public void createWithResourceWithProxiedContentReturnsProxy() throws Exception {
+		InterfaceTypeResource content = instantiateProxy(InterfaceTypeResource.class);
+		
+		InterfaceTypeResource resource = proxyFactory.create(new Resource<>(content), mock(RestOperations.class));
+		
+		assertThat(resource, is(allOf(notNullValue(), not(sameInstance(content)))));
+	}
+	
+	@Test
 	public void createWithUnconstructableEntityResourceThrowsException() {
 		thrown.expect(ClientProxyException.class);
 		thrown.expectMessage("couldn't create proxy instance of " + UnconstructableEntity.class);
 		
 		proxyFactory.create(new Resource<>(new UnconstructableEntity(new Object())), mock(RestOperations.class));
+	}
+	
+	private static <T> T instantiateProxy(Class<T> type) throws Exception {
+		ProxyFactory factory = new ProxyFactory();
+		factory.setInterfaces(new Class[] {type});
+		Class clazz = factory.createClass();
+		
+		@SuppressWarnings("unchecked")
+		T result = (T) clazz.newInstance();
+		return result;
 	}
 }

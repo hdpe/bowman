@@ -30,7 +30,7 @@ final class HalSupport {
 			methodName = methodName.substring(3);
 		}
 		else {
-			throw new IllegalArgumentException("not a bean property getter: " + methodName);
+			return methodName;
 		}
 		
 		return Introspector.decapitalize(methodName);

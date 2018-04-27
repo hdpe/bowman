@@ -33,8 +33,6 @@ import javassist.util.proxy.MethodHandler;
 import uk.co.blackpepper.bowman.annotation.LinkedResource;
 import uk.co.blackpepper.bowman.annotation.ResourceId;
 
-import static uk.co.blackpepper.bowman.HalSupport.toLinkName;
-
 @JsonIgnoreType
 class GetterSetterMethodHandler<T> implements MethodHandler {
 	
@@ -76,7 +74,7 @@ class GetterSetterMethodHandler<T> implements MethodHandler {
 			Object linkedResourceResult = linkedResourceResults.get(method.getName());
 			
 			if (linkedResourceResult == null) {
-				linkedResourceResult = resolveLinkedResource(self, method, proceed);
+				linkedResourceResult = resolveLinkedResource(self, method, proceed, args);
 				linkedResourceResults.put(method.getName(), linkedResourceResult);
 			}
 			
@@ -86,17 +84,10 @@ class GetterSetterMethodHandler<T> implements MethodHandler {
 		return method.invoke(resource.getContent(), args);
 	}
 
-	private Object resolveLinkedResource(Object self, Method method, Method proceed)
+	private Object resolveLinkedResource(Object self, Method method, Method proceed, Object[] args)
 			throws IllegalAccessException, InvocationTargetException {
 		
-		String linkName = getLinkName(method);
-		Link link = resource.getLink(linkName);
-		
-		if (link == null) {
-			throw new ClientProxyException(String.format("Link '%s' could not be found!", linkName));
-		}
-		
-		URI associationResource = URI.create(link.getHref());
+		URI associationResource = new MethodLinkUriResolver(resource).resolveForMethod(method, args);
 		
 		if (Collection.class.isAssignableFrom(method.getReturnType())) {
 			Class<?> linkedEntityType = (Class<?>) ((ParameterizedType) method.getGenericReturnType())
@@ -138,16 +129,6 @@ class GetterSetterMethodHandler<T> implements MethodHandler {
 		}
 		
 		return collection;
-	}
-	
-	private static String getLinkName(Method method) {
-		String rel = method.getAnnotation(LinkedResource.class).rel();
-		
-		if ("".equals(rel)) {
-			rel = toLinkName(method.getName());
-		}
-		
-		return rel;
 	}
 
 	private static <T> URI getResourceURI(Resource<T> resource) {

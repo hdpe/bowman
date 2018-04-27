@@ -82,6 +82,28 @@ public class ClientTest {
 		Entity expected = new Entity();
 		
 		Resource<Entity> resource = new Resource<>(new Entity());
+		when(restOperations.getResource(URI.create(BASE_URI + "/entities"), Entity.class)).thenReturn(resource);
+		when(proxyFactory.create(resource, restOperations)).thenReturn(expected);
+		
+		Entity proxy = client.get();
+		
+		assertThat(proxy, is(expected));
+	}
+	
+	@Test
+	public void getReturnsNullWhenRestOperationsReturnsNull() {
+		when(restOperations.getResource(URI.create(BASE_URI + "/entities"), Entity.class)).thenReturn(null);
+		
+		Entity proxy = client.get();
+		
+		assertThat(proxy, is(nullValue()));
+	}
+	
+	@Test
+	public void getWithUriReturnsProxy() {
+		Entity expected = new Entity();
+		
+		Resource<Entity> resource = new Resource<>(new Entity());
 		when(restOperations.getResource(URI.create("http://www.example.com/1"), Entity.class)).thenReturn(resource);
 		when(proxyFactory.create(resource, restOperations)).thenReturn(expected);
 		
@@ -91,7 +113,7 @@ public class ClientTest {
 	}
 	
 	@Test
-	public void getReturnsNullWhenRestOperationsReturnsNull() {
+	public void getWithUriReturnsNullWhenRestOperationsReturnsNull() {
 		when(restOperations.getResource(URI.create("http://www.example.com/1"), Entity.class)).thenReturn(null);
 		
 		Entity proxy = client.get(URI.create("http://www.example.com/1"));

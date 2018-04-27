@@ -16,6 +16,7 @@
 package uk.co.blackpepper.bowman;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 import org.springframework.hateoas.Resource;
 
@@ -23,14 +24,17 @@ import javassist.util.proxy.MethodFilter;
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.Proxy;
 import javassist.util.proxy.ProxyFactory;
+import uk.co.blackpepper.bowman.annotation.LinkedResource;
 
 class JavassistClientProxyFactory implements ClientProxyFactory {
 
 	private static final class GetterSetterMethodFilter implements MethodFilter {
 		@Override
 		public boolean isHandled(Method method) {
-			return method.getName().startsWith("get")
-				|| method.getName().startsWith("is") || method.getName().startsWith("set");
+			return method.isAnnotationPresent(LinkedResource.class)
+				|| method.getName().startsWith("get")
+				|| method.getName().startsWith("is")
+				|| method.getName().startsWith("set");
 		}
 	}
 	
@@ -47,7 +51,12 @@ class JavassistClientProxyFactory implements ClientProxyFactory {
 
 	private static <T> T createProxyInstance(Class<T> entityType, MethodHandler methodHandler) {
 		ProxyFactory factory = new ProxyFactory();
-		factory.setSuperclass(entityType);
+		if (ProxyFactory.isProxyClass(entityType)) {
+			factory.setInterfaces(getNonProxyInterfaces(entityType));
+		}
+		else {
+			factory.setSuperclass(entityType);
+		}
 		factory.setFilter(FILTER_INSTANCE);
 		
 		Class<?> clazz = factory.createClass();
@@ -55,7 +64,13 @@ class JavassistClientProxyFactory implements ClientProxyFactory {
 		((Proxy) proxy).setHandler(methodHandler);
 		return proxy;
 	}
-
+	
+	private static Class[] getNonProxyInterfaces(Class<?> entityType) {
+		return Arrays.stream(entityType.getInterfaces())
+			.filter(i -> !Proxy.class.isAssignableFrom(i))
+			.toArray(Class[]::new);
+	}
+	
 	private static <T> T instantiateClass(Class<?> clazz) {
 		try {
 			@SuppressWarnings("unchecked")

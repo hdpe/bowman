@@ -24,20 +24,26 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 public class ResourceDeserializerTest {
 	
-	private static class DeclaredType {
+	private interface DeclaredType {
 		// no members
 	}
 	
-	private static class ResolvedType extends DeclaredType {
+	private static class ResolvedType implements DeclaredType {
 		
 		private String field;
 
 		public String getField() {
 			return field;
 		}
+	}
+	
+	private interface ResolvedInterfaceType extends DeclaredType {
+		
+		String findField();
 	}
 	
 	@SuppressWarnings("serial")
@@ -71,18 +77,37 @@ public class ResourceDeserializerTest {
 		mapper.registerModule(new Jackson2HalModule());
 		mapper.registerModule(new TestModule());
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		
+		doReturn(Void.class).when(typeResolver).resolveType(any(), any(), any());
+	}
+	
+	@Test
+	public void deserializeResolvesType() throws Exception {
+		mapper.readValue("{\"_links\":{\"self\":{\"href\":\"http://x.com/1\"}}}",
+			new TypeReference<Resource<DeclaredType>>() { /* generic type reference */ });
+		
+		verify(typeResolver).resolveType(DeclaredType.class,
+			new Links(new Link("http://x.com/1", Link.REL_SELF)), configuration);
 	}
 	
 	@Test
 	public void deserializeReturnsObjectOfResolvedType() throws Exception {
-		doReturn(ResolvedType.class).when(typeResolver).resolveType(DeclaredType.class,
-			new Links(new Link("http://x.com/1", Link.REL_SELF)), configuration);
+		doReturn(ResolvedType.class).when(typeResolver).resolveType(any(), any(), any());
 		
-		Resource<DeclaredType> resource = mapper.readValue(
-			"{\"field\":\"x\",\"_links\":{\"self\":{\"href\":\"http://x.com/1\"}}}",
+		Resource<DeclaredType> resource = mapper.readValue("{\"field\":\"x\"}",
 			new TypeReference<Resource<DeclaredType>>() { /* generic type reference */ });
 		
 		assertThat("class", resource.getContent().getClass(), Matchers.<Class<?>>equalTo(ResolvedType.class));
 		assertThat("field", ((ResolvedType) resource.getContent()).getField(), is("x"));
+	}
+	
+	@Test
+	public void deserializeReturnsObjectOfResolvedInterfaceType() throws Exception {
+		doReturn(ResolvedInterfaceType.class).when(typeResolver).resolveType(any(), any(), any());
+		
+		Resource<DeclaredType> resource = mapper.readValue("{}",
+			new TypeReference<Resource<DeclaredType>>() { /* generic type reference */ });
+		
+		assertThat(ResolvedInterfaceType.class.isAssignableFrom(resource.getContent().getClass()), is(true));
 	}
 }

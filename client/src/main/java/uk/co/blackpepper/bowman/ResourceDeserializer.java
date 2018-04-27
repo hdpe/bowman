@@ -15,6 +15,8 @@ import com.fasterxml.jackson.databind.deser.ContextualDeserializer;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import javassist.util.proxy.ProxyFactory;
+
 class ResourceDeserializer extends StdDeserializer<Resource<?>> implements ContextualDeserializer {
 
 	private static final long serialVersionUID = -7290132544264448620L;
@@ -45,9 +47,19 @@ class ResourceDeserializer extends StdDeserializer<Resource<?>> implements Conte
 		ResourceSupport resource = mapper.convertValue(node, ResourceSupport.class);
 		Links links = new Links(resource.getLinks());
 		
+		Object content = mapper.convertValue(node, getResourceDeserializationType(links));
+		return new Resource<>(content, links);
+	}
+	
+	private Class<?> getResourceDeserializationType(Links links) {
 		Class<?> resourceContentType = typeResolver.resolveType(handledType(), links, configuration);
 		
-		Object content = mapper.convertValue(node, resourceContentType);
-		return new Resource<>(content, links);
+		if (resourceContentType.isInterface()) {
+			ProxyFactory factory = new ProxyFactory();
+			factory.setInterfaces(new Class[] {resourceContentType});
+			resourceContentType = factory.createClass();
+		}
+		
+		return resourceContentType;
 	}
 }

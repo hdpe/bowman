@@ -60,6 +60,10 @@ public class Client<T> {
 		this.restOperations = restOperations;
 	}
 	
+	public T get() {
+		return get(getEntityBaseUri());
+	}
+	
 	/**
 	 * GET a single entity located at the given URI. 
 	 * 
