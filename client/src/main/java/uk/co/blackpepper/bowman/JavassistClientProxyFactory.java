@@ -15,41 +15,33 @@
  */
 package uk.co.blackpepper.bowman;
 
-import java.lang.reflect.Method;
 import java.util.Arrays;
 
 import org.springframework.hateoas.Resource;
 
-import javassist.util.proxy.MethodFilter;
-import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.Proxy;
 import javassist.util.proxy.ProxyFactory;
-import uk.co.blackpepper.bowman.annotation.LinkedResource;
+
+import static java.util.Arrays.asList;
 
 class JavassistClientProxyFactory implements ClientProxyFactory {
-
-	private static final class GetterSetterMethodFilter implements MethodFilter {
-		@Override
-		public boolean isHandled(Method method) {
-			return method.isAnnotationPresent(LinkedResource.class)
-				|| method.getName().startsWith("get")
-				|| method.getName().startsWith("is")
-				|| method.getName().startsWith("set");
-		}
-	}
-	
-	private static final MethodFilter FILTER_INSTANCE = new GetterSetterMethodFilter();
 
 	@Override
 	public <T> T create(Resource<T> resource, RestOperations restOperations) {
 		@SuppressWarnings("unchecked")
 		Class<T> entityType = (Class<T>) resource.getContent().getClass();
 		
-		return createProxyInstance(entityType,
-			new GetterSetterMethodHandler<>(resource, restOperations, this));
+		MethodHandlerChain handlerChain = new MethodHandlerChain(asList(
+			new SetterMethodHandler(resource),
+			new ResourceIdMethodHandler(resource),
+			new LinkedResourceMethodHandler(resource, restOperations, this),
+			new GetterMethodHandler(resource)
+		));
+		
+		return createProxyInstance(entityType, handlerChain);
 	}
-
-	private static <T> T createProxyInstance(Class<T> entityType, MethodHandler methodHandler) {
+	
+	private static <T> T createProxyInstance(Class<T> entityType, MethodHandlerChain handlerChain) {
 		ProxyFactory factory = new ProxyFactory();
 		if (ProxyFactory.isProxyClass(entityType)) {
 			factory.setInterfaces(getNonProxyInterfaces(entityType));
@@ -57,11 +49,11 @@ class JavassistClientProxyFactory implements ClientProxyFactory {
 		else {
 			factory.setSuperclass(entityType);
 		}
-		factory.setFilter(FILTER_INSTANCE);
+		factory.setFilter(handlerChain);
 		
 		Class<?> clazz = factory.createClass();
 		T proxy = instantiateClass(clazz);
-		((Proxy) proxy).setHandler(methodHandler);
+		((Proxy) proxy).setHandler(handlerChain);
 		return proxy;
 	}
 	

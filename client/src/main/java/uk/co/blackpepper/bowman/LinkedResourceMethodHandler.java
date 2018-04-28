@@ -1,18 +1,3 @@
-/*
- * Copyright 2016 Black Pepper Software
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package uk.co.blackpepper.bowman;
 
 import java.lang.reflect.InvocationTargetException;
@@ -23,24 +8,16 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreType;
-
-import javassist.util.proxy.MethodHandler;
 import uk.co.blackpepper.bowman.annotation.LinkedResource;
-import uk.co.blackpepper.bowman.annotation.ResourceId;
 
-@JsonIgnoreType
-class GetterSetterMethodHandler<T> implements MethodHandler {
-	
-	private final URI uri;
+class LinkedResourceMethodHandler implements ConditionalMethodHandler {
 	
 	private final RestOperations restOperations;
 
-	private final Resource<T> resource;
+	private final Resource<?> resource;
 	
 	private final ClientProxyFactory proxyFactory;
 	
@@ -48,40 +25,29 @@ class GetterSetterMethodHandler<T> implements MethodHandler {
 	
 	private final Map<String, Object> linkedResourceResults = new HashMap<>();
 	
-	GetterSetterMethodHandler(Resource<T> resource, RestOperations restOperations, ClientProxyFactory proxyFactory) {
-		this.uri = getResourceURI(resource);
+	LinkedResourceMethodHandler(Resource<?> resource, RestOperations restOperations, ClientProxyFactory proxyFactory) {
 		this.resource = resource;
 		this.restOperations = restOperations;
 		this.proxyFactory = proxyFactory;
 	}
-
-	// CHECKSTYLE:OFF
 	
 	@Override
-	public Object invoke(Object self, Method method, Method proceed, Object[] args) throws Throwable {
+	public boolean supports(Method method) {
+		return method.isAnnotationPresent(LinkedResource.class);
+	}
+	
+	@Override
+	public Object invoke(Object self, Method method, Method proceed, Object[] args)
+		throws InvocationTargetException, IllegalAccessException {
 		
-		// CHECKSTYLE:ON
+		Object linkedResourceResult = linkedResourceResults.get(method.getName());
 		
-		if (method.getName().startsWith("set")) {
-			return method.invoke(resource.getContent(), args);
+		if (linkedResourceResult == null) {
+			linkedResourceResult = resolveLinkedResource(self, method, proceed, args);
+			linkedResourceResults.put(method.getName(), linkedResourceResult);
 		}
 		
-		if (method.isAnnotationPresent(ResourceId.class)) {
-			return uri;
-		}
-
-		if (method.isAnnotationPresent(LinkedResource.class)) {
-			Object linkedResourceResult = linkedResourceResults.get(method.getName());
-			
-			if (linkedResourceResult == null) {
-				linkedResourceResult = resolveLinkedResource(self, method, proceed, args);
-				linkedResourceResults.put(method.getName(), linkedResourceResult);
-			}
-			
-			return linkedResourceResult;
-		}
-		
-		return method.invoke(resource.getContent(), args);
+		return linkedResourceResult;
 	}
 
 	private Object resolveLinkedResource(Object self, Method method, Method proceed, Object[] args)
@@ -129,10 +95,5 @@ class GetterSetterMethodHandler<T> implements MethodHandler {
 		}
 		
 		return collection;
-	}
-
-	private static <T> URI getResourceURI(Resource<T> resource) {
-		Link selfLink = resource.getLink(Link.REL_SELF);
-		return selfLink == null ? null : URI.create(selfLink.getHref());
 	}
 }
