@@ -1,6 +1,8 @@
 package uk.co.blackpepper.bowman;
 
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 import org.springframework.hateoas.Resource;
 
@@ -12,6 +14,8 @@ class GetterMethodHandler extends AbstractContentDelegatingMethodHandler {
 	
 	@Override
 	public boolean supports(Method method) {
-		return method.getName().startsWith("get") || method.getName().startsWith("is");
+		return Arrays.stream(getContentBeanInfo().getPropertyDescriptors())
+			.map(PropertyDescriptor::getReadMethod)
+			.anyMatch(method::equals);
 	}
 }
