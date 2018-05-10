@@ -124,6 +124,7 @@
 								<configuration>
 									<systemProperties>
 										<baseUrl>http://localhost:${tomcat.http.port}</baseUrl>
+										<logback.configurationFile>logback-test-quiet.xml</logback.configurationFile>
 									</systemProperties>
 								</configuration>
 							</execution>
