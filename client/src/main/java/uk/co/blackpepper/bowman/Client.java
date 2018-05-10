@@ -60,6 +60,12 @@ public class Client<T> {
 		this.restOperations = restOperations;
 	}
 	
+	/**
+	 * GET a single entity from the entity's base resource (determined by the class's
+	 * {@link uk.co.blackpepper.bowman.annotation.RemoteResource} annotation).
+	 *
+	 * @return the entity, or null if not found
+	 */
 	public T get() {
 		return get(getEntityBaseUri());
 	}
@@ -81,7 +87,7 @@ public class Client<T> {
 	}
 
 	/**
-	 * GET all the entities at the entity's collection resource (determined by the class's
+	 * GET a collection of entities from the entity's base resource (determined by the class's
 	 * {@link uk.co.blackpepper.bowman.annotation.RemoteResource} annotation). 
 	 * 
 	 * @return the entities retrieved
@@ -91,7 +97,7 @@ public class Client<T> {
 	}
 	
 	/**
-	 * GET all the entities at the given URI.
+	 * GET a collection of entities from the given URI.
 	 * 
 	 * @param uri the URI from which to retrieve the entities
 	 * @return the entities retrieved
@@ -109,7 +115,8 @@ public class Client<T> {
 	}
 	
 	/**
-	 * POST the given entity to the entity's collection resource.
+	 * POST the given entity to the entity's base resource (determined by the class's
+	 * {@link uk.co.blackpepper.bowman.annotation.RemoteResource} annotation).
 	 * 
 	 * The entity will be updated with the URI ID the remote service has assigned it.
 	 * 
@@ -125,7 +132,8 @@ public class Client<T> {
 	}
 	
 	/**
-	 * PUT the given entity to the entity's collection resource.
+	 * PUT the given entity to the entity's base resource (determined by the class's
+	 * {@link uk.co.blackpepper.bowman.annotation.RemoteResource} annotation).
 	 *
 	 * @param object the entity to submit
 	 */
