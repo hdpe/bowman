@@ -1,0 +1,109 @@
+= Bowman
+
+image:https://travis-ci.org/BlackPepperSoftware/bowman.svg?branch=master[title=Build Status,link=https://travis-ci.org/BlackPepperSoftware/bowman]
+image:https://coveralls.io/repos/github/BlackPepperSoftware/bowman/badge.svg?branch=master[title=Coverage Status,link=https://coveralls.io/github/BlackPepperSoftware/bowman?branch=master]
+image:https://maven-badges.herokuapp.com/maven-central/uk.co.blackpepper.bowman/bowman-client/badge.svg[title=Maven Central,link=https://maven-badges.herokuapp.com/maven-central/uk.co.blackpepper.bowman/bowman-client]
+
+Bowman is a Java library for accessing a http://stateless.co/hal_specification.html[JSON+HAL] REST API.
+
+== Documentation
+
+* https://blackpeppersoftware.github.io/bowman/latest/reference/[Reference Documentation]
+* https://blackpeppersoftware.github.io/bowman/latest/apidocs/[Javadoc]
+
+== Features
+
+* *Simplified API consumption* via automatic, *lazy link traversal* on an *annotated client-side model*
+* Tailor made for *https://projects.spring.io/spring-data-rest/[Spring Data REST]*
+* *Analogous interface* to JPA
+* *RESTful CRUD* and *templated link query* support
+* *Polymorphic* deserialisation
+
+Standing on the shoulders of http://projects.spring.io/spring-hateoas/[Spring HATEOAS] and https://github.com/FasterXML/jackson[Jackson].
+
+== Usage Example
+
+Given the following annotated model objects:
+
+[source,java]
+----
+@RemoteResource("/people")
+public class Person {
+
+  private URI id;
+  private String name;
+
+  public Person() {}
+  public Person(String name) { this.name = name; }
+
+  @ResourceId public URI getId() { return id; }
+  public String getName() { return name; }
+}
+----
+
+and
+
+[source,java]
+----
+@RemoteResource("/greetings")
+public class Greeting {
+
+  private URI id;
+  private Person recipient;
+  private String message;
+
+  public Greeting() {}
+  public Greeting(String message, Person recipient)
+    { this.message = message; this.recipient = recipient; }
+
+  @ResourceId public URI getId() { return id; }
+  @LinkedResource public Person getRecipient() { return recipient; }
+  public String getMessage() { return message; }
+}
+----
+
+Client instances can be constructed and used as demonstrated below.
+
+The HTTP requests/responses corresponding to each instruction are shown in a comment
+beneath.
+
+[source,java]
+----
+ClientFactory factory = Configuration.builder().setBaseUri("http://...").build()
+    .buildClientFactory();
+
+Client<Person> people = factory.create(Person.class);
+Client<Greeting> greetings = factory.create(Greeting.class);
+
+URI id = people.post(new Person("Bob"));
+// POST /people {"name": "Bob"}
+//  -> Location: http://.../people/1
+
+Person recipient = people.get(id);
+// GET /people/1
+//  -> {"name": "Bob", "_links": {"self": {"href": "http://.../people/1"}}}
+
+assertThat(recipient.getName(), is("Bob"));
+
+id = greetings.post(new Greeting("hello", recipient));
+// POST /greetings {"message": "hello", "recipient": "http://.../people/1"}}
+//  -> Location: http://.../greetings/1
+
+Greeting greeting = greetings.get(id);
+// GET /greetings/1
+//  -> {"message": "hello", "_links": {"self": {"href": "http://.../greetings/1"},
+// 			"recipient": {"href": "http://.../people/1"}}}
+
+assertThat(greeting.getMessage(), is("hello"));
+
+recipient = greeting.getRecipient();
+// GET /people/1
+//  -> {"name": "Bob", "_links": {"self": {"href": {"http://.../people/1"}}}
+
+assertThat(recipient.getName(), is("Bob"));
+----
+
+== Contributing
+
+* link:./development.adoc[Development Guide]
+
