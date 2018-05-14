@@ -1,0 +1,157 @@
+== The Client Model
+
+Bowman requires you to define a client-side model, consisting of entities, and enhanced with annotations to define the remote resources these entities map to and the relationships between them.
+
+=== Entity Types
+
+Bowman supports both concrete class and interface entity types.
+
+==== Concrete Classes
+
+Entity classes have a HAL representation containing JSON properties. Their corresponding classes are assumed to obey Java Bean conventions -- i.e. have zero-arg constructors and private fields with public getters (`get*`/`is*`) and setters (`set*`).
+
+[source,json]
+.JSON+HAL Representation
+----
+{
+  "property": "value",
+  "_links": {
+    "self": "http://www.example.com/entities/1"
+  }
+}
+----
+
+[source,java]
+.Client Model
+----
+class Entity {
+  private URI id;
+  private String property = "value";
+
+  @ResourceId URI getId() { return id; }
+  public String getProperty() { return property; }
+}
+----
+
+==== Interfaces
+
+Entity interfaces have a HAL representation entirely comprised of links.
+
+[source,json]
+.JSON+HAL Representation
+----
+{
+  "_links": {
+    "findByName": "http://www.example.com/related/findByName{?name}"
+  }
+}
+----
+
+[source,java]
+.Client Model
+----
+interface Entity {
+  @LinkedResource Related findByName(String name);
+}
+----
+
+=== Remote Resources
+
+Annotate your entities with `@RemoteResource(path)`, where `path` is the location of the entity's base resource, relative to the base URI set when building the `ClientFactory`.
+
+[source,java]
+@RemoteResource("/things")
+public class Thing { ... }
+
+==== ID Property
+
+Use `@ResourceId` to mark a `java.net.URI` accessor as the resource ID. This is the canonical URI for the resource - its 'self' link.
+
+[source,java]
+----
+private URI id;
+
+@ResourceId public URI getId() { return id; }
+----
+
+==== Value Properties
+
+Simple properties (Strings, primitives) will be mapped to JSON automatically.
+
+==== Linked Resources
+
+Mark a resource as _linked_ with `@LinkedResource` on its accessor. Invoking this accessor will automatically query its associated linked remote resource to populate the model.
+
+[source,java]
+.Concrete Class (Java Bean)
+----
+class Entity {
+  private Related related;
+  private Set<Related> relatedSet = new HashSet<>();
+
+  @LinkedResource public Related getRelated() { return related; }
+  @LinkedResource public Set<Related> getRelatedSet() { return relatedSet; }
+}
+----
+
+[source,java]
+.Interface
+----
+interface Entity {
+  @LinkedResource public Related findByName(String name)
+}
+----
+
+Links in an interface type are assumed to be templated with stringifiable query string parameters of the same names and in the same order as those in the interface method signatures.
+
+The HAL `rel` of a linked resource is assumed to be the same as the method name. You can customise this by setting the `rel` attribute of the `@LinkedResource` annotation:
+
+[source,java]
+@LinkedResource(rel = "my-rel") public Related getRelated() { ... }
+
+==== Inline Resources
+
+Mark a resource as _inline_ with the `InlineAssociationDeserializer` Jackson deserializer. Invoking this accessor will create and return a proxy that is aware of the inline object's links, and so is able to resolve nested linked resources.
+
+[source,java]
+----
+private Related related;
+private Set<Related> relatedSet = new HashSet<>();
+
+@JsonDeserialize(using = InlineAssociationDeserializer.class)
+public Related getRelated() { return related; }
+
+@JsonDeserialize(contentUsing = InlineAssociationDeserializer.class)
+public Set<Related> getRelatedSet() { return relatedSet; }
+----
+
+==== Embedded Resources
+
+Subresources are loaded from the `_embedded` property of a HAL response when querying a collection resource. For single-valued resources, embedded resources are currently disregarded: PRs welcome!
+
+=== Polymorphism
+
+Use `@ResourceTypeInfo` to declare a type's subtypes. On deserialization, the type of the resource will be determined using the `self` link of the resource.
+
+[source,java]
+----
+@ResourceTypeInfo(subtypes = {OneThing.class, AnotherThing.class})
+class Thing { }
+
+class OneThing extends Thing { }
+class AnotherThing extends Thing { }
+----
+
+Alternatively you can register your own `TypeResolver` to provide custom subtype resolution, perhaps using alternative resource links.
+
+[source,java]
+----
+@ResourceTypeInfo(typeResolver = MyTypeResolver.class)
+class Thing { }
+
+class MyTypeResolver implements TypeResolver {
+  Class<?> resolveType(Class<?> declaredType, Links resourceLinks, Configuration configuration) {
+    // own type resolution code here...
+  }
+}
+----

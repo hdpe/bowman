@@ -1,0 +1,71 @@
+== API Usage
+
+Using Bowman requires:
+
+. An annotated client model
+. A configured `ClientFactory`
+. A `Client` created from that factory
+
+A `Client` corresponds to a specific entity type; you will create one `Client` for each entity type that requires _direct_ (without following HAL links) retrieval or manipulation.
+
+=== Factory Instantiation
+
+`ClientFactory` instances are created through `Configuration.builder().getClientFactory()`.
+
+``Client``s are then created from the factory using `ClientFactory.create(clazz)`.
+
+TIP: Both `ClientFactory` and `Client` instances maintain no mutable state and may safely be shared across threads.
+
+=== Factory Configuration
+
+==== Base URI
+
+Set the base URI for the API with `setBaseUri`. Entities' base resources, specified by `@RemoteResource`, will be resolved relative to this.
+
+[source,java]
+ClientFactory factory = Configuration.builder()
+  .setBaseUri("http://www.example.com/my-api-root")
+  .build();
+
+This is often all the ClientFactory configuration you need.
+
+==== Framework Components
+
+Bowman uses Spring's `RestTemplate` and Jackson's `ObjectMapper` under the hood. It may often be necessary to customise these, to support custom serialisation, add authentication headers to the request etc.
+
+[source,java]
+----
+ClientFactory factory = Configuration.builder()
+  .setBaseUri(...)
+  .setRestTemplateConfigurer(...) <1>
+  .setObjectMapperConfigurer(...) <2>
+  .setClientHttpRequestFactory(...) <3>
+  .build();
+----
+<1> Provide custom configuration of the `RestTemplate` via an implementation of `uk.co.blackpepper.bowman.RestTemplateConfigurer`
+<2> Provide custom configuration of the `ObjectMapper` via an implementation of `uk.co.blackpepper.bowman.ObjectMapperConfigurer`
+<3> Provide an implementation of `org.springframework.http.client.ClientHttpRequestFactory`. The default `HttpComponentsClientHttpRequestFactory` is often sufficient, but you may wish to provide a buffering request factory to allow logging of the response body in an interceptor prior to deserialisation.
+
+WARNING: Provided implementations of `ClientHttpRequestFactory` *must* throw an `org.springframework.web.client.HttpClientErrorException` when an HTTP 404 is returned accessing the remote resource.
+
+=== Client Instantiation
+
+Then from your `ClientFactory` you can create a `Client` of the desired type. The _base resource_ of the ``Client``'s API is then determined by its `@RemoteResource` annotation.
+
+[source,java]
+Client<Customer> customers = factory.create(Customer.class);
+
+=== Client API Methods
+
+Clients support:
+
+* `get()` - GET the single entity from the base resource
+* `get(URI id)` - GET the entity with the given ID
+* `getAll()` - GET a collection of entities from the base resource
+* `getAll(URI location)` - GET a collection of entities from the given resource
+* `post(T object)` - POST the entity to the base resource
+* `put(T object)` - PUT the entity to its resource
+* `patch(URI id, P patch)` - PATCH the entity with the given ID with a set of changes
+* `delete(URI id)` - DELETE the entity with the given ID
+
+WARNING: PUT/PATCH are supported with caveats: there is currently a whole category of Spring Data REST limitations interacting via PUT/PATCH with JPA repositories due to attempts to replace persistent collections and state merge occurring outside of a transaction.

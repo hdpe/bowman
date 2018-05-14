@@ -1,0 +1,17 @@
+= Bowman Reference Documentation
+:toc: right
+:icons: font
+
+A simple, model-mapping, link-traversing Java client library for consuming a JSON+HAL REST API.
+
+include::010-overview.adoc[]
+
+include::020-getting-started.adoc[]
+
+include::030-api-usage.adoc[]
+
+include::040-client-model.adoc[]
+
+include::100-faqs.adoc[]
+
+include::500-glossary.adoc[]

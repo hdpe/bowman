@@ -1,4 +1,12 @@
 language: java
 install: true
-script: mvn -s config/settings.ci.xml verify -PrunITs && { [ "${TRAVIS_PULL_REQUEST}" != "false" ] || mvn -s config/settings.ci.xml deploy; }
+script: mvn -s config/settings.ci.xml verify -PgenerateDocs,runITs && { [ "${TRAVIS_PULL_REQUEST}" != "false" ] || mvn -s config/settings.ci.xml deploy; }
 after_success: mvn test jacoco:report coveralls:report -pl :bowman-client
+deploy:
+  provider: pages
+  local-dir: client/target/generated-docs
+  skip-cleanup: true
+  github-token: $GITHUB_TOKEN
+  keep-history: true
+  on:
+    branch: master

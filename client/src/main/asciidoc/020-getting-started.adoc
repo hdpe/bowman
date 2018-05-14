@@ -1,0 +1,108 @@
+== Getting Started
+
+=== Add to Your Project
+
+Add the Maven dependency:
+
+[source,xml]
+[subs="+attributes"]
+<dependency>
+  <groupId>uk.co.blackpepper.bowman</groupId>
+  <artifactId>bowman-client</artifactId>
+  <version>{project-version}</version>
+</dependency>
+
+=== Usage Example
+
+Given the following annotated model objects:
+
+[source,java]
+----
+import uk.co.blackpepper.bowman.annotation.RemoteResource;
+import uk.co.blackpepper.bowman.annotation.ResourceId;
+
+@RemoteResource("/people")
+public class Person {
+
+  private URI id;
+  private String name;
+
+  public Person() {}
+  public Person(String name) { this.name = name; }
+
+  @ResourceId public URI getId() { return id; }
+  public String getName() { return name; }
+}
+----
+
+and
+
+[source,java]
+----
+import uk.co.blackpepper.bowman.annotation.LinkedResource;
+import uk.co.blackpepper.bowman.annotation.RemoteResource;
+import uk.co.blackpepper.bowman.annotation.ResourceId;
+
+@RemoteResource("/greetings")
+public class Greeting {
+
+  private URI id;
+  private Person recipient;
+  private String message;
+
+  public Greeting() {}
+  public Greeting(String message, Person recipient)
+    { this.message = message; this.recipient = recipient; }
+
+  @ResourceId public URI getId() { return id; }
+  @LinkedResource public Person getRecipient() { return recipient; }
+  public String getMessage() { return message; }
+}
+----
+
+Client instances can be constructed and used as demonstrated below.
+
+TIP: The HTTP requests/responses corresponding to each instruction are shown in a comment
+beneath.
+
+[source,java]
+----
+import uk.co.blackpepper.bowman.Client;
+import uk.co.blackpepper.bowman.ClientFactory;
+import uk.co.blackpepper.bowman.Configuration;
+
+...
+
+ClientFactory factory = Configuration.builder().setBaseUri("http://...").build()
+  .buildClientFactory();
+
+Client<Person> people = factory.create(Person.class);
+Client<Greeting> greetings = factory.create(Greeting.class);
+
+URI id = people.post(new Person("Bob"));
+// POST /people {"name": "Bob"}
+//  -> Location: http://.../people/1
+
+Person recipient = people.get(id);
+// GET /people/1
+//  -> {"name": "Bob", "_links": {"self": {"href": "http://.../people/1"}}}
+
+assertThat(recipient.getName(), is("Bob"));
+
+id = greetings.post(new Greeting("hello", recipient));
+// POST /greetings {"message": "hello", "recipient": "http://.../people/1"}}
+//  -> Location: http://.../greetings/1
+
+Greeting greeting = greetings.get(id);
+// GET /greetings/1
+//  -> {"message": "hello", "_links": {"self": {"href": "http://.../greetings/1"},
+// 			"recipient": {"href": "http://.../people/1"}}}
+
+assertThat(greeting.getMessage(), is("hello"));
+
+recipient = greeting.getRecipient();
+// GET /people/1
+//  -> {"name": "Bob", "_links": {"self": {"href": {"http://.../people/1"}}}
+
+assertThat(recipient.getName(), is("Bob"));
+----

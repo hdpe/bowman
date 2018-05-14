@@ -1,0 +1,29 @@
+== FAQs
+
+=== How can I access an API that requires authentication?
+
+For example, you could define an interceptor to send the `Authorization` header with your OAuth access token on each request:
+
+[source,java]
+----
+ClientFactory clientFactory = Configuration.builder()
+  .setRestTemplateConfigurer(new RestTemplateConfigurer() {
+
+    public void configure(RestTemplate restTemplate) {
+
+      restTemplate.getInterceptors().add(new ClientHttpRequestInterceptor() {
+
+        public ClientHttpResponse intercept(HttpRequest request, byte[] body,
+            ClientHttpRequestExecution execution) throws IOException {
+
+          request.getHeaders().add("Authorization", "Bearer youraccesstoken");
+          return execution.execute(request, body);
+        }
+      });
+    }
+  })
+  .buildClientFactory();
+----
+
+You should be able to use Bowman or any other HTTP client library to first get the token from an OAuth https://tools.ietf.org/html/rfc6749#section-4.1.4[access token response] following authorisation.
+

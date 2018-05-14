@@ -1,0 +1,14 @@
+== Overview
+
+Bowman is a Java library for accessing a http://stateless.co/hal_specification.html[JSON+HAL] REST API, supporting the mapping of a client-side
+model to HTTP resources with automatic link traversal into associated resources.
+
+=== Philosophy
+
+The original motivation for this library was to make it easier to write clients for https://projects.spring.io/spring-data-rest/[Spring Data
+REST]-exposed JPA repositories, supporting lazy-loading of associations in a similar style
+to JPA.
+
+Bowman mandates the use of a client-side model -- comprised of _entities_, though separate from the server-side model -- which maps to an API's JSON+HAL representation via annotations. It then enhances the model by creating _proxies_ using Javassist, so that invoking an accessor or query method can transparently retrieve a linked remote resource and add it to the client-side object graph. This can make client code much easier to write and understand.
+
+TIP: See the blog post https://hdpe.me/post/spring-data-rest-hal-client/[Simpler Spring Data REST Clients with Bowman], for the thinking that led to the creation of this library.

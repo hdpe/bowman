@@ -37,6 +37,59 @@
 		</plugins>
 	</build>
 	
+	<profiles>
+		<profile>
+			<id>generateDocs</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.asciidoctor</groupId>
+						<artifactId>asciidoctor-maven-plugin</artifactId>
+						<configuration>
+							<backend>html5</backend>
+							<sourceHighlighter>highlight.js</sourceHighlighter>
+							<attributes>
+								<revnumber>${project.version}</revnumber>
+								<revdate>${maven.build.timestamp}</revdate>
+								<organization>${project.organization.name}</organization>
+								<project-version>${project.version}</project-version>
+							</attributes>
+							<sourceDocumentName>index.adoc</sourceDocumentName>
+						</configuration>
+						<executions>
+							<execution>
+								<id>output-latest-reference</id>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>process-asciidoc</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>target/generated-docs/latest/reference</outputDirectory>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					
+					<plugin>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>output-latest-apidocs</id>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>javadoc</goal>
+								</goals>
+								<configuration>
+									<reportOutputDirectory>target/generated-docs/latest</reportOutputDirectory>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+	
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework</groupId>
