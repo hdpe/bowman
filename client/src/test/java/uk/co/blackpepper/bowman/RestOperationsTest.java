@@ -24,7 +24,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
@@ -32,9 +31,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.DeserializationConfig;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.cfg.HandlerInstantiator;
 import com.fasterxml.jackson.databind.introspect.Annotated;
@@ -100,7 +97,7 @@ public class RestOperationsTest {
 	}
 	
 	@Test
-	public void getResourceOnNotFoundHttpClientExceptionReturnsNull() throws Exception {
+	public void getResourceOnNotFoundHttpClientExceptionReturnsNull() {
 		when(restTemplate.getForObject(URI.create("http://example.com"), ObjectNode.class))
 			.thenThrow(new HttpClientErrorException(NOT_FOUND));
 		
@@ -110,7 +107,7 @@ public class RestOperationsTest {
 	}
 	
 	@Test
-	public void getResourceOnOtherHttpClientExceptionThrowsException() throws Exception {
+	public void getResourceOnOtherHttpClientExceptionThrowsException() {
 		HttpClientErrorException exception = new HttpClientErrorException(I_AM_A_TEAPOT);
 		when(restTemplate.getForObject(URI.create("http://example.com"), ObjectNode.class))
 			.thenThrow(exception);
@@ -132,7 +129,7 @@ public class RestOperationsTest {
 	}
 	
 	@Test
-	public void getResourcesOnNotFoundHttpClientExceptionReturnsEmpty() throws Exception {
+	public void getResourcesOnNotFoundHttpClientExceptionReturnsEmpty() {
 		when(restTemplate.getForObject(URI.create("http://example.com"), ObjectNode.class))
 			.thenThrow(new HttpClientErrorException(NOT_FOUND));
 		
@@ -143,7 +140,7 @@ public class RestOperationsTest {
 	}
 	
 	@Test
-	public void getResourcesOnOtherHttpClientExceptionThrowsException() throws Exception {
+	public void getResourcesOnOtherHttpClientExceptionThrowsException() {
 		HttpClientErrorException exception = new HttpClientErrorException(HttpStatus.I_AM_A_TEAPOT);
 		when(restTemplate.getForObject(URI.create("http://example.com"), ObjectNode.class))
 			.thenThrow(exception);
@@ -154,59 +151,61 @@ public class RestOperationsTest {
 	}
 	
 	@Test
-	public void postObjectReturnsURI() {
+	public void postForIdReturnsId() {
 		Entity entity = new Entity();
 		when(restTemplate.postForLocation(URI.create("http://example.com"), entity))
 			.thenReturn(URI.create("http://example.com/1"));
 		
-		URI id = restOperations.postObject(URI.create("http://example.com"), entity);
+		URI id = restOperations.postForId(URI.create("http://example.com"), entity);
 		
 		assertThat(id, is(URI.create("http://example.com/1")));
 	}
 	
 	@Test
-	public void putObjectPutsObject() {
+	public void putPutsToResource() {
 		Entity entity = new Entity();
-		restOperations.putObject(URI.create("http://example.com/1"), entity);
+		restOperations.put(URI.create("http://example.com/1"), entity);
 		
 		verify(restTemplate).put(URI.create("http://example.com/1"), entity);
 	}
 	
 	@Test
-	public void deleteResourceDeletesResource() {
-		restOperations.deleteResource(URI.create("http://example.com/1"));
+	public void deleteDeletesResource() {
+		restOperations.delete(URI.create("http://example.com/1"));
 		
 		verify(restTemplate).delete(URI.create("http://example.com/1"));
 	}
 
 	@Test
-	public void patchResourceReturnsResource() throws Exception {
-		Map<String, String> patch = new HashMap<String, String>();
+	public void patchForResourceReturnsResource() throws Exception {
+		Map<String, String> patch = new HashMap<>();
 		patch.put("field", "patchedValue");
 
 		when(restTemplate.patchForObject(URI.create("http://example.com"), patch, ObjectNode.class))
 			.thenReturn(createObjectNode("{\"field\":\"patchedValue\"}"));
 
-		Resource<Entity> resource = restOperations.patchResource(URI.create("http://example.com"), patch, Entity.class);
+		Resource<Entity> resource = restOperations.patchForResource(URI.create("http://example.com"), patch,
+			Entity.class);
 
 		assertThat(resource.getContent().getField(), is("patchedValue"));
 	}
 
 	@Test
-	public void patchResourceReturnsNull() throws Exception {
-		Map<String, String> patch = new HashMap<String, String>();
+	public void patchForResourceReturnsNull() {
+		Map<String, String> patch = new HashMap<>();
 
 		when(restTemplate.patchForObject(URI.create("http://example.com"), patch, ObjectNode.class))
 			.thenReturn(null);
 
-		Resource<Entity> resource = restOperations.patchResource(URI.create("http://example.com"), patch, Entity.class);
+		Resource<Entity> resource = restOperations.patchForResource(URI.create("http://example.com"), patch,
+			Entity.class);
 
 		assertThat(resource, is(nullValue()));
 	}
 
 	@Test
-	public void patchResourceOnHttpClientExceptionThrowsException() throws Exception {
-		Map<String, String> patch = new HashMap<String, String>();
+	public void patchForResourceOnHttpClientExceptionThrowsException() {
+		Map<String, String> patch = new HashMap<>();
 
 		HttpClientErrorException exception = new HttpClientErrorException(NOT_FOUND);
 		when(restTemplate.patchForObject(URI.create("http://example.com"), patch, ObjectNode.class))
@@ -214,25 +213,19 @@ public class RestOperationsTest {
 
 		thrown.expect(is(exception));
 
-		restOperations.patchResource(URI.create("http://example.com"), patch, Entity.class);
+		restOperations.patchForResource(URI.create("http://example.com"), patch, Entity.class);
 	}
 
 	private static ResourceDeserializer declaredTypeResourceDeserializer() {
 		TypeResolver declaredTypeTypeResolver = mock(TypeResolver.class);
 		
 		when(declaredTypeTypeResolver.resolveType(any(), any(), any()))
-			.then(new Answer<Class<?>>() {
-			
-				@Override
-				public Class<?> answer(InvocationOnMock invocation) throws Throwable {
-					return invocation.getArgumentAt(0, Class.class);
-				}
-			});
+			.then((Answer<Class<?>>) invocation -> invocation.getArgumentAt(0, Class.class));
 		
 		return new ResourceDeserializer(Object.class, declaredTypeTypeResolver, Configuration.build());
 	}
 	
-	private ObjectNode createObjectNode(String json) throws IOException, JsonParseException, JsonMappingException {
+	private ObjectNode createObjectNode(String json) throws IOException {
 		return objectMapper.readValue(json, ObjectNode.class);
 	}
 }

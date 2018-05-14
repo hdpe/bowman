@@ -55,7 +55,7 @@ public class Client<T> {
 	Client(Class<T> entityType, Configuration configuration, RestOperations restOperations,
 			ClientProxyFactory proxyFactory) {
 		this.entityType = entityType;
-		this.baseUri = configuration.getBaseUri();
+		this.baseUri = getEntityBaseUri(entityType, configuration);
 		this.proxyFactory = proxyFactory;
 		this.restOperations = restOperations;
 	}
@@ -67,7 +67,7 @@ public class Client<T> {
 	 * @return the entity, or null if not found
 	 */
 	public T get() {
-		return get(getEntityBaseUri());
+		return get(baseUri);
 	}
 	
 	/**
@@ -93,7 +93,7 @@ public class Client<T> {
 	 * @return the entities retrieved
 	 */
 	public Iterable<T> getAll() {
-		return getAll(getEntityBaseUri());
+		return getAll(baseUri);
 	}
 	
 	/**
@@ -124,7 +124,7 @@ public class Client<T> {
 	 * @return the URI ID of the newly created remote entity
 	 */
 	public URI post(T object) {
-		URI resourceUri = restOperations.postObject(getEntityBaseUri(), object);
+		URI resourceUri = restOperations.postForId(baseUri, object);
 		
 		setId(object, resourceUri);
 		
@@ -138,7 +138,7 @@ public class Client<T> {
 	 * @param object the entity to submit
 	 */
 	public void put(T object) {
-		restOperations.putObject(getId(object), object);
+		restOperations.put(getId(object), object);
 	}
 
 	/**
@@ -147,7 +147,7 @@ public class Client<T> {
 	 * @param uri a URI of the entity to delete 
 	 */
 	public void delete(URI uri) {
-		restOperations.deleteResource(uri);
+		restOperations.delete(uri);
 	}
 
 	/**
@@ -158,14 +158,18 @@ public class Client<T> {
 	 * @return The patched entity, or null if no response content was returned
 	 */
 	public T patch(URI uri, Object patch) {
-		Resource<T> resource = restOperations.patchResource(uri, patch, entityType);
+		Resource<T> resource = restOperations.patchForResource(uri, patch, entityType);
 
 		return proxyFactory.create(resource, restOperations);
 	}
-
-	private URI getEntityBaseUri() {
+	
+	URI getBaseUri() {
+		return baseUri;
+	}
+	
+	private static URI getEntityBaseUri(Class<?> entityType, Configuration configuration) {
 		String path = entityType.getAnnotation(RemoteResource.class).value();
 		
-		return UriComponentsBuilder.fromUri(baseUri).path(path).build().toUri();
+		return UriComponentsBuilder.fromUri(configuration.getBaseUri()).path(path).build().toUri();
 	}
 }

@@ -4,19 +4,24 @@ import java.net.URI;
 
 import org.junit.Test;
 
+import uk.co.blackpepper.bowman.annotation.RemoteResource;
+
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
-import static org.springframework.test.util.ReflectionTestUtils.getField;
 
 public class ConfigurationTest {
+	
+	@RemoteResource("/y")
+	private static class Entity {
+	}
 	
 	@Test
 	public void buildClientFactoryBuildsFactoryWithConfiguration() {
 		ClientFactory factory = Configuration.builder()
 			.setBaseUri(URI.create("http://x.com")).build().buildClientFactory();
 		
-		Client<Object> client = factory.create(Object.class);
+		Client<Entity> client = factory.create(Entity.class);
 		
-		assertThat((URI) getField(client, "baseUri"), is(URI.create("http://x.com")));
+		assertThat(client.getBaseUri(), is(URI.create("http://x.com/y")));
 	}
 }

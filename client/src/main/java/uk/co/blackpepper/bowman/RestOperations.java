@@ -78,19 +78,19 @@ class RestOperations {
 		return objectMapper.convertValue(node, targetType);
 	}
 	
-	public URI postObject(URI uri, Object object) {
+	public URI postForId(URI uri, Object object) {
 		return restTemplate.postForLocation(uri, object);
 	}
 	
-	public void putObject(URI uri, Object object) {
+	public void put(URI uri, Object object) {
 		restTemplate.put(uri, object);
 	}
 	
-	public void deleteResource(URI uri) {
+	public void delete(URI uri) {
 		restTemplate.delete(uri);
 	}
 	
-	public <T> Resource<T> patchResource(URI uri, Object patch, Class<T> entityType) {
+	public <T> Resource<T> patchForResource(URI uri, Object patch, Class<T> entityType) {
 		ObjectNode node;
 
 		node = restTemplate.patchForObject(uri, patch, ObjectNode.class);

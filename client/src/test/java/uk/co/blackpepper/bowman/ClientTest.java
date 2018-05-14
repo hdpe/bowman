@@ -127,7 +127,7 @@ public class ClientTest {
 		Map<String, String> patch = new HashMap<String, String>();
 
 		Resource<Entity> resource = new Resource<>(new Entity());
-		when(restOperations.patchResource(URI.create("http://www.example.com/1"), patch, Entity.class))
+		when(restOperations.patchForResource(URI.create("http://www.example.com/1"), patch, Entity.class))
 			.thenReturn(resource);
 		when(proxyFactory.create(resource, restOperations)).thenReturn(expected);
 
@@ -140,7 +140,7 @@ public class ClientTest {
 	public void patchReturnsNullWhenRestOperationsReturnsNull() {
 		Map<String, String> patch = new HashMap<String, String>();
 
-		when(restOperations.patchResource(URI.create("http://www.example.com/1"), patch, Entity.class))
+		when(restOperations.patchForResource(URI.create("http://www.example.com/1"), patch, Entity.class))
 			.thenReturn(null);
 
 		Entity proxy = client.patch(URI.create("http://www.example.com/1"), patch);
@@ -165,7 +165,7 @@ public class ClientTest {
 	@Test
 	public void postReturnsId() {
 		Entity entity = new Entity();
-		when(restOperations.postObject(URI.create(BASE_URI + "/entities"), entity)).thenReturn(
+		when(restOperations.postForId(URI.create(BASE_URI + "/entities"), entity)).thenReturn(
 				URI.create("http://www.example.com/1"));
 		
 		URI uri = client.post(entity);
@@ -176,7 +176,7 @@ public class ClientTest {
 	@Test
 	public void postSetsId() {
 		Entity entity = new Entity();
-		when(restOperations.postObject(URI.create(BASE_URI + "/entities"), entity)).thenReturn(
+		when(restOperations.postForId(URI.create(BASE_URI + "/entities"), entity)).thenReturn(
 				URI.create("http://www.example.com/1"));
 		
 		client.post(entity);
@@ -190,13 +190,13 @@ public class ClientTest {
 		
 		client.put(entity);
 		
-		verify(restOperations).putObject(URI.create("http://www.example.com/1"), entity);
+		verify(restOperations).put(URI.create("http://www.example.com/1"), entity);
 	}
 	
 	@Test
 	public void deleteInvokesRestOperations() {
 		client.delete(URI.create("http://www.example.com/1"));
 		
-		verify(restOperations).deleteResource(URI.create("http://www.example.com/1"));
+		verify(restOperations).delete(URI.create("http://www.example.com/1"));
 	}
 }
