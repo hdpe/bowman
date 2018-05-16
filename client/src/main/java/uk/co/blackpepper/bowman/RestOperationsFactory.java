@@ -101,7 +101,7 @@ class RestOperationsFactory {
 
 		private Object findHandlerInstance(Class<?> clazz) {
 			Object handler = handlerMap.get(clazz);
-			return handler != null ? handler : BeanUtils.instantiate(clazz);
+			return handler != null ? handler : BeanUtils.instantiateClass(clazz);
 		}
 	}
 

@@ -30,7 +30,7 @@ import com.fasterxml.jackson.databind.cfg.HandlerInstantiator;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -68,7 +68,7 @@ public class RestOperationsFactoryTest {
 		ObjectMapper mapper = new ObjectMapper();
 		RestTemplate restTemplate = new RestTemplate();
 		
-		when(mapperFactory.create(any(HandlerInstantiator.class))).thenReturn(mapper);
+		when(mapperFactory.create(any())).thenReturn(mapper);
 		when(restTemplateFactory.create(clientHttpRequestFactory, mapper)).thenReturn(restTemplate);
 		
 		RestOperations restOperations = factory.create();
@@ -81,9 +81,8 @@ public class RestOperationsFactoryTest {
 		ObjectMapper mapper = new ObjectMapper();
 		RestTemplate restTemplate = new RestTemplate();
 		
-		when(mapperFactory.create(any(HandlerInstantiator.class))).thenReturn(mapper);
-		when(restTemplateFactory.create(any(ClientHttpRequestFactory.class), any(ObjectMapper.class)))
-			.thenReturn(restTemplate);
+		when(mapperFactory.create(any())).thenReturn(mapper);
+		when(restTemplateFactory.create(any(), any())).thenReturn(restTemplate);
 		
 		factory.create();
 	
@@ -103,8 +102,7 @@ public class RestOperationsFactoryTest {
 				.build();
 		
 		RestTemplate restTemplate = new RestTemplate();
-		when(restTemplateFactory.create(any(ClientHttpRequestFactory.class), any(ObjectMapper.class)))
-			.thenReturn(restTemplate);
+		when(restTemplateFactory.create(any(), any())).thenReturn(restTemplate);
 		
 		new RestOperationsFactory(configuration, proxyFactory, mapperFactory, restTemplateFactory)
 			.create();
@@ -120,8 +118,7 @@ public class RestOperationsFactoryTest {
 			.build();
 		
 		ObjectMapper objectMapper = new ObjectMapper();
-		when(mapperFactory.create(any(HandlerInstantiator.class)))
-			.thenReturn(objectMapper);
+		when(mapperFactory.create(any())).thenReturn(objectMapper);
 		
 		new RestOperationsFactory(configuration, proxyFactory, mapperFactory, restTemplateFactory)
 			.create();

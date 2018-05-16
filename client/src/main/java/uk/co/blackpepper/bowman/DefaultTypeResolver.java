@@ -24,7 +24,7 @@ class DefaultTypeResolver implements TypeResolver {
 		}
 		
 		TypeResolver delegateTypeResolver = customTypeResolverIsSpecified
-			? BeanUtils.instantiate(info.typeResolver())
+			? BeanUtils.instantiateClass(info.typeResolver())
 			: new SelfLinkTypeResolver(info.subtypes());
 		
 		return delegateTypeResolver.resolveType(declaredType, resourceLinks, configuration);

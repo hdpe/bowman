@@ -31,18 +31,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import com.fasterxml.jackson.databind.DeserializationConfig;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.cfg.HandlerInstantiator;
-import com.fasterxml.jackson.databind.introspect.Annotated;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -77,8 +75,8 @@ public class RestOperationsTest {
 	public void setup() {
 		HandlerInstantiator instantiator = mock(HandlerInstantiator.class);
 		
-		doReturn(declaredTypeResourceDeserializer()).when(instantiator).deserializerInstance(
-			any(DeserializationConfig.class), any(Annotated.class), eq(ResourceDeserializer.class));
+		doReturn(declaredTypeResourceDeserializer()).when(instantiator)
+			.deserializerInstance(any(), any(), eq(ResourceDeserializer.class));
 		
 		restTemplate = mock(RestTemplate.class);
 		objectMapper = new DefaultObjectMapperFactory().create(instantiator);
@@ -220,7 +218,7 @@ public class RestOperationsTest {
 		TypeResolver declaredTypeTypeResolver = mock(TypeResolver.class);
 		
 		when(declaredTypeTypeResolver.resolveType(any(), any(), any()))
-			.then((Answer<Class<?>>) invocation -> invocation.getArgumentAt(0, Class.class));
+			.then((Answer<Class<?>>) invocation -> invocation.getArgument(0));
 		
 		return new ResourceDeserializer(Object.class, declaredTypeTypeResolver, Configuration.build());
 	}

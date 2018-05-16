@@ -9,19 +9,17 @@ import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.hal.Jackson2HalModule;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationConfig;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.cfg.HandlerInstantiator;
-import com.fasterxml.jackson.databind.introspect.Annotated;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
 import uk.co.blackpepper.bowman.JacksonClientModule.ResourceMixin;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -69,8 +67,7 @@ public class ResourceDeserializerTest {
 		instantiator = mock(HandlerInstantiator.class);
 		
 		doReturn(new ResourceDeserializer(Object.class, typeResolver, configuration))
-			.when(instantiator).deserializerInstance(any(DeserializationConfig.class),
-					any(Annotated.class), eq(ResourceDeserializer.class));
+			.when(instantiator).deserializerInstance(any(), any(), eq(ResourceDeserializer.class));
 				
 		mapper = new ObjectMapper();
 		mapper.setHandlerInstantiator(instantiator);

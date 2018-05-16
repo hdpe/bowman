@@ -17,7 +17,7 @@ class DefaultPropertyValueFactory implements PropertyValueFactory {
 		Object collection = null;
 		
 		if (Collection.class.isAssignableFrom(collectionType) && !collectionType.isInterface()) {
-			collection = BeanUtils.instantiate(collectionType);
+			collection = BeanUtils.instantiateClass(collectionType);
 		}
 		else if (SortedSet.class.equals(collectionType)) {
 			collection = new TreeSet<>();
