@@ -1,6 +1,7 @@
 = Bowman Reference Documentation
 :toc: right
 :icons: font
+:sectanchors:
 
 A simple, model-mapping, link-traversing Java client library for consuming a JSON+HAL REST API.
 
