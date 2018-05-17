@@ -3,13 +3,13 @@ install: true
 before_script:
   - |
     if [ "$TRAVIS_TAG" != "" ]; then
-      PHASE="site"
+      PHASES="install site"
     elif [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
-      PHASE="verify"
+      PHASES="verify"
     else
-      PHASE="deploy"
+      PHASES="deploy"
     fi
-script: mvn -s config/settings.ci.xml "$PHASE" -PrunITs
+script: mvn -s config/settings.ci.xml $PHASES -PrunITs
 after_success: mvn test jacoco:report coveralls:report -pl :bowman-client
 deploy:
   provider: pages
