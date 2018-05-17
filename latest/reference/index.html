@@ -430,8 +430,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>Bowman Reference Documentation</h1>
 <div class="details">
-<span id="revnumber">version 0.4.1-SNAPSHOT,</span>
-<span id="revdate">2018-05-14T21:42:40Z</span>
+<span id="revnumber">version 0.5.0-RELEASE2,</span>
+<span id="revdate">2018-05-17T16:27:01Z</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -480,14 +480,14 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="sect1">
-<h2 id="_overview">Overview</h2>
+<h2 id="_overview"><a class="anchor" href="#_overview"></a>Overview</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Bowman is a Java library for accessing a <a href="http://stateless.co/hal_specification.html">JSON+HAL</a> REST API, supporting the mapping of a client-side
 model to HTTP resources with automatic link traversal into associated resources.</p>
 </div>
 <div class="sect2">
-<h3 id="_philosophy">Philosophy</h3>
+<h3 id="_philosophy"><a class="anchor" href="#_philosophy"></a>Philosophy</h3>
 <div class="paragraph">
 <p>The original motivation for this library was to make it easier to write clients for <a href="https://projects.spring.io/spring-data-rest/">Spring Data
 REST</a>-exposed JPA repositories, supporting lazy-loading of associations in a similar style
@@ -512,10 +512,10 @@ See the blog post <a href="https://hdpe.me/post/spring-data-rest-hal-client/">Si
 </div>
 </div>
 <div class="sect1">
-<h2 id="_getting_started">Getting Started</h2>
+<h2 id="_getting_started"><a class="anchor" href="#_getting_started"></a>Getting Started</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_add_to_your_project">Add to Your Project</h3>
+<h3 id="_add_to_your_project"><a class="anchor" href="#_add_to_your_project"></a>Add to Your Project</h3>
 <div class="paragraph">
 <p>Add the Maven dependency:</p>
 </div>
@@ -524,13 +524,13 @@ See the blog post <a href="https://hdpe.me/post/spring-data-rest-hal-client/">Si
 <pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
   &lt;groupId&gt;uk.co.blackpepper.bowman&lt;/groupId&gt;
   &lt;artifactId&gt;bowman-client&lt;/artifactId&gt;
-  &lt;version&gt;0.4.1-SNAPSHOT&lt;/version&gt;
+  &lt;version&gt;0.5.0-RELEASE2&lt;/version&gt;
 &lt;/dependency&gt;</code></pre>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_usage_example">Usage Example</h3>
+<h3 id="_usage_example"><a class="anchor" href="#_usage_example"></a>Usage Example</h3>
 <div class="paragraph">
 <p>Given the following annotated model objects:</p>
 </div>
@@ -641,7 +641,7 @@ assertThat(recipient.getName(), is("Bob"));</code></pre>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_api_usage">API Usage</h2>
+<h2 id="_api_usage"><a class="anchor" href="#_api_usage"></a>API Usage</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Using Bowman requires:</p>
@@ -663,7 +663,7 @@ assertThat(recipient.getName(), is("Bob"));</code></pre>
 <p>A <code>Client</code> corresponds to a specific entity type; you will create one <code>Client</code> for each entity type that requires <em>direct</em> (without following HAL links) retrieval or manipulation.</p>
 </div>
 <div class="sect2">
-<h3 id="_factory_instantiation">Factory Instantiation</h3>
+<h3 id="_factory_instantiation"><a class="anchor" href="#_factory_instantiation"></a>Factory Instantiation</h3>
 <div class="paragraph">
 <p><code>ClientFactory</code> instances are created through <code>Configuration.builder().getClientFactory()</code>.</p>
 </div>
@@ -684,9 +684,9 @@ Both <code>ClientFactory</code> and <code>Client</code> instances maintain no mu
 </div>
 </div>
 <div class="sect2">
-<h3 id="_factory_configuration">Factory Configuration</h3>
+<h3 id="_factory_configuration"><a class="anchor" href="#_factory_configuration"></a>Factory Configuration</h3>
 <div class="sect3">
-<h4 id="_base_uri">Base URI</h4>
+<h4 id="_base_uri"><a class="anchor" href="#_base_uri"></a>Base URI</h4>
 <div class="paragraph">
 <p>Set the base URI for the API with <code>setBaseUri</code>. Entities' base resources, specified by <code>@RemoteResource</code>, will be resolved relative to this.</p>
 </div>
@@ -702,7 +702,7 @@ Both <code>ClientFactory</code> and <code>Client</code> instances maintain no mu
 </div>
 </div>
 <div class="sect3">
-<h4 id="_framework_components">Framework Components</h4>
+<h4 id="_framework_components"><a class="anchor" href="#_framework_components"></a>Framework Components</h4>
 <div class="paragraph">
 <p>Bowman uses Spring&#8217;s <code>RestTemplate</code> and Jackson&#8217;s <code>ObjectMapper</code> under the hood. It may often be necessary to customise these, to support custom serialisation, add authentication headers to the request etc.</p>
 </div>
@@ -747,7 +747,7 @@ Provided implementations of <code>ClientHttpRequestFactory</code> <strong>must</
 </div>
 </div>
 <div class="sect2">
-<h3 id="_client_instantiation">Client Instantiation</h3>
+<h3 id="_client_instantiation"><a class="anchor" href="#_client_instantiation"></a>Client Instantiation</h3>
 <div class="paragraph">
 <p>Then from your <code>ClientFactory</code> you can create a <code>Client</code> of the desired type. The <em>base resource</em> of the <code>Client</code>'s API is then determined by its <code>@RemoteResource</code> annotation.</p>
 </div>
@@ -758,7 +758,7 @@ Provided implementations of <code>ClientHttpRequestFactory</code> <strong>must</
 </div>
 </div>
 <div class="sect2">
-<h3 id="_client_api_methods">Client API Methods</h3>
+<h3 id="_client_api_methods"><a class="anchor" href="#_client_api_methods"></a>Client API Methods</h3>
 <div class="paragraph">
 <p>Clients support:</p>
 </div>
@@ -806,18 +806,18 @@ PUT/PATCH are supported with caveats: there is currently a whole category of Spr
 </div>
 </div>
 <div class="sect1">
-<h2 id="_the_client_model">The Client Model</h2>
+<h2 id="_the_client_model"><a class="anchor" href="#_the_client_model"></a>The Client Model</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Bowman requires you to define a client-side model, consisting of entities, and enhanced with annotations to define the remote resources these entities map to and the relationships between them.</p>
 </div>
 <div class="sect2">
-<h3 id="_entity_types">Entity Types</h3>
+<h3 id="_entity_types"><a class="anchor" href="#_entity_types"></a>Entity Types</h3>
 <div class="paragraph">
 <p>Bowman supports both concrete class and interface entity types.</p>
 </div>
 <div class="sect3">
-<h4 id="_concrete_classes">Concrete Classes</h4>
+<h4 id="_concrete_classes"><a class="anchor" href="#_concrete_classes"></a>Concrete Classes</h4>
 <div class="paragraph">
 <p>Entity classes have a HAL representation containing JSON properties. Their corresponding classes are assumed to obey Java Bean conventions&#8201;&#8212;&#8201;i.e. have zero-arg constructors and private fields with public getters (<code>get*</code>/<code>is*</code>) and setters (<code>set*</code>).</p>
 </div>
@@ -846,7 +846,7 @@ PUT/PATCH are supported with caveats: there is currently a whole category of Spr
 </div>
 </div>
 <div class="sect3">
-<h4 id="_interfaces">Interfaces</h4>
+<h4 id="_interfaces"><a class="anchor" href="#_interfaces"></a>Interfaces</h4>
 <div class="paragraph">
 <p>Entity interfaces have a HAL representation entirely comprised of links.</p>
 </div>
@@ -871,7 +871,7 @@ PUT/PATCH are supported with caveats: there is currently a whole category of Spr
 </div>
 </div>
 <div class="sect2">
-<h3 id="_remote_resources">Remote Resources</h3>
+<h3 id="_remote_resources"><a class="anchor" href="#_remote_resources"></a>Remote Resources</h3>
 <div class="paragraph">
 <p>Annotate your entities with <code>@RemoteResource(path)</code>, where <code>path</code> is the location of the entity&#8217;s base resource, relative to the base URI set when building the <code>ClientFactory</code>.</p>
 </div>
@@ -882,7 +882,7 @@ public class Thing { ... }</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_id_property">ID Property</h4>
+<h4 id="_id_property"><a class="anchor" href="#_id_property"></a>ID Property</h4>
 <div class="paragraph">
 <p>Use <code>@ResourceId</code> to mark a <code>java.net.URI</code> accessor as the resource ID. This is the canonical URI for the resource - its 'self' link.</p>
 </div>
@@ -895,13 +895,13 @@ public class Thing { ... }</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_value_properties">Value Properties</h4>
+<h4 id="_value_properties"><a class="anchor" href="#_value_properties"></a>Value Properties</h4>
 <div class="paragraph">
 <p>Simple properties (Strings, primitives) will be mapped to JSON automatically.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_linked_resources">Linked Resources</h4>
+<h4 id="_linked_resources"><a class="anchor" href="#_linked_resources"></a>Linked Resources</h4>
 <div class="paragraph">
 <p>Mark a resource as <em>linked</em> with <code>@LinkedResource</code> on its accessor. Invoking this accessor will automatically query its associated linked remote resource to populate the model.</p>
 </div>
@@ -938,7 +938,7 @@ public class Thing { ... }</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_inline_resources">Inline Resources</h4>
+<h4 id="_inline_resources"><a class="anchor" href="#_inline_resources"></a>Inline Resources</h4>
 <div class="paragraph">
 <p>Mark a resource as <em>inline</em> with the <code>InlineAssociationDeserializer</code> Jackson deserializer. Invoking this accessor will create and return a proxy that is aware of the inline object&#8217;s links, and so is able to resolve nested linked resources.</p>
 </div>
@@ -956,14 +956,14 @@ public Set&lt;Related&gt; getRelatedSet() { return relatedSet; }</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_embedded_resources">Embedded Resources</h4>
+<h4 id="_embedded_resources"><a class="anchor" href="#_embedded_resources"></a>Embedded Resources</h4>
 <div class="paragraph">
 <p>Subresources are loaded from the <code>_embedded</code> property of a HAL response when querying a collection resource. For single-valued resources, embedded resources are currently disregarded: PRs welcome!</p>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_polymorphism">Polymorphism</h3>
+<h3 id="_polymorphism"><a class="anchor" href="#_polymorphism"></a>Polymorphism</h3>
 <div class="paragraph">
 <p>Use <code>@ResourceTypeInfo</code> to declare a type&#8217;s subtypes. On deserialization, the type of the resource will be determined using the <code>self</code> link of the resource.</p>
 </div>
@@ -995,10 +995,10 @@ class MyTypeResolver implements TypeResolver {
 </div>
 </div>
 <div class="sect1">
-<h2 id="_faqs">FAQs</h2>
+<h2 id="_faqs"><a class="anchor" href="#_faqs"></a>FAQs</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_how_can_i_access_an_api_that_requires_authentication">How can I access an API that requires authentication?</h3>
+<h3 id="_how_can_i_access_an_api_that_requires_authentication"><a class="anchor" href="#_how_can_i_access_an_api_that_requires_authentication"></a>How can I access an API that requires authentication?</h3>
 <div class="paragraph">
 <p>For example, you could define an interceptor to send the <code>Authorization</code> header with your OAuth access token on each request:</p>
 </div>
@@ -1030,7 +1030,7 @@ class MyTypeResolver implements TypeResolver {
 </div>
 </div>
 <div class="sect1">
-<h2 id="_glossary">Glossary</h2>
+<h2 id="_glossary"><a class="anchor" href="#_glossary"></a>Glossary</h2>
 <div class="sectionbody">
 <div class="dlist glossary">
 <dl>
@@ -1049,8 +1049,8 @@ class MyTypeResolver implements TypeResolver {
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 0.4.1-SNAPSHOT<br>
-Last updated 2018-05-14 21:42:30 UTC
+Version 0.5.0-RELEASE2<br>
+Last updated 2018-05-17 16:26:50 UTC
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
