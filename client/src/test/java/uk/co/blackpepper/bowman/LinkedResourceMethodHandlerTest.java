@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 
 import org.junit.Test;
 import org.springframework.hateoas.Resource;
+
 import uk.co.blackpepper.bowman.annotation.LinkedResource;
 
 import static org.hamcrest.Matchers.equalTo;
@@ -99,7 +100,7 @@ public class LinkedResourceMethodHandlerTest {
 
 	@SuppressWarnings("ALL")
 	private static class ResourceContent {
-		String something;
+		private String something;
 
 		@LinkedResource
 		public void setSomething(String value) {
@@ -144,5 +145,4 @@ public class LinkedResourceMethodHandlerTest {
 			return null;
 		}
 	}
-
 }
