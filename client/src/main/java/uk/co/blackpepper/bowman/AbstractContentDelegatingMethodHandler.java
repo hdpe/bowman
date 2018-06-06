@@ -3,6 +3,7 @@ package uk.co.blackpepper.bowman;
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.springframework.hateoas.Resource;
@@ -36,11 +37,17 @@ abstract class AbstractContentDelegatingMethodHandler implements ConditionalMeth
 	}
 
 	@Override
-	public Object invoke(Object self, Method method, Method proceed, Object[] args) throws Throwable {
+	public Object invoke(Object self, Method method, Method proceed, Object[] args)
+	throws InvocationTargetException, IllegalAccessException {
+
 		return method.invoke(resource.getContent(), args);
 	}
 	
 	protected BeanInfo getContentBeanInfo() {
 		return contentBeanInfo;
+	}
+
+	protected Resource<?> getResource() {
+		return resource;
 	}
 }
