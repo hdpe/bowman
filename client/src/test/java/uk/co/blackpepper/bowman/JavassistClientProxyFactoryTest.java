@@ -65,7 +65,7 @@ public class JavassistClientProxyFactoryTest {
 		}
 		
 		@LinkedResource
-		public Entity linked() {
+		public Entity getLinked() {
 			return linked;
 		}
 		
@@ -146,7 +146,7 @@ public class JavassistClientProxyFactoryTest {
 		
 		Entity proxy = proxyFactory.create(resource, restOperations);
 		
-		assertThat(proxy.linked().getId(), is(URI.create("http://www.example.com/1")));
+		assertThat(proxy.getLinked().getId(), is(URI.create("http://www.example.com/1")));
 	}
 	
 	@Test
@@ -170,7 +170,7 @@ public class JavassistClientProxyFactoryTest {
 		thrown.expect(ClientProxyException.class);
 		thrown.expectMessage("Link 'linked' could not be found!");
 		
-		entity.linked();
+		entity.getLinked();
 	}
 	
 	@Test
@@ -183,7 +183,7 @@ public class JavassistClientProxyFactoryTest {
 		
 		Entity proxy = proxyFactory.create(resource, restOperations);
 		
-		assertThat(proxy.linked(), is(nullValue()));
+		assertThat(proxy.getLinked(), is(nullValue()));
 	}
 	
 	@Test
