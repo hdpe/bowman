@@ -9,7 +9,6 @@ import org.springframework.hateoas.Resource;
 import uk.co.blackpepper.bowman.annotation.LinkedResource;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
@@ -48,8 +47,6 @@ public class LinkedResourceMethodHandlerTest {
 		final String setterValue = "STRING";
 		final Object setterResult = handler.invoke(resourceContent, setterMethod, null, new String[]{setterValue});
 
-		assertThat(setterResult, is(notNullValue()));
-		assertThat(setterResult, instanceOf(String.class));
 		assertThat(setterValue, equalTo(setterResult));
 
 		final Method getterMethod = findMethod(ResourceContent.class, "getSomething");
@@ -57,8 +54,6 @@ public class LinkedResourceMethodHandlerTest {
 
 		final Object getterResult = handler.invoke(resourceContent, getterMethod, null, null);
 
-		assertThat(getterResult, is(notNullValue()));
-		assertThat(getterResult, instanceOf(String.class));
 		assertThat(getterResult, equalTo(setterResult));
 
 		assertThat(setterValue, equalTo(resourceContent.getSomething()));
