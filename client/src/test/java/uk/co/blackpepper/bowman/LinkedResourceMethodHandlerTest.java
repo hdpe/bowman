@@ -31,34 +31,6 @@ public class LinkedResourceMethodHandlerTest {
 	}
 
 	@Test
-	public void supportsLinkedResourceSetterWithNoParamIsFalse() {
-		assertThat(handler.supports(findMethod(ResourceContent.class, "setNothing")), is(false));
-	}
-
-	@Test
-	public void supportsLinkedResourceVoidGetterIsFalse() {
-		assertThat(handler.supports(findMethod(ResourceContent.class, "getNothing")), is(false));
-	}
-
-	@Test
-	public void supportsLinkedResourceSetterWithReturnValueIsFalse() {
-		assertThat(handler.supports(findMethod(
-				ResourceContent.class, "setSomethingWithReturn", String.class)), is(false));
-	}
-
-	@Test
-	public void supportsLinkedResourceSetterWithMultipleParamsIsFalse() {
-		assertThat(handler.supports(findMethod(
-				ResourceContent.class, "setSomethingWithExtraParam", String.class, String.class)), is(false));
-	}
-
-	@Test
-	public void supportsLinkedResourceGetterWithParamsIsFalse() {
-		assertThat(handler.supports(findMethod(
-				ResourceContent.class, "getSomethingFromParam", String.class)), is(false));
-	}
-
-	@Test
 	public void supportsNonAnnotatedSetterIsFalse() {
 		assertThat(handler.supports(findMethod(ResourceContent.class, "setSomethingElse", String.class)), is(false));
 	}
@@ -110,31 +82,6 @@ public class LinkedResourceMethodHandlerTest {
 		@LinkedResource
 		public String getSomething() {
 			return something;
-		}
-
-		@LinkedResource
-		public void setNothing() {
-			// no-op
-		}
-
-		@LinkedResource
-		public void getNothing() {
-			// no-op
-		}
-
-		@LinkedResource
-		public String setSomethingWithReturn(String value) {
-			return value;
-		}
-
-		@LinkedResource
-		public void setSomethingWithExtraParam(String value, String extraParam) {
-			// no-op
-		}
-
-		@LinkedResource
-		public String getSomethingFromParam(String value) {
-			return value;
 		}
 
 		public void setSomethingElse(String value) {

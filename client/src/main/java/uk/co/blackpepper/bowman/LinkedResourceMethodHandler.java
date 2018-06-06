@@ -34,7 +34,7 @@ class LinkedResourceMethodHandler extends AbstractContentDelegatingMethodHandler
 
 	@Override
 	public boolean supports(Method method) {
-		return method.isAnnotationPresent(LinkedResource.class) && (isSetter(method) || isGetter(method));
+		return method.isAnnotationPresent(LinkedResource.class);
 	}
 
 	@Override
@@ -64,12 +64,6 @@ class LinkedResourceMethodHandler extends AbstractContentDelegatingMethodHandler
 	private boolean isSetter(Method method) {
 		return Arrays.stream(getContentBeanInfo().getPropertyDescriptors())
 				.map(PropertyDescriptor::getWriteMethod)
-				.anyMatch(method::equals);
-	}
-
-	private boolean isGetter(Method method) {
-		return Arrays.stream(getContentBeanInfo().getPropertyDescriptors())
-				.map(PropertyDescriptor::getReadMethod)
 				.anyMatch(method::equals);
 	}
 
