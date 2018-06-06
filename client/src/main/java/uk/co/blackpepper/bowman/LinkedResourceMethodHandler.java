@@ -42,10 +42,10 @@ class LinkedResourceMethodHandler extends AbstractContentDelegatingMethodHandler
 	throws InvocationTargetException, IllegalAccessException {
 		return isSetter(method)
 				? invokeSetter(self, method, proceed, args)
-				: invokeGetter(self, method, proceed, args);
+				: invokeOther(self, method, proceed, args);
 	}
 
-	private Object invokeGetter(Object self, Method method, Method proceed, Object[] args)
+	private Object invokeOther(Object self, Method method, Method proceed, Object[] args)
 	throws InvocationTargetException, IllegalAccessException {
 		if (!linkedResourceResults.containsKey(method.getName())) {
 			linkedResourceResults.put(method.getName(), resolveLinkedResource(self, method, proceed, args));
