@@ -1,6 +1,5 @@
 package uk.co.blackpepper.bowman;
 
-import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -16,7 +15,9 @@ import org.springframework.hateoas.Resources;
 
 import uk.co.blackpepper.bowman.annotation.LinkedResource;
 
-class LinkedResourceMethodHandler extends AbstractContentDelegatingMethodHandler {
+class LinkedResourceMethodHandler extends AbstractPropertyAwareMethodHandler {
+
+	private final Resource resource;
 
 	private final RestOperations restOperations;
 
@@ -26,10 +27,11 @@ class LinkedResourceMethodHandler extends AbstractContentDelegatingMethodHandler
 
 	private final Map<String, Object> linkedResourceResults = new HashMap<>();
 
-	LinkedResourceMethodHandler(Resource<?> resource, RestOperations restOperations, ClientProxyFactory proxyFactory) {
-		super(resource);
+	LinkedResourceMethodHandler(Resource resource, RestOperations restOperations, ClientProxyFactory proxyFactory) {
+		super(resource.getContent().getClass());
 		this.restOperations = restOperations;
 		this.proxyFactory = proxyFactory;
+		this.resource = resource;
 	}
 
 	@Override
@@ -40,31 +42,25 @@ class LinkedResourceMethodHandler extends AbstractContentDelegatingMethodHandler
 	@Override
 	public Object invoke(Object self, Method method, Method proceed, Object[] args)
 	throws InvocationTargetException, IllegalAccessException {
-		return isSetter(method)
-				? invokeSetter(self, method, proceed, args)
-				: invokeOther(self, method, proceed, args);
+		return isSetter(method) ? invokeSetter(method, args) : invokeOther(self, method, proceed, args);
 	}
 
 	private Object invokeOther(Object self, Method method, Method proceed, Object[] args)
 	throws InvocationTargetException, IllegalAccessException {
-		if (!linkedResourceResults.containsKey(method.getName())) {
-			linkedResourceResults.put(method.getName(), resolveLinkedResource(self, method, proceed, args));
+		Object linkedResourceResult = linkedResourceResults.get(method.getName());
+
+		if (linkedResourceResult == null) {
+			linkedResourceResult = resolveLinkedResource(self, method, proceed, args);
+			linkedResourceResults.put(method.getName(), linkedResourceResult);
 		}
-		return linkedResourceResults.get(method.getName());
+
+		return linkedResourceResult;
 	}
 
-	private Object invokeSetter(Object self, Method method, Method proceed, Object[] args)
-	throws InvocationTargetException, IllegalAccessException {
-		super.invoke(self, method, proceed, args);
+	private Object invokeSetter(Method method, Object[] args) {
 		final String getterName = getGetterFromSetter(method).getName();
 		linkedResourceResults.put(getterName, args[0]);
 		return linkedResourceResults.get(getterName);
-	}
-
-	private boolean isSetter(Method method) {
-		return Arrays.stream(getContentBeanInfo().getPropertyDescriptors())
-				.map(PropertyDescriptor::getWriteMethod)
-				.anyMatch(method::equals);
 	}
 
 	private Method getGetterFromSetter(Method method) {
@@ -76,7 +72,7 @@ class LinkedResourceMethodHandler extends AbstractContentDelegatingMethodHandler
 	private Object resolveLinkedResource(Object self, Method method, Method proceed, Object[] args)
 			throws IllegalAccessException, InvocationTargetException {
 		
-		URI associationResource = new MethodLinkUriResolver(getResource()).resolveForMethod(method, args);
+		URI associationResource = new MethodLinkUriResolver(resource).resolveForMethod(method, args);
 		
 		if (Collection.class.isAssignableFrom(method.getReturnType())) {
 			Class<?> linkedEntityType = (Class<?>) ((ParameterizedType) method.getGenericReturnType())
@@ -112,9 +108,9 @@ class LinkedResourceMethodHandler extends AbstractContentDelegatingMethodHandler
 		else {
 			collection.clear();
 		}
-		
-		for (Resource<F> resource : resources) {
-			collection.add(proxyFactory.create(resource, restOperations));
+
+		for (Resource<F> fResource : resources) {
+			collection.add(proxyFactory.create(fResource, restOperations));
 		}
 		
 		return collection;

@@ -55,8 +55,6 @@ public class LinkedResourceMethodHandlerTest {
 		final Object getterResult = handler.invoke(resourceContent, getterMethod, null, null);
 
 		assertThat(getterResult, equalTo(setterResult));
-
-		assertThat(setterValue, equalTo(resourceContent.getSomething()));
 	}
 
 	private LinkedResourceMethodHandler createHandler() {
