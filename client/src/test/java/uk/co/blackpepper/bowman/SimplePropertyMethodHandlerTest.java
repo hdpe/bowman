@@ -10,7 +10,7 @@ import static org.springframework.util.ReflectionUtils.findMethod;
 
 public class SimplePropertyMethodHandlerTest {
 
-	@SuppressWarnings({"EmptyMethod", "SameReturnValue", "unused"})
+	@SuppressWarnings("unused")
 	private static class ResourceContent {
 		
 		public String getThing() {

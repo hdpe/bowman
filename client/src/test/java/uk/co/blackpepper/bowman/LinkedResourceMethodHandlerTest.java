@@ -49,7 +49,7 @@ public class LinkedResourceMethodHandlerTest {
 				new RestOperationsFactory(Configuration.builder().build(), proxyFactory).create(), proxyFactory);
 	}
 
-	@SuppressWarnings({"EmptyMethod", "SameReturnValue", "unused"})
+	@SuppressWarnings("unused")
 	private static class ResourceContent {
 		@LinkedResource
 		public void anyAnnotatedMethod() {
