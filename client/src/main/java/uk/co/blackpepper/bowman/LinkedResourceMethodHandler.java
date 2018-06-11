@@ -36,16 +36,40 @@ class LinkedResourceMethodHandler extends AbstractPropertyAwareMethodHandler {
 
 	@Override
 	public boolean supports(Method method) {
+		if (isSetter(method)) {
+			Method getter = getGetterFromSetter(method);
+			if (getter != null) {
+				return getter.isAnnotationPresent(LinkedResource.class);
+			}
+		}
+
 		return method.isAnnotationPresent(LinkedResource.class);
 	}
 
 	@Override
 	public Object invoke(Object self, Method method, Method proceed, Object[] args)
 	throws InvocationTargetException, IllegalAccessException {
-		return isSetter(method) ? invokeSetter(method, args) : invokeOther(self, method, proceed, args);
+		if (isSetter(method)) {
+			invokeSetterMethod(method, args);
+			return null;
+		}
+		else {
+			return invokeAnnotatedMethod(self, method, proceed, args);
+		}
 	}
 
-	private Object invokeOther(Object self, Method method, Method proceed, Object[] args)
+	private void invokeSetterMethod(Method method, Object[] args) {
+		final String getterName = getGetterFromSetter(method).getName();
+		linkedResourceResults.put(getterName, args[0]);
+	}
+
+	private Method getGetterFromSetter(Method method) {
+		return Arrays.stream(getContentBeanInfo().getPropertyDescriptors())
+				.filter(pd -> method.equals(pd.getWriteMethod()))
+				.collect(Collectors.toList()).get(0).getReadMethod();
+	}
+
+	private Object invokeAnnotatedMethod(Object self, Method method, Method proceed, Object[] args)
 	throws InvocationTargetException, IllegalAccessException {
 		Object linkedResourceResult = linkedResourceResults.get(method.getName());
 
@@ -55,18 +79,6 @@ class LinkedResourceMethodHandler extends AbstractPropertyAwareMethodHandler {
 		}
 
 		return linkedResourceResult;
-	}
-
-	private Object invokeSetter(Method method, Object[] args) {
-		final String getterName = getGetterFromSetter(method).getName();
-		linkedResourceResults.put(getterName, args[0]);
-		return linkedResourceResults.get(getterName);
-	}
-
-	private Method getGetterFromSetter(Method method) {
-		return Arrays.stream(getContentBeanInfo().getPropertyDescriptors())
-				.filter(pd -> method.equals(pd.getWriteMethod()))
-				.collect(Collectors.toList()).get(0).getReadMethod();
 	}
 
 	private Object resolveLinkedResource(Object self, Method method, Method proceed, Object[] args)

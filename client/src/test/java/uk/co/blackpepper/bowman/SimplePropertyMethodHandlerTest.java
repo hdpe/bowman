@@ -8,9 +8,9 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.springframework.util.ReflectionUtils.findMethod;
 
-public class SimplePropertyAwareMethodHandlerTest {
+public class SimplePropertyMethodHandlerTest {
 
-	@SuppressWarnings("ALL")
+	@SuppressWarnings({"EmptyMethod", "SameReturnValue", "unused"})
 	private static class ResourceContent {
 		
 		public String getThing() {
@@ -46,11 +46,11 @@ public class SimplePropertyAwareMethodHandlerTest {
 		}
 	}
 	
-	private SimplePropertyAwareMethodHandler handler;
+	private SimplePropertyMethodHandler handler;
 	
 	@Before
 	public void setUp() {
-		handler = new SimplePropertyAwareMethodHandler(new Resource<>(new ResourceContent()));
+		handler = new SimplePropertyMethodHandler<>(new Resource<>(new ResourceContent()));
 	}
 	
 	@Test

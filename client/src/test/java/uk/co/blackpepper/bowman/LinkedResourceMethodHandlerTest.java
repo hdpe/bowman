@@ -10,7 +10,6 @@ import uk.co.blackpepper.bowman.annotation.LinkedResource;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.springframework.util.ReflectionUtils.findMethod;
 
@@ -20,41 +19,28 @@ public class LinkedResourceMethodHandlerTest {
 	private final LinkedResourceMethodHandler handler = createHandler();
 
 	@Test
-	public void supportsLinkedResourceSetterIsTrue() {
-		assertThat(handler.supports(findMethod(ResourceContent.class, "setSomething", String.class)), is(true));
+	public void supportsAnyAnnotatedMethodIsTrue() {
+		assertThat(handler.supports(findMethod(ResourceContent.class, "anyAnnotatedMethod")), is(true));
 	}
 
 	@Test
-	public void supportsLinkedResourceGetterIsTrue() {
-		assertThat(handler.supports(findMethod(ResourceContent.class, "getSomething")), is(true));
+	public void supportsSetterForAnnotatedGetterIsTrue() {
+		assertThat(handler.supports(findMethod(ResourceContent.class, "setLinkedResource", String.class)), is(true));
 	}
 
 	@Test
-	public void supportsNonAnnotatedSetterIsFalse() {
-		assertThat(handler.supports(findMethod(ResourceContent.class, "setSomethingElse", String.class)), is(false));
-	}
-
-	@Test
-	public void supportsNonAnnotatedGetterIsFalse() {
-		assertThat(handler.supports(findMethod(ResourceContent.class, "getSomethingElse")), is(false));
+	public void supportsNonAnnotatedMethodIsFalse() {
+		assertThat(handler.supports(findMethod(ResourceContent.class, "nonAnnotatedMethod")), is(false));
 	}
 
 	@Test
 	public void invokeSetsAndReturnsSameLinkedResource() throws InvocationTargetException, IllegalAccessException {
-		final Method setterMethod = findMethod(ResourceContent.class, "setSomething", String.class);
-		assertThat(setterMethod, is(notNullValue()));
+		final Method getterMethod = findMethod(ResourceContent.class, "getLinkedResource");
+		final Method setterMethod = findMethod(ResourceContent.class, "setLinkedResource", String.class);
 
-		final String setterValue = "STRING";
-		final Object setterResult = handler.invoke(resourceContent, setterMethod, null, new String[]{setterValue});
+		handler.invoke(resourceContent, setterMethod, null, new String[]{"X"});
 
-		assertThat(setterValue, equalTo(setterResult));
-
-		final Method getterMethod = findMethod(ResourceContent.class, "getSomething");
-		assertThat(getterMethod, is(notNullValue()));
-
-		final Object getterResult = handler.invoke(resourceContent, getterMethod, null, null);
-
-		assertThat(getterResult, equalTo(setterResult));
+		assertThat(handler.invoke(resourceContent, getterMethod, null, null), equalTo("X"));
 	}
 
 	private LinkedResourceMethodHandler createHandler() {
@@ -63,25 +49,23 @@ public class LinkedResourceMethodHandlerTest {
 				new RestOperationsFactory(Configuration.builder().build(), proxyFactory).create(), proxyFactory);
 	}
 
-	@SuppressWarnings("ALL")
+	@SuppressWarnings({"EmptyMethod", "SameReturnValue", "unused"})
 	private static class ResourceContent {
-		private String something;
-
 		@LinkedResource
-		public void setSomething(String value) {
-			something = value;
-		}
-
-		@LinkedResource
-		public String getSomething() {
-			return something;
-		}
-
-		public void setSomethingElse(String value) {
+		public void anyAnnotatedMethod() {
 			// no-op
 		}
 
-		public String getSomethingElse() {
+		@LinkedResource
+		public String getLinkedResource() {
+			return null;
+		}
+
+		public void setLinkedResource(String value) {
+			// no-op
+		}
+
+		public String nonAnnotatedMethod() {
 			return null;
 		}
 	}

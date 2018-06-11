@@ -5,11 +5,11 @@ import java.lang.reflect.Method;
 
 import org.springframework.hateoas.Resource;
 
-class SimplePropertyAwareMethodHandler<T> extends AbstractPropertyAwareMethodHandler {
+class SimplePropertyMethodHandler<T> extends AbstractPropertyAwareMethodHandler {
 
 	private final T content;
 
-	SimplePropertyAwareMethodHandler(Resource<T> resource) {
+	SimplePropertyMethodHandler(Resource<T> resource) {
 		super(resource.getContent().getClass());
 		this.content = resource.getContent();
 	}
