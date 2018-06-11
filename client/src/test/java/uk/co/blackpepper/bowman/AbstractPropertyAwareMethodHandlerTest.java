@@ -8,17 +8,22 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.springframework.hateoas.Resource;
 
-public class AbstractContentDelegatingMethodHandlerTest {
+public class AbstractPropertyAwareMethodHandlerTest {
 	
-	private static class TestMethodHandler extends AbstractContentDelegatingMethodHandler {
+	private static class TestMethodHandler extends AbstractPropertyAwareMethodHandler {
 		
 		TestMethodHandler(Resource<?> resource, BeanInfoProvider beanInfoProvider) {
-			super(resource, beanInfoProvider);
+			super(resource.getContent().getClass(), beanInfoProvider);
 		}
 		
 		@Override
 		public boolean supports(Method method) {
 			return false;
+		}
+
+		@Override
+		public Object invoke(Object o, Method method, Method method1, Object[] objects) {
+			return null;
 		}
 	}
 	

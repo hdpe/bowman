@@ -171,4 +171,26 @@ public class SimpleEntityIT extends AbstractIT {
 		// clean up
 		client.patch(entityUri, new SimpleEntityPatch(null));
 	}
+
+	@Test
+	public void canPatchRetrievedLinkedResourceOfEntity() {
+		SimpleEntity related = new SimpleEntity();
+		related.setName("related");
+		client.post(related);
+
+		SimpleEntity sent = new SimpleEntity();
+		sent.setRelated(related);
+		client.post(sent);
+
+		SimpleEntity retrieved = client.get(sent.getId());
+
+		SimpleEntity related2 = new SimpleEntity();
+		related2.setName("related2");
+		client.post(related2);
+
+		retrieved.setRelated(related2);
+		client.patch(retrieved.getId(), new SimpleEntityPatch(retrieved.getRelated()));
+
+		assertThat(client.get(retrieved.getId()).getRelated().getName(), is("related2"));
+	}
 }
