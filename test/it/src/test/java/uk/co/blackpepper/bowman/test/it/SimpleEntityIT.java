@@ -167,9 +167,6 @@ public class SimpleEntityIT extends AbstractIT {
 		
 		assertThat(updated.getName(), is("x"));
 		assertThat(updated.getRelated().getName(), is("y"));
-		
-		// clean up
-		client.patch(entityUri, new SimpleEntityPatch(null));
 	}
 
 	@Test
