@@ -34,11 +34,11 @@ import uk.co.blackpepper.bowman.annotation.ResourceId;
 
 import static java.util.Arrays.asList;
 
+import static org.hamcrest.CoreMatchers.isA;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
@@ -102,6 +102,9 @@ public class JavassistClientProxyFactoryTest {
 		public UnconstructableEntity(Object argument) {
 			// unconstructable due to missing no-args constructor
 		}
+	}
+	
+	public abstract static class AbstractClassTypeResource {
 	}
 	
 	public interface InterfaceTypeResource {
@@ -244,12 +247,21 @@ public class JavassistClientProxyFactoryTest {
 	}
 	
 	@Test
-	public void createWithResourceWithProxiedContentReturnsProxy() throws Exception {
-		InterfaceTypeResource content = instantiateProxy(InterfaceTypeResource.class);
+	public void createWithResourceWithProxiedAbstractClassContentReturnsProxy() throws Exception {
+		AbstractClassTypeResource content = instantiateProxyOfAbstractClassType(AbstractClassTypeResource.class);
+		
+		AbstractClassTypeResource resource = proxyFactory.create(new Resource<>(content), mock(RestOperations.class));
+		
+		assertThat(resource, is(allOf(isA(AbstractClassTypeResource.class), not(sameInstance(content)))));
+	}
+	
+	@Test
+	public void createWithResourceWithProxiedInterfaceContentReturnsProxy() throws Exception {
+		InterfaceTypeResource content = instantiateProxyOfInterfaceType(InterfaceTypeResource.class);
 		
 		InterfaceTypeResource resource = proxyFactory.create(new Resource<>(content), mock(RestOperations.class));
 		
-		assertThat(resource, is(allOf(notNullValue(), not(sameInstance(content)))));
+		assertThat(resource, is(allOf(isA(InterfaceTypeResource.class), not(sameInstance(content)))));
 	}
 	
 	@Test
@@ -260,11 +272,19 @@ public class JavassistClientProxyFactoryTest {
 		proxyFactory.create(new Resource<>(new UnconstructableEntity(new Object())), mock(RestOperations.class));
 	}
 	
-	private static <T> T instantiateProxy(Class<T> type) throws Exception {
+	private static <T> T instantiateProxyOfAbstractClassType(Class<T> type) throws Exception {
+		ProxyFactory factory = new ProxyFactory();
+		factory.setSuperclass(type);
+		return instantiate(factory.createClass());
+	}
+	
+	private static <T> T instantiateProxyOfInterfaceType(Class<T> type) throws Exception {
 		ProxyFactory factory = new ProxyFactory();
 		factory.setInterfaces(new Class[] {type});
-		Class clazz = factory.createClass();
-		
+		return instantiate(factory.createClass());
+	}
+	
+	private static <T> T instantiate(Class clazz) throws Exception {
 		@SuppressWarnings("unchecked")
 		T result = (T) clazz.newInstance();
 		return result;

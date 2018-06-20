@@ -44,6 +44,7 @@ class JavassistClientProxyFactory implements ClientProxyFactory {
 		ProxyFactory factory = new ProxyFactory();
 		if (ProxyFactory.isProxyClass(entityType)) {
 			factory.setInterfaces(getNonProxyInterfaces(entityType));
+			factory.setSuperclass(entityType.getSuperclass());
 		}
 		else {
 			factory.setSuperclass(entityType);

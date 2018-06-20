@@ -7,6 +7,8 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
+import javassist.util.proxy.ProxyFactory;
+
 abstract class AbstractPropertyAwareMethodHandler implements ConditionalMethodHandler {
 
 	interface BeanInfoProvider {
@@ -21,7 +23,7 @@ abstract class AbstractPropertyAwareMethodHandler implements ConditionalMethodHa
 
 	AbstractPropertyAwareMethodHandler(Class clazz, BeanInfoProvider beanInfoProvider) {
 		try {
-			contentBeanInfo = beanInfoProvider.getBeanInfo(clazz);
+			contentBeanInfo = beanInfoProvider.getBeanInfo(getBeanType(clazz));
 		}
 		catch (IntrospectionException exception) {
 			throw new ClientProxyException(String.format("couldn't determine properties for %s", clazz.getName()),
@@ -43,5 +45,13 @@ abstract class AbstractPropertyAwareMethodHandler implements ConditionalMethodHa
 	
 	BeanInfo getContentBeanInfo() {
 		return contentBeanInfo;
+	}
+	
+	private static Class getBeanType(Class clazz) {
+		if (!ProxyFactory.isProxyClass(clazz)) {
+			return clazz;
+		}
+		
+		return clazz.getSuperclass();
 	}
 }

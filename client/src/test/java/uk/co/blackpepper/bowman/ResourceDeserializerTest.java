@@ -39,6 +39,15 @@ public class ResourceDeserializerTest {
 		}
 	}
 	
+	private abstract static class ResolvedAbstractClassType implements DeclaredType {
+		
+		ResolvedAbstractClassType() {
+			// explicit constructor required for private class
+		}
+		
+		abstract String findField();
+	}
+	
 	private interface ResolvedInterfaceType extends DeclaredType {
 		
 		String findField();
@@ -106,5 +115,15 @@ public class ResourceDeserializerTest {
 			new TypeReference<Resource<DeclaredType>>() { /* generic type reference */ });
 		
 		assertThat(ResolvedInterfaceType.class.isAssignableFrom(resource.getContent().getClass()), is(true));
+	}
+
+	@Test
+	public void deserializeReturnsObjectOfResolvedAbstractClassType() throws Exception {
+		doReturn(ResolvedAbstractClassType.class).when(typeResolver).resolveType(any(), any(), any());
+		
+		Resource<DeclaredType> resource = mapper.readValue("{}",
+			new TypeReference<Resource<DeclaredType>>() { /* generic type reference */ });
+		
+		assertThat(ResolvedAbstractClassType.class.isAssignableFrom(resource.getContent().getClass()), is(true));
 	}
 }
