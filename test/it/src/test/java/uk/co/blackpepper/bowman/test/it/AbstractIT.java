@@ -92,6 +92,8 @@ public class AbstractIT {
 	
 	// CHECKSTYLE:OFF
 	
+	protected URI baseUri;
+	
 	protected ClientFactory clientFactory;
 	
 	// CHECKSTYLE:ON
@@ -100,8 +102,10 @@ public class AbstractIT {
 		new CreatedEntityRecordingClientHttpRequestInterceptor();
 	
 	protected AbstractIT() {
+		baseUri = URI.create(System.getProperty("baseUrl", "http://localhost:8080"));
+		
 		clientFactory = Configuration.builder()
-				.setBaseUri(System.getProperty("baseUrl", "http://localhost:8080"))
+				.setBaseUri(baseUri)
 				.setClientHttpRequestFactory(new BufferingClientHttpRequestFactory(
 						new HttpComponentsClientHttpRequestFactory()))
 				.setRestTemplateConfigurer(new RestTemplateConfigurer() {
