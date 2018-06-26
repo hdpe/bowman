@@ -18,7 +18,6 @@ package uk.co.blackpepper.bowman.test.it;
 import java.net.URI;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -67,7 +66,6 @@ public class PagingIT extends AbstractIT {
 	}
 	
 	@Test
-	@Ignore("https://github.com/spring-projects/spring-hateoas/issues/725")
 	public void canGetLinkedResourceFromPage() {
 		PageableEntity related = new PageableEntity();
 		related.setName("related");
