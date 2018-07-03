@@ -15,6 +15,8 @@
  */
 package uk.co.blackpepper.bowman.test.server.repository;
 
+import java.util.List;
+
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
@@ -23,7 +25,8 @@ import uk.co.blackpepper.bowman.test.server.model.SimpleEntity;
 
 @RepositoryRestResource(path = "/simple-entities")
 public interface SimpleEntityRepository extends CrudRepository<SimpleEntity, Integer> {
-	// no additional methods
 	
 	SimpleEntity findByName(@Param("name") String name);
+	
+	List<SimpleEntity> findByNameContaining(@Param("query") String query);
 }
