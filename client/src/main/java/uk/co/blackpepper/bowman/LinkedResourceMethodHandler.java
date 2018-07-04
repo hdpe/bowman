@@ -82,14 +82,13 @@ class LinkedResourceMethodHandler extends AbstractPropertyAwareMethodHandler {
 	}
 
 	private Object resolveLinkedResource(Object self, Method method, Method proceed, Object[] args)
-			throws IllegalAccessException, InvocationTargetException {
-		
+	throws IllegalAccessException, InvocationTargetException {
+
 		URI associationResource = new MethodLinkUriResolver(resource).resolveForMethod(method, args);
-		
+
 		if (Collection.class.isAssignableFrom(method.getReturnType())) {
 			Class<?> linkedEntityType = (Class<?>) ((ParameterizedType) method.getGenericReturnType())
-				.getActualTypeArguments()[0];
-			
+					.getActualTypeArguments()[0];
 			return resolveCollectionLinkedResource(associationResource, linkedEntityType, self, proceed);
 		}
 
@@ -98,33 +97,37 @@ class LinkedResourceMethodHandler extends AbstractPropertyAwareMethodHandler {
 
 	private <F> F resolveSingleLinkedResource(URI associationResource, Class<F> linkedEntityType) {
 		Resource<F> linkedResource = restOperations.getResource(associationResource, linkedEntityType);
-		
+
 		if (linkedResource == null) {
 			return null;
 		}
-		
+
 		return proxyFactory.create(linkedResource, restOperations);
 	}
 
 	private <F> Collection<F> resolveCollectionLinkedResource(URI associationResource, Class<F> linkedEntityType,
 		Object contextEntity, Method originalMethod) throws IllegalAccessException, InvocationTargetException {
-		
+
 		Resources<Resource<F>> resources = restOperations.getResources(associationResource, linkedEntityType);
-		
-		@SuppressWarnings("unchecked")
-		Collection<F> collection = (Collection<F>) originalMethod.invoke(contextEntity);
-		
-		if (collection == null) {
-			collection = propertyValueFactory.createCollection(originalMethod.getReturnType());
+		Collection<F> collection;
+
+		if (originalMethod == null) {
+			collection = propertyValueFactory.createCollection(linkedEntityType);
 		}
 		else {
-			collection.clear();
+			// noinspection unchecked
+			collection = (Collection<F>) originalMethod.invoke(contextEntity);
+			if (collection == null) {
+				collection = propertyValueFactory.createCollection(originalMethod.getReturnType());
+			}
+			else {
+				collection.clear();
+			}
 		}
 
 		for (Resource<F> fResource : resources) {
 			collection.add(proxyFactory.create(fResource, restOperations));
 		}
-		
 		return collection;
 	}
 }
