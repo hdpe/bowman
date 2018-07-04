@@ -89,9 +89,16 @@ class LinkedResourceMethodHandler extends AbstractPropertyAwareMethodHandler {
 		if (Collection.class.isAssignableFrom(method.getReturnType())) {
 			Class<?> linkedEntityType = (Class<?>) ((ParameterizedType) method.getGenericReturnType())
 					.getActualTypeArguments()[0];
-			return resolveCollectionLinkedResource(associationResource, linkedEntityType, self, proceed);
-		}
 
+			if (proceed == null) {
+				return createCollectionOfLinkedResource(getLinkedResources(associationResource,
+						linkedEntityType), method);
+			}
+			else {
+				return createCollectionOfLinkedResource(getLinkedResources(associationResource, linkedEntityType),
+						self, proceed);
+			}
+		}
 		return resolveSingleLinkedResource(associationResource, method.getReturnType());
 	}
 
@@ -105,29 +112,34 @@ class LinkedResourceMethodHandler extends AbstractPropertyAwareMethodHandler {
 		return proxyFactory.create(linkedResource, restOperations);
 	}
 
-	private <F> Collection<F> resolveCollectionLinkedResource(URI associationResource, Class<F> linkedEntityType,
-		Object contextEntity, Method originalMethod) throws IllegalAccessException, InvocationTargetException {
+	private <F> Collection<F> createCollectionOfLinkedResource(Resources<Resource<F>> resources, Object contextEntity,
+		Method originalMethod) throws IllegalAccessException, InvocationTargetException {
 
-		Resources<Resource<F>> resources = restOperations.getResources(associationResource, linkedEntityType);
-		Collection<F> collection;
-
-		if (originalMethod == null) {
-			collection = propertyValueFactory.createCollection(linkedEntityType);
+		// noinspection unchecked
+		Collection<F> collection = (Collection<F>) originalMethod.invoke(contextEntity);
+		if (collection == null) {
+			collection = propertyValueFactory.createCollection(originalMethod.getReturnType());
 		}
 		else {
-			// noinspection unchecked
-			collection = (Collection<F>) originalMethod.invoke(contextEntity);
-			if (collection == null) {
-				collection = propertyValueFactory.createCollection(originalMethod.getReturnType());
-			}
-			else {
-				collection.clear();
-			}
+			collection.clear();
 		}
+		return updateCollectionWithLinkedResources(collection, resources);
+	}
 
+	private <F> Collection<F> createCollectionOfLinkedResource(Resources<Resource<F>> resources, Method method) {
+		return updateCollectionWithLinkedResources(
+				propertyValueFactory.createCollection(method.getReturnType()), resources);
+	}
+
+	private <F> Collection<F> updateCollectionWithLinkedResources(Collection<F> collection,
+		Resources<Resource<F>> resources) {
 		for (Resource<F> fResource : resources) {
 			collection.add(proxyFactory.create(fResource, restOperations));
 		}
 		return collection;
+	}
+
+	private <F> Resources<Resource<F>> getLinkedResources(URI associationResource, Class<F> linkedEntityType) {
+		return restOperations.getResources(associationResource, linkedEntityType);
 	}
 }
