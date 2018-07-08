@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -108,6 +109,9 @@ public class JavassistClientProxyFactoryTest {
 	}
 	
 	public interface InterfaceTypeResource {
+		
+		@LinkedResource
+		List<Entity> linked();
 	}
 	
 	private JavassistClientProxyFactory proxyFactory;
@@ -262,6 +266,21 @@ public class JavassistClientProxyFactoryTest {
 		InterfaceTypeResource resource = proxyFactory.create(new Resource<>(content), mock(RestOperations.class));
 		
 		assertThat(resource, is(allOf(isA(InterfaceTypeResource.class), not(sameInstance(content)))));
+	}
+	
+	@Test
+	@Ignore
+	public void createWithResourceWithProxiedInterfaceContentReturnsProxyWithLinkedResources() throws Exception {
+		InterfaceTypeResource content = instantiateProxyOfInterfaceType(InterfaceTypeResource.class);
+		
+		when(restOperations.getResources(URI.create("http://www.example.com/association/linked"),
+			Entity.class)).thenReturn(new Resources<>(asList(new Resource<>(new Entity(),
+			new Link("http://www.example.com/1", Link.REL_SELF)))));
+		
+		InterfaceTypeResource resource = proxyFactory.create(new Resource<>(content,
+			new Link("http://www.example.com/association/linked", "linked")), restOperations);
+		
+		assertThat(resource.linked().get(0).getId(), is(URI.create("http://www.example.com/1")));
 	}
 	
 	@Test
