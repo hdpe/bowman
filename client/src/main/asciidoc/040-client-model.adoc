@@ -4,7 +4,7 @@ Bowman requires you to define a client-side model, consisting of entities, and e
 
 === Entity Types
 
-Bowman supports both concrete class and interface entity types.
+Bowman supports abstract class and interface entity types as well as concrete classes.
 
 ==== Concrete Classes
 
@@ -29,13 +29,46 @@ class Entity {
   private String property = "value";
 
   @ResourceId URI getId() { return id; }
+
   public String getProperty() { return property; }
+  public void setProperty(String property) { this.property = property; }
+}
+----
+
+==== Abstract Classes
+
+It may be more convenient to map read-only linked resources using abstract methods.
+
+[source,json]
+.JSON+HAL Representation
+----
+{
+  "property": "value",
+  "_links": {
+    "self": "http://www.example.com/entities/1",
+    "nextEntity": "http://www.example.com/entitites/1/next"
+  }
+}
+----
+
+[source,java]
+----
+abstract class Entity {
+  private URI id;
+  private String property = "value";
+
+  @ResourceId URI getId() { return id; }
+
+  public String getProperty() { return property; }
+  public void setProperty(String property) { this.property = property; }
+
+  @LinkedResource public abstract Entity nextEntity();
 }
 ----
 
 ==== Interfaces
 
-Entity interfaces have a HAL representation entirely comprised of links.
+If an entity's HAL representation comprises read-only links only, it's probably more convenient to map it using an interface type.
 
 [source,json]
 .JSON+HAL Representation

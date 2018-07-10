@@ -5,4 +5,4 @@ Base resource::
   The remote resource identified as the entrypoint for an entity's API, identified by the entity's `@RemoteResource` annotation. An entity's base resource may be single-valued or collection-valued.
 
 Entity::
-  An artifact within the client-side model. This may correspond to a full or embedded remote resource. Entity types may be concrete classes (Java Beans - when their representation contains data properties) or interfaces (when their representation is purely links).
+  An artifact within the client-side model. This may correspond to a full or embedded remote resource. Entity types may be concrete classes (Java Beans - when their representation contains data properties) or abstract classes or interfaces (useful when their representation contains read-only links).
