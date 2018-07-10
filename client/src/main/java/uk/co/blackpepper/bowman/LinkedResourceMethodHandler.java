@@ -82,23 +82,24 @@ class LinkedResourceMethodHandler extends AbstractPropertyAwareMethodHandler {
 	}
 
 	private Object resolveLinkedResource(Object self, Method method, Method proceed, Object[] args)
-	throws IllegalAccessException, InvocationTargetException {
+			throws IllegalAccessException, InvocationTargetException {
 
 		URI associationResource = new MethodLinkUriResolver(resource).resolveForMethod(method, args);
 
 		if (Collection.class.isAssignableFrom(method.getReturnType())) {
 			Class<?> linkedEntityType = (Class<?>) ((ParameterizedType) method.getGenericReturnType())
-					.getActualTypeArguments()[0];
+				.getActualTypeArguments()[0];
 
 			if (proceed == null) {
-				return createCollectionOfLinkedResource(getLinkedResources(associationResource,
+				return resolveCollectionLinkedResource(getLinkedResources(associationResource,
 						linkedEntityType), method);
 			}
 			else {
-				return createCollectionOfLinkedResource(getLinkedResources(associationResource, linkedEntityType),
+				return resolveCollectionLinkedResource(getLinkedResources(associationResource, linkedEntityType),
 						self, proceed);
 			}
 		}
+
 		return resolveSingleLinkedResource(associationResource, method.getReturnType());
 	}
 
@@ -112,11 +113,12 @@ class LinkedResourceMethodHandler extends AbstractPropertyAwareMethodHandler {
 		return proxyFactory.create(linkedResource, restOperations);
 	}
 
-	private <F> Collection<F> createCollectionOfLinkedResource(Resources<Resource<F>> resources, Object contextEntity,
+	private <F> Collection<F> resolveCollectionLinkedResource(Resources<Resource<F>> resources, Object contextEntity,
 		Method originalMethod) throws IllegalAccessException, InvocationTargetException {
 
-		// noinspection unchecked
+		@SuppressWarnings("unchecked")
 		Collection<F> collection = (Collection<F>) originalMethod.invoke(contextEntity);
+
 		if (collection == null) {
 			collection = propertyValueFactory.createCollection(originalMethod.getReturnType());
 		}
@@ -126,7 +128,7 @@ class LinkedResourceMethodHandler extends AbstractPropertyAwareMethodHandler {
 		return updateCollectionWithLinkedResources(collection, resources);
 	}
 
-	private <F> Collection<F> createCollectionOfLinkedResource(Resources<Resource<F>> resources, Method method) {
+	private <F> Collection<F> resolveCollectionLinkedResource(Resources<Resource<F>> resources, Method method) {
 		return updateCollectionWithLinkedResources(
 				propertyValueFactory.createCollection(method.getReturnType()), resources);
 	}
@@ -136,6 +138,7 @@ class LinkedResourceMethodHandler extends AbstractPropertyAwareMethodHandler {
 		for (Resource<F> fResource : resources) {
 			collection.add(proxyFactory.create(fResource, restOperations));
 		}
+
 		return collection;
 	}
 
