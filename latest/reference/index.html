@@ -430,8 +430,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>Bowman Reference Documentation</h1>
 <div class="details">
-<span id="revnumber">version 0.5.1,</span>
-<span id="revdate">2018-06-11T10:24:52Z</span>
+<span id="revnumber">version 0.6.0,</span>
+<span id="revdate">2018-07-13T12:17:48Z</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -524,7 +524,7 @@ See the blog post <a href="https://hdpe.me/post/spring-data-rest-hal-client/">Si
 <pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
   &lt;groupId&gt;uk.co.blackpepper.bowman&lt;/groupId&gt;
   &lt;artifactId&gt;bowman-client&lt;/artifactId&gt;
-  &lt;version&gt;0.5.1&lt;/version&gt;
+  &lt;version&gt;0.6.0&lt;/version&gt;
 &lt;/dependency&gt;</code></pre>
 </div>
 </div>
@@ -814,7 +814,7 @@ PUT/PATCH are supported with caveats: there is currently a whole category of Spr
 <div class="sect2">
 <h3 id="_entity_types"><a class="anchor" href="#_entity_types"></a>Entity Types</h3>
 <div class="paragraph">
-<p>Bowman supports both concrete class and interface entity types.</p>
+<p>Bowman supports abstract class and interface entity types as well as concrete classes.</p>
 </div>
 <div class="sect3">
 <h4 id="_concrete_classes"><a class="anchor" href="#_concrete_classes"></a>Concrete Classes</h4>
@@ -840,7 +840,42 @@ PUT/PATCH are supported with caveats: there is currently a whole category of Spr
   private String property = "value";
 
   @ResourceId URI getId() { return id; }
+
   public String getProperty() { return property; }
+  public void setProperty(String property) { this.property = property; }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_abstract_classes"><a class="anchor" href="#_abstract_classes"></a>Abstract Classes</h4>
+<div class="paragraph">
+<p>It may be more convenient to map read-only linked resources using abstract methods.</p>
+</div>
+<div class="listingblock">
+<div class="title">JSON+HAL Representation</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "property": "value",
+  "_links": {
+    "self": "http://www.example.com/entities/1",
+    "nextEntity": "http://www.example.com/entitites/1/next"
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">abstract class Entity {
+  private URI id;
+  private String property = "value";
+
+  @ResourceId URI getId() { return id; }
+
+  public String getProperty() { return property; }
+  public void setProperty(String property) { this.property = property; }
+
+  @LinkedResource public abstract Entity nextEntity();
 }</code></pre>
 </div>
 </div>
@@ -848,7 +883,7 @@ PUT/PATCH are supported with caveats: there is currently a whole category of Spr
 <div class="sect3">
 <h4 id="_interfaces"><a class="anchor" href="#_interfaces"></a>Interfaces</h4>
 <div class="paragraph">
-<p>Entity interfaces have a HAL representation entirely comprised of links.</p>
+<p>If an entity&#8217;s HAL representation comprises read-only links only, it&#8217;s probably more convenient to map it using an interface type.</p>
 </div>
 <div class="listingblock">
 <div class="title">JSON+HAL Representation</div>
@@ -1040,7 +1075,7 @@ class MyTypeResolver implements TypeResolver {
 </dd>
 <dt>Entity</dt>
 <dd>
-<p>An artifact within the client-side model. This may correspond to a full or embedded remote resource. Entity types may be concrete classes (Java Beans - when their representation contains data properties) or interfaces (when their representation is purely links).</p>
+<p>An artifact within the client-side model. This may correspond to a full or embedded remote resource. Entity types may be concrete classes (Java Beans - when their representation contains data properties) or abstract classes or interfaces (useful when their representation contains read-only links).</p>
 </dd>
 </dl>
 </div>
@@ -1049,8 +1084,8 @@ class MyTypeResolver implements TypeResolver {
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 0.5.1<br>
-Last updated 2018-06-11 10:24:48 UTC
+Version 0.6.0<br>
+Last updated 2018-07-13 12:17:46 UTC
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
