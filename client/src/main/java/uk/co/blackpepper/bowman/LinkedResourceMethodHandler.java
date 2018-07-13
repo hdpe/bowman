@@ -83,14 +83,21 @@ class LinkedResourceMethodHandler extends AbstractPropertyAwareMethodHandler {
 
 	private Object resolveLinkedResource(Object self, Method method, Method proceed, Object[] args)
 			throws IllegalAccessException, InvocationTargetException {
-		
+
 		URI associationResource = new MethodLinkUriResolver(resource).resolveForMethod(method, args);
-		
+
 		if (Collection.class.isAssignableFrom(method.getReturnType())) {
 			Class<?> linkedEntityType = (Class<?>) ((ParameterizedType) method.getGenericReturnType())
 				.getActualTypeArguments()[0];
-			
-			return resolveCollectionLinkedResource(associationResource, linkedEntityType, self, proceed);
+
+			if (proceed == null) {
+				return resolveCollectionLinkedResource(getLinkedResources(associationResource,
+						linkedEntityType), method);
+			}
+			else {
+				return resolveCollectionLinkedResource(getLinkedResources(associationResource, linkedEntityType),
+						self, proceed);
+			}
 		}
 
 		return resolveSingleLinkedResource(associationResource, method.getReturnType());
@@ -98,33 +105,44 @@ class LinkedResourceMethodHandler extends AbstractPropertyAwareMethodHandler {
 
 	private <F> F resolveSingleLinkedResource(URI associationResource, Class<F> linkedEntityType) {
 		Resource<F> linkedResource = restOperations.getResource(associationResource, linkedEntityType);
-		
+
 		if (linkedResource == null) {
 			return null;
 		}
-		
+
 		return proxyFactory.create(linkedResource, restOperations);
 	}
 
-	private <F> Collection<F> resolveCollectionLinkedResource(URI associationResource, Class<F> linkedEntityType,
-		Object contextEntity, Method originalMethod) throws IllegalAccessException, InvocationTargetException {
-		
-		Resources<Resource<F>> resources = restOperations.getResources(associationResource, linkedEntityType);
-		
+	private <F> Collection<F> resolveCollectionLinkedResource(Resources<Resource<F>> resources, Object contextEntity,
+		Method originalMethod) throws IllegalAccessException, InvocationTargetException {
+
 		@SuppressWarnings("unchecked")
 		Collection<F> collection = (Collection<F>) originalMethod.invoke(contextEntity);
-		
+
 		if (collection == null) {
 			collection = propertyValueFactory.createCollection(originalMethod.getReturnType());
 		}
 		else {
 			collection.clear();
 		}
+		return updateCollectionWithLinkedResources(collection, resources);
+	}
 
+	private <F> Collection<F> resolveCollectionLinkedResource(Resources<Resource<F>> resources, Method method) {
+		return updateCollectionWithLinkedResources(
+				propertyValueFactory.createCollection(method.getReturnType()), resources);
+	}
+
+	private <F> Collection<F> updateCollectionWithLinkedResources(Collection<F> collection,
+		Resources<Resource<F>> resources) {
 		for (Resource<F> fResource : resources) {
 			collection.add(proxyFactory.create(fResource, restOperations));
 		}
-		
+
 		return collection;
+	}
+
+	private <F> Resources<Resource<F>> getLinkedResources(URI associationResource, Class<F> linkedEntityType) {
+		return restOperations.getResources(associationResource, linkedEntityType);
 	}
 }

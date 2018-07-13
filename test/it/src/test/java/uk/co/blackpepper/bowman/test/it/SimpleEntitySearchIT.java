@@ -3,7 +3,6 @@ package uk.co.blackpepper.bowman.test.it;
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import uk.co.blackpepper.bowman.Client;
@@ -53,7 +52,6 @@ public class SimpleEntitySearchIT extends AbstractIT {
 	}
 	
 	@Test
-	@Ignore("https://github.com/BlackPepperSoftware/bowman/issues/25")
 	public void getByInterfaceCollectionValuedTemplateLinkReturnsEntities() {
 		SimpleEntity entity = new SimpleEntity();
 		entity.setName("x");
