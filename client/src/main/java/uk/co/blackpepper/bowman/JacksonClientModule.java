@@ -52,15 +52,16 @@ public class JacksonClientModule extends SimpleModule {
 	private static final long serialVersionUID = 5622234359343391536L;
 
 	@JsonDeserialize(using = ResourceDeserializer.class)
-	abstract static class ResourceMixin extends Resource<Object> {
-
-		ResourceMixin() {
-			super(new Object());
+	abstract static class ResourceMixin {
+		private ResourceMixin() {
 		}
 	}
 	
 	@JsonIgnoreType
-	abstract static class MethodHandlerMixin { }
+	abstract static class MethodHandlerMixin {
+		private MethodHandlerMixin() {
+		}
+	}
 
 	private static class LinkedResourceUriSerializer extends StdSerializer<Object> {
 
