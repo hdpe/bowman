@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.springframework.hateoas.Resource;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreType;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.BeanDescription;
@@ -31,6 +32,7 @@ import com.fasterxml.jackson.databind.ser.BeanPropertyWriter;
 import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
+import javassist.util.proxy.MethodHandler;
 import uk.co.blackpepper.bowman.annotation.LinkedResource;
 
 /**
@@ -39,7 +41,8 @@ import uk.co.blackpepper.bowman.annotation.LinkedResource;
  * <p>Registering this module with an {@link com.fasterxml.jackson.databind.ObjectMapper}
  * will cause properties annotated with {@link LinkedResource} to be serialized as
  * URI strings (single-valued associations) or arrays of URI strings (collection-valued
- * associations).
+ * associations), and properties of type {@link javassist.util.proxy.MethodHandler} to
+ * not be serialized.
  * 
  * @author Ryan Pickett
  * 
@@ -49,13 +52,17 @@ public class JacksonClientModule extends SimpleModule {
 	private static final long serialVersionUID = 5622234359343391536L;
 
 	@JsonDeserialize(using = ResourceDeserializer.class)
-	abstract static class ResourceMixin extends Resource<Object> {
-
-		ResourceMixin() {
-			super(new Object());
+	abstract static class ResourceMixin {
+		private ResourceMixin() {
 		}
 	}
 	
+	@JsonIgnoreType
+	abstract static class MethodHandlerMixin {
+		private MethodHandlerMixin() {
+		}
+	}
+
 	private static class LinkedResourceUriSerializer extends StdSerializer<Object> {
 
 		private static final long serialVersionUID = -5901774722661025524L;
@@ -102,5 +109,6 @@ public class JacksonClientModule extends SimpleModule {
 		});
 		
 		setMixInAnnotation(Resource.class, ResourceMixin.class);
+		setMixInAnnotation(MethodHandler.class, MethodHandlerMixin.class);
 	}
 }

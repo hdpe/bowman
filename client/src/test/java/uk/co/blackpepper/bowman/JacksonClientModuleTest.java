@@ -25,11 +25,13 @@ import org.junit.Test;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import javassist.util.proxy.MethodHandler;
 import uk.co.blackpepper.bowman.annotation.LinkedResource;
 import uk.co.blackpepper.bowman.annotation.RemoteResource;
 import uk.co.blackpepper.bowman.annotation.ResourceId;
 
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
 
 public class JacksonClientModuleTest {
@@ -112,5 +114,17 @@ public class JacksonClientModuleTest {
 		String json = mapper.writeValueAsString(new Entity("x"));
 		
 		assertThat(json, containsString("\"simple\":\"x\""));
+	}
+
+	@Test
+	public void handlerOnJavassistProxyIsNotSerialized() throws Exception {
+		Entity proxy = new Entity("x") {
+			public MethodHandler getHandler() {
+				return null;
+			}
+		};
+		String json = mapper.writeValueAsString(proxy);
+
+		assertThat(json, not(containsString("\"handler\"")));
 	}
 }
