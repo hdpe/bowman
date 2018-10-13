@@ -4,12 +4,9 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreType;
-
 import javassist.util.proxy.MethodFilter;
 import javassist.util.proxy.MethodHandler;
 
-@JsonIgnoreType
 class MethodHandlerChain implements MethodHandler, MethodFilter {
 	
 	private List<ConditionalMethodHandler> delegateHandlers;
