@@ -52,6 +52,14 @@ class ResourceDeserializer extends StdDeserializer<Resource<?>> implements Conte
 		return new Resource<>(content, links);
 	}
 	
+	TypeResolver getTypeResolver() {
+		return typeResolver;
+	}
+	
+	Configuration getConfiguration() {
+		return configuration;
+	}
+	
 	private Class<?> getResourceDeserializationType(Links links) {
 		Class<?> resourceContentType = typeResolver.resolveType(handledType(), links, configuration);
 		

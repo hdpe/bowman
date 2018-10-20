@@ -15,19 +15,42 @@
  */
 package uk.co.blackpepper.bowman;
 
+import java.util.List;
+import java.util.function.BiFunction;
+
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.theories.ParameterSignature;
+import org.junit.experimental.theories.ParameterSupplier;
+import org.junit.experimental.theories.ParametersSuppliedBy;
+import org.junit.experimental.theories.PotentialAssignment;
+import org.junit.experimental.theories.Theories;
+import org.junit.experimental.theories.Theory;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.KeyDeserializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.cfg.HandlerInstantiator;
+import com.fasterxml.jackson.databind.jsontype.impl.MinimalClassNameIdResolver;
+import com.fasterxml.jackson.databind.jsontype.impl.StdTypeResolverBuilder;
+import com.fasterxml.jackson.databind.type.SimpleType;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 
+import static java.util.Arrays.asList;
+
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -35,6 +58,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@RunWith(Theories.class)
 public class RestOperationsFactoryTest {
 
 	private RestTemplateFactory restTemplateFactory;
@@ -46,7 +70,9 @@ public class RestOperationsFactoryTest {
 	private ClientHttpRequestFactory clientHttpRequestFactory;
 	
 	private RestOperationsFactory factory;
-
+	
+	private Configuration configuration;
+	
 	@Before
 	public void setup() {
 		restTemplateFactory = mock(RestTemplateFactory.class);
@@ -55,12 +81,15 @@ public class RestOperationsFactoryTest {
 
 		clientHttpRequestFactory = mock(ClientHttpRequestFactory.class);
 		
-		Configuration configuration = Configuration.builder()
+		configuration = Configuration.builder()
 				.setRestTemplateConfigurer(null)
 				.setClientHttpRequestFactory(clientHttpRequestFactory)
 				.build();
 		
 		factory = new RestOperationsFactory(configuration, proxyFactory, mapperFactory, restTemplateFactory);
+		
+		when(mapperFactory.create(any())).thenReturn(new ObjectMapper());
+		when(restTemplateFactory.create(any(), any())).thenReturn(new RestTemplate());
 	}
 	
 	@Test
@@ -73,7 +102,7 @@ public class RestOperationsFactoryTest {
 		
 		RestOperations restOperations = factory.create();
 		
-		assertThat(restOperations, is(aRestOperationsMatching(restTemplate, mapper)));
+		assertThat(restOperations, is(aRestOperationsMatching(is(restTemplate), is(mapper))));
 	}
 	
 	@Test
@@ -88,10 +117,40 @@ public class RestOperationsFactoryTest {
 	
 		ArgumentCaptor<HandlerInstantiator> handlerInstantiator = ArgumentCaptor.forClass(HandlerInstantiator.class);
 		verify(mapperFactory).create(handlerInstantiator.capture());
+		
+		JsonDeserializer<?> result = handlerInstantiator.getValue()
+			.deserializerInstance(null, null, InlineAssociationDeserializer.class);
+		
+		assertThat(result, is(anInlineAssociationDeserializerMatching(
+			aRestOperationsMatching(is(restTemplate), is(mapper)), is(proxyFactory))));
+	}
+	
+	@Test
+	public void createInstantiatesObjectMapperWithResourceDeserializerAwareHandlerInstantiator() {
+		factory.create();
+		
+		ArgumentCaptor<HandlerInstantiator> handlerInstantiator = ArgumentCaptor.forClass(HandlerInstantiator.class);
+		verify(mapperFactory).create(handlerInstantiator.capture());
+		
+		JsonDeserializer<?> result = handlerInstantiator.getValue()
+			.deserializerInstance(null, null, ResourceDeserializer.class);
+		
+		assertThat(result, is(aResourceDeserializerMatching(instanceOf(DefaultTypeResolver.class),
+			is(configuration))));
+	}
+	
+	@Theory
+	public void createInstantiatesObjectMapperWithNonLibraryHandlerAwareHandlerInstantiator(
+		@ParametersSuppliedBy(NonLibraryHandlerTestParams.class) HandlerInstantiatorTestParams params) {
 
-		assertThat(handlerInstantiator.getValue().deserializerInstance(null, null, InlineAssociationDeserializer.class),
-				is(anInlineAssociationDeserializerMatching(aRestOperationsMatching(restTemplate, mapper),
-						proxyFactory)));
+		factory.create();
+		
+		ArgumentCaptor<HandlerInstantiator> handlerInstantiator = ArgumentCaptor.forClass(HandlerInstantiator.class);
+		verify(mapperFactory).create(handlerInstantiator.capture());
+		
+		Object result = params.instantiationMethod.apply(handlerInstantiator.getValue(), params.clazz);
+		
+		assertThat(result, instanceOf(params.clazz));
 	}
 	
 	@Test
@@ -126,14 +185,14 @@ public class RestOperationsFactoryTest {
 		verify(objectMapperConfigurer).configure(objectMapper);
 	}
 
-	private static Matcher<RestOperations> aRestOperationsMatching(final RestTemplate restTemplate,
-			final ObjectMapper mapper) {
+	private static Matcher<RestOperations> aRestOperationsMatching(Matcher<RestTemplate> restTemplate,
+			Matcher<ObjectMapper> mapper) {
 		return new TypeSafeMatcher<RestOperations>() {
 
 			@Override
 			public boolean matchesSafely(RestOperations other) {
-				return restTemplate == other.getRestTemplate()
-						&& mapper == other.getObjectMapper();
+				return restTemplate.matches(other.getRestTemplate())
+						&& mapper.matches(other.getObjectMapper());
 			}
 
 			@Override
@@ -144,9 +203,8 @@ public class RestOperationsFactoryTest {
 		};
 	}
 
-	@SuppressWarnings("rawtypes")
 	private static Matcher<JsonDeserializer> anInlineAssociationDeserializerMatching(
-			final Matcher<RestOperations> restOperations, final ClientProxyFactory proxyFactory) {
+			Matcher<RestOperations> restOperations, Matcher<ClientProxyFactory> proxyFactory) {
 		return new TypeSafeMatcher<JsonDeserializer>() {
 
 			@Override
@@ -158,7 +216,7 @@ public class RestOperationsFactoryTest {
 				InlineAssociationDeserializer other = (InlineAssociationDeserializer) item;
 				
 				return restOperations.matches(other.getRestOperations())
-						&& proxyFactory == other.getProxyFactory();
+						&& proxyFactory.matches(other.getProxyFactory());
 			}
 
 			@Override
@@ -168,5 +226,118 @@ public class RestOperationsFactoryTest {
 					.appendText(", proxyFactory ").appendValue(proxyFactory);
 			}
 		};
+	}
+	
+	private static Matcher<JsonDeserializer> aResourceDeserializerMatching(
+			Matcher<TypeResolver> typeResolver, Matcher<Configuration> configuration) {
+		return new TypeSafeMatcher<JsonDeserializer>() {
+			
+			@Override
+			protected boolean matchesSafely(JsonDeserializer item) {
+				if (!(item instanceof ResourceDeserializer)) {
+					return false;
+				}
+				
+				ResourceDeserializer other = (ResourceDeserializer) item;
+				
+				return typeResolver.matches(other.getTypeResolver())
+					&& configuration.matches(other.getConfiguration());
+			}
+			
+			@Override
+			public void describeTo(Description description) {
+				description.appendText("instanceof ").appendValue(ResourceDeserializer.class)
+					.appendText(", typeResolver ").appendValue(typeResolver)
+					.appendText(", configuration ").appendValue(configuration);
+			}
+		};
+	}
+	
+	private static class HandlerInstantiatorTestParams {
+		
+		private Class<?> clazz;
+		
+		private BiFunction<HandlerInstantiator, Class<?>, Object> instantiationMethod;
+		
+		public HandlerInstantiatorTestParams(Class<?> clazz,
+			BiFunction<HandlerInstantiator, Class<?>, Object> instantiationMethod) {
+			
+			this.clazz = clazz;
+			this.instantiationMethod = instantiationMethod;
+		}
+	}
+	
+	public static class NonLibraryHandlerTestParams extends ParameterSupplier {
+		
+		public NonLibraryHandlerTestParams() {
+		}
+		
+		@Override
+		public List<PotentialAssignment> getValueSources(ParameterSignature sig) {
+			return asList(
+				PotentialAssignment.forValue(
+					"deserializerInstance",
+					new HandlerInstantiatorTestParams(DummyJsonDeserializer.class,
+						(instantiator, clazz) -> instantiator.deserializerInstance(null, null, clazz))
+				),
+				
+				PotentialAssignment.forValue(
+					"keyDeserializerInstance",
+					new HandlerInstantiatorTestParams(DummyKeyDeserializer.class,
+						(instantiator, clazz) -> instantiator.keyDeserializerInstance(null, null, clazz))
+				),
+				
+				PotentialAssignment.forValue(
+					"serializerInstance",
+					new HandlerInstantiatorTestParams(DummySerializer.class,
+						(instantiator, clazz) -> instantiator.serializerInstance(null, null, clazz))
+				),
+				
+				PotentialAssignment.forValue(
+					"typeResolverBuilderInstance",
+					new HandlerInstantiatorTestParams(DummyTypeResolverBuilder.class,
+						(instantiator, clazz) -> instantiator.typeResolverBuilderInstance(null, null, clazz))
+				),
+				
+				PotentialAssignment.forValue(
+					"typeIdResolverInstance",
+					new HandlerInstantiatorTestParams(DummyTypeIdResolver.class,
+						(instantiator, clazz) -> instantiator.typeIdResolverInstance(null, null, clazz))
+				)
+			);
+		}
+	}
+	
+	private static class DummyJsonDeserializer extends JsonDeserializer<Object> {
+		
+		@Override
+		public Object deserialize(JsonParser p, DeserializationContext ctxt) {
+			return null;
+		}
+	}
+	
+	private static class DummyKeyDeserializer extends KeyDeserializer {
+		
+		@Override
+		public Object deserializeKey(String key, DeserializationContext ctxt) {
+			return null;
+		}
+	}
+	
+	private static class DummySerializer extends JsonSerializer<Object> {
+		
+		@Override
+		public void serialize(Object value, JsonGenerator gen, SerializerProvider serializers) {
+		}
+	}
+	
+	private static class DummyTypeResolverBuilder extends StdTypeResolverBuilder {
+	}
+	
+	private static class DummyTypeIdResolver extends MinimalClassNameIdResolver {
+		
+		protected DummyTypeIdResolver() {
+			super(SimpleType.constructUnsafe(Object.class), TypeFactory.defaultInstance());
+		}
 	}
 }
