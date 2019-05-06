@@ -17,6 +17,19 @@ import uk.co.blackpepper.bowman.annotation.LinkedResource;
 
 class LinkedResourceMethodHandler extends AbstractPropertyAwareMethodHandler {
 
+	private static final class LinkedResourceResult {
+		
+		private Object value;
+		
+		LinkedResourceResult(Object value) {
+			this.value = value;
+		}
+		
+		Object getValue() {
+			return value;
+		}
+	}
+	
 	private final Resource resource;
 
 	private final RestOperations restOperations;
@@ -25,7 +38,7 @@ class LinkedResourceMethodHandler extends AbstractPropertyAwareMethodHandler {
 
 	private final PropertyValueFactory propertyValueFactory = new DefaultPropertyValueFactory();
 
-	private final Map<String, Object> linkedResourceResults = new HashMap<>();
+	private final Map<String, LinkedResourceResult> linkedResourceResults = new HashMap<>();
 
 	LinkedResourceMethodHandler(Resource resource, RestOperations restOperations, ClientProxyFactory proxyFactory) {
 		super(resource.getContent().getClass());
@@ -60,7 +73,7 @@ class LinkedResourceMethodHandler extends AbstractPropertyAwareMethodHandler {
 
 	private void invokeSetterMethod(Method method, Object[] args) {
 		final String getterName = getGetterFromSetter(method).getName();
-		linkedResourceResults.put(getterName, args[0]);
+		linkedResourceResults.put(getterName, new LinkedResourceResult(args[0]));
 	}
 
 	private Method getGetterFromSetter(Method method) {
@@ -71,14 +84,17 @@ class LinkedResourceMethodHandler extends AbstractPropertyAwareMethodHandler {
 
 	private Object invokeAnnotatedMethod(Object self, Method method, Method proceed, Object[] args)
 	throws InvocationTargetException, IllegalAccessException {
-		Object linkedResourceResult = linkedResourceResults.get(method.getName());
+		LinkedResourceResult result = linkedResourceResults.get(method.getName());
 
-		if (linkedResourceResult == null) {
-			linkedResourceResult = resolveLinkedResource(self, method, proceed, args);
-			linkedResourceResults.put(method.getName(), linkedResourceResult);
+		if (result == null) {
+			Object resultValue = resolveLinkedResource(self, method, proceed, args);
+
+			result = new LinkedResourceResult(resultValue);
+
+			linkedResourceResults.put(method.getName(), result);
 		}
 
-		return linkedResourceResult;
+		return result.getValue();
 	}
 
 	private Object resolveLinkedResource(Object self, Method method, Method proceed, Object[] args)

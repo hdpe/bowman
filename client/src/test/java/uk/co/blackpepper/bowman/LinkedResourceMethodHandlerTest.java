@@ -10,6 +10,7 @@ import uk.co.blackpepper.bowman.annotation.LinkedResource;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.springframework.util.ReflectionUtils.findMethod;
 
@@ -41,6 +42,16 @@ public class LinkedResourceMethodHandlerTest {
 		handler.invoke(resourceContent, setterMethod, null, new String[]{"X"});
 
 		assertThat(handler.invoke(resourceContent, getterMethod, null, null), equalTo("X"));
+	}
+
+	@Test
+	public void invokeSetsAndReturnsNull() throws InvocationTargetException, IllegalAccessException {
+		final Method getterMethod = findMethod(ResourceContent.class, "getLinkedResource");
+		final Method setterMethod = findMethod(ResourceContent.class, "setLinkedResource", String.class);
+
+		handler.invoke(resourceContent, setterMethod, null, new String[]{null});
+
+		assertThat(handler.invoke(resourceContent, getterMethod, null, null), is(nullValue()));
 	}
 
 	private LinkedResourceMethodHandler createHandler() {
