@@ -83,7 +83,7 @@ public class SimpleEntityIT extends AbstractIT {
 	}
 	
 	@Test
-	public void canGetNullEntityAssocation() {
+	public void canGetNullEntityAssociation() {
 		URI location = client.post(new SimpleEntity());
 
 		SimpleEntity retrieved = client.get(location);

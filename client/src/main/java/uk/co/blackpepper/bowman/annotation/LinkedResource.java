@@ -21,7 +21,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation to mark a property as a linked rather than inline assocation.
+ * Annotation to mark a property as a linked rather than inline association.
  * 
  * @author Ryan Pickett
  * 
