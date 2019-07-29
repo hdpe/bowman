@@ -84,7 +84,7 @@ public class ResourceDeserializerTest {
 		mapper.registerModule(new TestModule());
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		
-		doReturn(Void.class).when(typeResolver).resolveType(any(), any(), any());
+		doReturn(Object.class).when(typeResolver).resolveType(any(), any(), any());
 	}
 	
 	@Test

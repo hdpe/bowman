@@ -259,7 +259,7 @@ public class RestOperationsFactoryTest {
 		
 		private BiFunction<HandlerInstantiator, Class<?>, Object> instantiationMethod;
 		
-		public HandlerInstantiatorTestParams(Class<?> clazz,
+		HandlerInstantiatorTestParams(Class<?> clazz,
 			BiFunction<HandlerInstantiator, Class<?>, Object> instantiationMethod) {
 			
 			this.clazz = clazz;

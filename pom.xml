@@ -20,7 +20,7 @@
 	<parent>
 		<groupId>uk.co.blackpepper</groupId>
 		<artifactId>bp-parent</artifactId>
-		<version>1.1.1</version>
+		<version>1.4.0</version>
 	</parent>
 	
 	<groupId>uk.co.blackpepper.bowman</groupId>
@@ -65,7 +65,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-		<spring-boot.version>2.0.2.RELEASE</spring-boot.version>
+		<spring-boot.version>2.1.6.RELEASE</spring-boot.version>
 	</properties>
 
 	<modules>
@@ -92,13 +92,7 @@
 					<artifactId>build-helper-maven-plugin</artifactId>
 					<version>3.0.0</version>
 				</plugin>
-				
-				<plugin>
-					<groupId>org.jacoco</groupId>
-					<artifactId>jacoco-maven-plugin</artifactId>
-					<version>0.8.0</version>
-				</plugin>
-				
+
 				<plugin>
 					<groupId>org.eluder.coveralls</groupId>
 					<artifactId>coveralls-maven-plugin</artifactId>
@@ -125,48 +119,7 @@
 			</plugins>
 		</pluginManagement>
 	</build>
-	
-	<profiles>
-		<profile>
-			<id>nonRelease</id>
-			
-			<activation>
-				<property>
-					<name>performRelease</name>
-					<value>!true</value>
-				</property>
-			</activation>
-			
-			<properties>
-				<skipNexusStagingDeployMojo>${isReleaseVersion}</skipNexusStagingDeployMojo>
-			</properties>
-			
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>build-helper-maven-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>determine-build-type</id>
-								<goals>
-									<goal>regex-property</goal>
-								</goals>
-								<configuration>
-									<name>isReleaseVersion</name>
-									<value>${project.version}</value>
-									<regex>^(?!.*-SNAPSHOT$).*$</regex>
-									<replacement>true</replacement>
-									<failIfNoMatch>false</failIfNoMatch>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
-	
+
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -186,7 +139,7 @@
 			<dependency>
 				<groupId>org.javassist</groupId>
 				<artifactId>javassist</artifactId>
-				<version>3.22.0-GA</version>
+				<version>3.25.0-GA</version>
 			</dependency>
 			
 			<dependency>
