@@ -12,6 +12,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
 import static org.springframework.util.ReflectionUtils.findMethod;
 
 public class LinkedResourceMethodHandlerTest {
@@ -57,7 +58,8 @@ public class LinkedResourceMethodHandlerTest {
 	private LinkedResourceMethodHandler createHandler() {
 		final JavassistClientProxyFactory proxyFactory = new JavassistClientProxyFactory();
 		return new LinkedResourceMethodHandler(new Resource<>(resourceContent),
-				new RestOperationsFactory(Configuration.builder().build(), proxyFactory).create(), proxyFactory);
+				new RestOperationsFactory(Configuration.builder().build(), proxyFactory).create(), proxyFactory,
+			mock(PropertyValueFactory.class), mock(MethodLinkUriResolver.class));
 	}
 
 	@SuppressWarnings("unused")

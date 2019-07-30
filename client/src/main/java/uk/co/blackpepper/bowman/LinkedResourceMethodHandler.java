@@ -36,15 +36,26 @@ class LinkedResourceMethodHandler extends AbstractPropertyAwareMethodHandler {
 
 	private final ClientProxyFactory proxyFactory;
 
-	private final PropertyValueFactory propertyValueFactory = new DefaultPropertyValueFactory();
-
+	private final PropertyValueFactory propertyValueFactory;
+	
+	private final MethodLinkUriResolver methodLinkUriResolver;
+	
 	private final Map<String, LinkedResourceResult> linkedResourceResults = new HashMap<>();
 
 	LinkedResourceMethodHandler(Resource resource, RestOperations restOperations, ClientProxyFactory proxyFactory) {
+		this(resource, restOperations, proxyFactory, new DefaultPropertyValueFactory(), new MethodLinkUriResolver());
+	}
+
+	LinkedResourceMethodHandler(Resource resource, RestOperations restOperations, ClientProxyFactory proxyFactory,
+		PropertyValueFactory propertyValueFactory, MethodLinkUriResolver methodLinkUriResolver) {
+		
 		super(resource.getContent().getClass());
+		
+		this.resource = resource;
 		this.restOperations = restOperations;
 		this.proxyFactory = proxyFactory;
-		this.resource = resource;
+		this.propertyValueFactory = propertyValueFactory;
+		this.methodLinkUriResolver = methodLinkUriResolver;
 	}
 
 	@Override
@@ -100,7 +111,7 @@ class LinkedResourceMethodHandler extends AbstractPropertyAwareMethodHandler {
 	private Object resolveLinkedResource(Object self, Method method, Method proceed, Object[] args)
 			throws IllegalAccessException, InvocationTargetException {
 
-		URI associationResource = new MethodLinkUriResolver().resolveForMethod(resource, method, args);
+		URI associationResource = methodLinkUriResolver.resolveForMethod(resource, method, args);
 
 		if (Collection.class.isAssignableFrom(method.getReturnType())) {
 			Class<?> linkedEntityType = (Class<?>) ((ParameterizedType) method.getGenericReturnType())
