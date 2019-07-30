@@ -100,7 +100,7 @@ class LinkedResourceMethodHandler extends AbstractPropertyAwareMethodHandler {
 	private Object resolveLinkedResource(Object self, Method method, Method proceed, Object[] args)
 			throws IllegalAccessException, InvocationTargetException {
 
-		URI associationResource = new MethodLinkUriResolver(resource).resolveForMethod(method, args);
+		URI associationResource = new MethodLinkUriResolver().resolveForMethod(resource, method, args);
 
 		if (Collection.class.isAssignableFrom(method.getReturnType())) {
 			Class<?> linkedEntityType = (Class<?>) ((ParameterizedType) method.getGenericReturnType())

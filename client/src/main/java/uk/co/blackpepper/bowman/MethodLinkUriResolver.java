@@ -12,13 +12,7 @@ import static uk.co.blackpepper.bowman.HalSupport.toLinkName;
 
 class MethodLinkUriResolver {
 	
-	private Resource<?> resource;
-	
-	MethodLinkUriResolver(Resource<?> resource) {
-		this.resource = resource;
-	}
-	
-	URI resolveForMethod(Method method, Object[] args) {
+	URI resolveForMethod(Resource<?> resource, Method method, Object[] args) {
 		String linkName = getLinkName(method);
 		Link link = resource.getLink(linkName);
 		

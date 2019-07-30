@@ -28,7 +28,7 @@ public class MethodLinkUriResolverTest {
 		
 		Method linked = Content.class.getMethod("linked", String.class, int.class);
 		
-		URI uri = new MethodLinkUriResolver(resource).resolveForMethod(linked, new Object[] {"1", 2});
+		URI uri = new MethodLinkUriResolver().resolveForMethod(resource, linked, new Object[] {"1", 2});
 		
 		assertThat(uri, is(URI.create("http://www.example.com/?x=1&y=2")));
 	}
