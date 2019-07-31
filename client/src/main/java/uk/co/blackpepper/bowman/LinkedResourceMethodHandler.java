@@ -38,16 +38,20 @@ class LinkedResourceMethodHandler extends AbstractPropertyAwareMethodHandler {
 
 	private final PropertyValueFactory propertyValueFactory;
 	
+	private final MethodLinkAttributesResolver methodLinkAttributesResolver;
+	
 	private final MethodLinkUriResolver methodLinkUriResolver;
 	
 	private final Map<String, LinkedResourceResult> linkedResourceResults = new HashMap<>();
 
 	LinkedResourceMethodHandler(Resource resource, RestOperations restOperations, ClientProxyFactory proxyFactory) {
-		this(resource, restOperations, proxyFactory, new DefaultPropertyValueFactory(), new MethodLinkUriResolver());
+		this(resource, restOperations, proxyFactory, new DefaultPropertyValueFactory(),
+			new MethodLinkAttributesResolver(), new MethodLinkUriResolver());
 	}
 
 	LinkedResourceMethodHandler(Resource resource, RestOperations restOperations, ClientProxyFactory proxyFactory,
-		PropertyValueFactory propertyValueFactory, MethodLinkUriResolver methodLinkUriResolver) {
+		PropertyValueFactory propertyValueFactory, MethodLinkAttributesResolver methodLinkAttributesResolver,
+		MethodLinkUriResolver methodLinkUriResolver) {
 		
 		super(resource.getContent().getClass());
 		
@@ -55,6 +59,7 @@ class LinkedResourceMethodHandler extends AbstractPropertyAwareMethodHandler {
 		this.restOperations = restOperations;
 		this.proxyFactory = proxyFactory;
 		this.propertyValueFactory = propertyValueFactory;
+		this.methodLinkAttributesResolver = methodLinkAttributesResolver;
 		this.methodLinkUriResolver = methodLinkUriResolver;
 	}
 
@@ -110,8 +115,10 @@ class LinkedResourceMethodHandler extends AbstractPropertyAwareMethodHandler {
 
 	private Object resolveLinkedResource(Object self, Method method, Method proceed, Object[] args)
 			throws IllegalAccessException, InvocationTargetException {
-
-		URI associationResource = methodLinkUriResolver.resolveForMethod(resource, method, args);
+		
+		MethodLinkAttributes attribs = methodLinkAttributesResolver.resolveForMethod(method);
+		
+		URI associationResource = methodLinkUriResolver.resolveForMethod(resource, attribs.getLinkName(), args);
 
 		if (Collection.class.isAssignableFrom(method.getReturnType())) {
 			Class<?> linkedEntityType = (Class<?>) ((ParameterizedType) method.getGenericReturnType())

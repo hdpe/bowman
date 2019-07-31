@@ -17,8 +17,10 @@ import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static org.springframework.util.ReflectionUtils.findMethod;
@@ -32,12 +34,15 @@ public class LinkedResourceMethodHandlerTest {
 
 	private LinkedResourceMethodHandler handler;
 	
+	private MethodLinkAttributesResolver methodLinkAttributesResolver;
+	
 	private MethodLinkUriResolver methodLinkUriResolver;
 	
 	private Resource<ResourceContent> resource;
 	
 	@Before
 	public void setUp() {
+		methodLinkAttributesResolver = mock(MethodLinkAttributesResolver.class);
 		methodLinkUriResolver = mock(MethodLinkUriResolver.class);
 		
 		JavassistClientProxyFactory proxyFactory = new JavassistClientProxyFactory();
@@ -45,9 +50,10 @@ public class LinkedResourceMethodHandlerTest {
 		resourceContent = new ResourceContent();
 		resource = new Resource<>(resourceContent);
 		
-		handler = new LinkedResourceMethodHandler(resource,
-			new RestOperationsFactory(Configuration.builder().build(), proxyFactory).create(), proxyFactory,
-			mock(PropertyValueFactory.class), methodLinkUriResolver);
+		handler = new LinkedResourceMethodHandler(resource, mock(RestOperations.class), proxyFactory,
+			mock(PropertyValueFactory.class), methodLinkAttributesResolver, methodLinkUriResolver);
+		
+		when(methodLinkAttributesResolver.resolveForMethod(any())).thenReturn(new MethodLinkAttributes("_linkName"));
 	}
 
 	@Test
@@ -66,14 +72,26 @@ public class LinkedResourceMethodHandlerTest {
 	}
 	
 	@Test
+	public void invokeResolvesLinkFromLinkAttributes() throws InvocationTargetException, IllegalAccessException {
+		final Method getterMethod = findMethod(ResourceContent.class, "getLinkedResource");
+		
+		when(methodLinkAttributesResolver.resolveForMethod(getterMethod)).thenReturn(new MethodLinkAttributes("x"));
+		
+		handler.invoke(resourceContent, getterMethod, null, new String[0]);
+		
+		verify(methodLinkUriResolver).resolveForMethod(eq(resource), eq("x"), argThat(is(emptyArray())));
+	}
+	
+	@Test
 	public void invokeWhenNoLinkThrowsException() throws InvocationTargetException, IllegalAccessException {
 		final Method getterMethod = findMethod(ResourceContent.class, "getLinkedResource");
 		
-		when(methodLinkUriResolver.resolveForMethod(eq(resource), eq(getterMethod), argThat(is(emptyArray()))))
-			.thenThrow(new NoSuchLinkException("x"));
+		when(methodLinkAttributesResolver.resolveForMethod(getterMethod)).thenReturn(new MethodLinkAttributes("x"));
+		when(methodLinkUriResolver.resolveForMethod(eq(resource), eq("x"), argThat(is(emptyArray()))))
+			.thenThrow(new NoSuchLinkException("x!"));
 		
 		thrown.expect(NoSuchLinkException.class);
-		thrown.expect(hasProperty("linkName", is("x")));
+		thrown.expect(hasProperty("linkName", is("x!")));
 		
 		handler.invoke(resourceContent, getterMethod, null, new String[0]);
 	}
