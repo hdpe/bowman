@@ -37,6 +37,7 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.isA;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.sameInstance;
@@ -173,8 +174,8 @@ public class JavassistClientProxyFactoryTest {
 	public void createWithLinkedResourceLinkNotPresentReturnsProxyThrowingException() {
 		Entity entity = proxyFactory.create(new Resource<>(new Entity()), restOperations);
 		
-		thrown.expect(ClientProxyException.class);
-		thrown.expectMessage("Link 'linked' could not be found!");
+		thrown.expect(NoSuchLinkException.class);
+		thrown.expect(hasProperty("linkName", is("linked")));
 		
 		entity.linked();
 	}

@@ -17,7 +17,7 @@ class MethodLinkUriResolver {
 		Link link = resource.getLink(linkName);
 		
 		if (link == null) {
-			throw new ClientProxyException(String.format("Link '%s' could not be found!", linkName));
+			throw new NoSuchLinkException(linkName);
 		}
 		
 		return URI.create(link.expand(args).getHref());
