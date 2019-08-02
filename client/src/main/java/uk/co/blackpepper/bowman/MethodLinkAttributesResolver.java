@@ -17,6 +17,6 @@ class MethodLinkAttributesResolver {
 			rel = toLinkName(method.getName());
 		}
 		
-		return new MethodLinkAttributes(rel);
+		return new MethodLinkAttributes(rel, annotation.optionalLink());
 	}
 }

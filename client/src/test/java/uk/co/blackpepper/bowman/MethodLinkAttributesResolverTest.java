@@ -19,6 +19,12 @@ public class MethodLinkAttributesResolverTest {
 		
 		@LinkedResource(rel = "custom")
 		void withRel();
+		
+		@LinkedResource(optionalLink = false)
+		Object getNotOptional();
+		
+		@LinkedResource(optionalLink = true)
+		Object getOptional();
 	}
 	
 	private MethodLinkAttributesResolver resolver;
@@ -44,5 +50,32 @@ public class MethodLinkAttributesResolverTest {
 		MethodLinkAttributes attribs = resolver.resolveForMethod(linked);
 		
 		assertThat(attribs.getLinkName(), is("custom"));
+	}
+	
+	@Test
+	public void resolveForMethodWithDefaultOptionalLinkReturnsOptionalIsFalse() throws Exception {
+		Method linked = Content.class.getMethod("withRel");
+		
+		MethodLinkAttributes attribs = resolver.resolveForMethod(linked);
+		
+		assertThat(attribs.isOptional(), is(false));
+	}
+	
+	@Test
+	public void resolveForMethodWithOptionalLinkFalseReturnsOptionalIsFalse() throws Exception {
+		Method linked = Content.class.getMethod("getNotOptional");
+		
+		MethodLinkAttributes attribs = resolver.resolveForMethod(linked);
+		
+		assertThat(attribs.isOptional(), is(false));
+	}
+	
+	@Test
+	public void resolveForMethodWithOptionalLinkTrueReturnsOptionalIsTrue() throws Exception {
+		Method linked = Content.class.getMethod("getOptional");
+		
+		MethodLinkAttributes attribs = resolver.resolveForMethod(linked);
+		
+		assertThat(attribs.isOptional(), is(true));
 	}
 }

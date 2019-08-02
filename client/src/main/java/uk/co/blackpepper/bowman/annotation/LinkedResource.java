@@ -31,4 +31,6 @@ import java.lang.annotation.Target;
 public @interface LinkedResource {
 	
 	String rel() default "";
+	
+	boolean optionalLink() default false;
 }

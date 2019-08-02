@@ -2,6 +2,9 @@ package uk.co.blackpepper.bowman;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -11,11 +14,13 @@ import org.springframework.hateoas.Resource;
 
 import uk.co.blackpepper.bowman.annotation.LinkedResource;
 
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.emptyArray;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -40,8 +45,11 @@ public class LinkedResourceMethodHandlerTest {
 	
 	private Resource<ResourceContent> resource;
 	
+	private PropertyValueFactory propertyValueFactory;
+	
 	@Before
 	public void setUp() {
+		propertyValueFactory = mock(PropertyValueFactory.class);
 		methodLinkAttributesResolver = mock(MethodLinkAttributesResolver.class);
 		methodLinkUriResolver = mock(MethodLinkUriResolver.class);
 		
@@ -51,11 +59,11 @@ public class LinkedResourceMethodHandlerTest {
 		resource = new Resource<>(resourceContent);
 		
 		handler = new LinkedResourceMethodHandler(resource, mock(RestOperations.class), proxyFactory,
-			mock(PropertyValueFactory.class), methodLinkAttributesResolver, methodLinkUriResolver);
+			propertyValueFactory, methodLinkAttributesResolver, methodLinkUriResolver);
 		
-		when(methodLinkAttributesResolver.resolveForMethod(any())).thenReturn(new MethodLinkAttributes("_linkName"));
+		when(methodLinkAttributesResolver.resolveForMethod(any())).thenReturn(newRequiredLinkAttributes());
 	}
-
+	
 	@Test
 	public void supportsAnyAnnotatedMethodIsTrue() {
 		assertThat(handler.supports(findMethod(ResourceContent.class, "anyAnnotatedMethod")), is(true));
@@ -75,7 +83,8 @@ public class LinkedResourceMethodHandlerTest {
 	public void invokeResolvesLinkFromLinkAttributes() throws InvocationTargetException, IllegalAccessException {
 		final Method getterMethod = findMethod(ResourceContent.class, "getLinkedResource");
 		
-		when(methodLinkAttributesResolver.resolveForMethod(getterMethod)).thenReturn(new MethodLinkAttributes("x"));
+		when(methodLinkAttributesResolver.resolveForMethod(getterMethod)).thenReturn(new MethodLinkAttributes("x",
+			true));
 		
 		handler.invoke(resourceContent, getterMethod, null, new String[0]);
 		
@@ -83,17 +92,50 @@ public class LinkedResourceMethodHandlerTest {
 	}
 	
 	@Test
-	public void invokeWhenNoLinkThrowsException() throws InvocationTargetException, IllegalAccessException {
+	public void invokeWhenNoLinkAndRequiredLinkThrowsException() throws InvocationTargetException,
+		IllegalAccessException {
+		
 		final Method getterMethod = findMethod(ResourceContent.class, "getLinkedResource");
 		
-		when(methodLinkAttributesResolver.resolveForMethod(getterMethod)).thenReturn(new MethodLinkAttributes("x"));
-		when(methodLinkUriResolver.resolveForMethod(eq(resource), eq("x"), argThat(is(emptyArray()))))
-			.thenThrow(new NoSuchLinkException("x!"));
+		when(methodLinkAttributesResolver.resolveForMethod(any())).thenReturn(newRequiredLinkAttributes());
+		when(methodLinkUriResolver.resolveForMethod(any(), any(), any())).thenThrow(new NoSuchLinkException("x"));
 		
 		thrown.expect(NoSuchLinkException.class);
-		thrown.expect(hasProperty("linkName", is("x!")));
+		thrown.expect(hasProperty("linkName", is("x")));
 		
 		handler.invoke(resourceContent, getterMethod, null, new String[0]);
+	}
+	
+	@Test
+	public void invokeWhenNoLinkAndOptionalLinkAndSingleValueReturnsNull() throws InvocationTargetException,
+		IllegalAccessException {
+		
+		final Method getterMethod = findMethod(ResourceContent.class, "getOptionalLinkedResource");
+		
+		when(methodLinkAttributesResolver.resolveForMethod(any())).thenReturn(newOptionalLinkAttributes());
+		when(methodLinkUriResolver.resolveForMethod(any(), any(), any())).thenThrow(new NoSuchLinkException("x"));
+		
+		Object result = handler.invoke(resourceContent, getterMethod, null, new String[0]);
+		
+		assertThat(result, is(nullValue()));
+	}
+	
+	@Test
+	public void invokeWhenNoLinkAndOptionalLinkAndCollectionValueReturnsEmpty() throws InvocationTargetException,
+		IllegalAccessException {
+		
+		final Method getterMethod = findMethod(ResourceContent.class, "getOptionalLinkedResources");
+		
+		when(methodLinkAttributesResolver.resolveForMethod(any())).thenReturn(newOptionalLinkAttributes());
+		when(methodLinkUriResolver.resolveForMethod(any(), any(), any())).thenThrow(new NoSuchLinkException("x"));
+		
+		SortedSet<String> set = new TreeSet<>();
+		when(propertyValueFactory.createCollection(SortedSet.class)).thenReturn(set);
+		
+		Object result = handler.invoke(resourceContent, getterMethod, null, new String[0]);
+		
+		assertThat(result, is(sameInstance(set)));
+		assertThat((Collection<?>) result, is(empty()));
 	}
 
 	@Test
@@ -115,6 +157,14 @@ public class LinkedResourceMethodHandlerTest {
 
 		assertThat(handler.invoke(resourceContent, getterMethod, null, null), is(nullValue()));
 	}
+	
+	private static MethodLinkAttributes newRequiredLinkAttributes() {
+		return new MethodLinkAttributes("_linkName", false);
+	}
+	
+	private static MethodLinkAttributes newOptionalLinkAttributes() {
+		return new MethodLinkAttributes("_linkName", true);
+	}
 
 	@SuppressWarnings("unused")
 	private static class ResourceContent {
@@ -125,6 +175,16 @@ public class LinkedResourceMethodHandlerTest {
 
 		@LinkedResource
 		public String getLinkedResource() {
+			return null;
+		}
+		
+		@LinkedResource(optionalLink = true)
+		public String getOptionalLinkedResource() {
+			return null;
+		}
+		
+		@LinkedResource(optionalLink = true)
+		public SortedSet<String> getOptionalLinkedResources() {
 			return null;
 		}
 

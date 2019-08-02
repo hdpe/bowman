@@ -116,11 +116,24 @@ class LinkedResourceMethodHandler extends AbstractPropertyAwareMethodHandler {
 	private Object resolveLinkedResource(Object self, Method method, Method proceed, Object[] args)
 			throws IllegalAccessException, InvocationTargetException {
 		
+		boolean isCollection = Collection.class.isAssignableFrom(method.getReturnType());
+		
 		MethodLinkAttributes attribs = methodLinkAttributesResolver.resolveForMethod(method);
 		
-		URI associationResource = methodLinkUriResolver.resolveForMethod(resource, attribs.getLinkName(), args);
-
-		if (Collection.class.isAssignableFrom(method.getReturnType())) {
+		URI associationResource;
+		
+		try {
+			associationResource = methodLinkUriResolver.resolveForMethod(resource, attribs.getLinkName(), args);
+		}
+		catch (NoSuchLinkException exception) {
+			if (attribs.isOptional()) {
+				return isCollection ? createCollectionForMethod(method) : null;
+			}
+			
+			throw exception;
+		}
+		
+		if (isCollection) {
 			Class<?> linkedEntityType = (Class<?>) ((ParameterizedType) method.getGenericReturnType())
 				.getActualTypeArguments()[0];
 
@@ -154,7 +167,7 @@ class LinkedResourceMethodHandler extends AbstractPropertyAwareMethodHandler {
 		Collection<F> collection = (Collection<F>) originalMethod.invoke(contextEntity);
 
 		if (collection == null) {
-			collection = propertyValueFactory.createCollection(originalMethod.getReturnType());
+			collection = createCollectionForMethod(originalMethod);
 		}
 		else {
 			collection.clear();
@@ -164,7 +177,7 @@ class LinkedResourceMethodHandler extends AbstractPropertyAwareMethodHandler {
 
 	private <F> Collection<F> resolveCollectionLinkedResource(Resources<Resource<F>> resources, Method method) {
 		return updateCollectionWithLinkedResources(
-				propertyValueFactory.createCollection(method.getReturnType()), resources);
+			createCollectionForMethod(method), resources);
 	}
 
 	private <F> Collection<F> updateCollectionWithLinkedResources(Collection<F> collection,
@@ -178,5 +191,9 @@ class LinkedResourceMethodHandler extends AbstractPropertyAwareMethodHandler {
 
 	private <F> Resources<Resource<F>> getLinkedResources(URI associationResource, Class<F> linkedEntityType) {
 		return restOperations.getResources(associationResource, linkedEntityType);
+	}
+	
+	private <F> Collection<F> createCollectionForMethod(Method method) {
+		return propertyValueFactory.createCollection(method.getReturnType());
 	}
 }

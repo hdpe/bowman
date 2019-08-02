@@ -142,6 +142,11 @@ The HAL `rel` of a linked resource is assumed to be the same as the method name.
 [source,java]
 @LinkedResource(rel = "my-rel") public Related getRelated() { ... }
 
+By default, the `rel` for each `@LinkedResource` is required to be present in the consumed HAL's `_links` property. If you want to tolerate the link being absent completely, you can set the `optionalLink` attribute:
+
+[source,java]
+@LinkedResource(optionalLink = true) public Related getRelated() { ... }
+
 ==== Inline Resources
 
 Mark a resource as _inline_ with the `InlineAssociationDeserializer` Jackson deserializer. Invoking this accessor will create and return a proxy that is aware of the inline object's links, and so is able to resolve nested linked resources.

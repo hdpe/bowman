@@ -4,11 +4,18 @@ class MethodLinkAttributes {
 	
 	private String linkName;
 	
-	MethodLinkAttributes(String linkName) {
+	private boolean optional;
+	
+	MethodLinkAttributes(String linkName, boolean optional) {
 		this.linkName = linkName;
+		this.optional = optional;
 	}
 	
-	String getLinkName() {
+	public String getLinkName() {
 		return linkName;
+	}
+	
+	public boolean isOptional() {
+		return optional;
 	}
 }
