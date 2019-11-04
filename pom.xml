@@ -20,7 +20,7 @@
 	<parent>
 		<groupId>uk.co.blackpepper</groupId>
 		<artifactId>bp-parent</artifactId>
-		<version>1.4.0</version>
+		<version>1.5.0</version>
 	</parent>
 	
 	<groupId>uk.co.blackpepper.bowman</groupId>
