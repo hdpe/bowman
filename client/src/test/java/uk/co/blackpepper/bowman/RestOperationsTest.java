@@ -25,8 +25,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.stubbing.Answer;
-import org.springframework.hateoas.Resource;
-import org.springframework.hateoas.Resources;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -89,7 +89,7 @@ public class RestOperationsTest {
 		when(restTemplate.getForObject(URI.create("http://example.com"), ObjectNode.class))
 			.thenReturn(createObjectNode("{\"field\":\"value\"}"));
 		
-		Resource<Entity> resource = restOperations.getResource(URI.create("http://example.com"), Entity.class);
+		EntityModel<Entity> resource = restOperations.getResource(URI.create("http://example.com"), Entity.class);
 		
 		assertThat(resource.getContent().getField(), is("value"));
 	}
@@ -99,7 +99,7 @@ public class RestOperationsTest {
 		when(restTemplate.getForObject(URI.create("http://example.com"), ObjectNode.class))
 			.thenThrow(new HttpClientErrorException(NOT_FOUND));
 		
-		Resource<Entity> resource = restOperations.getResource(URI.create("http://example.com"), Entity.class);
+		EntityModel<Entity> resource = restOperations.getResource(URI.create("http://example.com"), Entity.class);
 		
 		assertThat(resource, is(nullValue()));
 	}
@@ -120,7 +120,7 @@ public class RestOperationsTest {
 		when(restTemplate.getForObject(URI.create("http://example.com"), ObjectNode.class))
 			.thenReturn(createObjectNode("{\"_embedded\":{\"entities\":[{\"field\":\"value\"}]}}"));
 		
-		Resources<Resource<Entity>> resources = restOperations.getResources(URI.create("http://example.com"),
+		CollectionModel<EntityModel<Entity>> resources = restOperations.getResources(URI.create("http://example.com"),
 			Entity.class);
 		
 		assertThat(resources.getContent().iterator().next().getContent().getField(), is("value"));
@@ -131,7 +131,7 @@ public class RestOperationsTest {
 		when(restTemplate.getForObject(URI.create("http://example.com"), ObjectNode.class))
 			.thenThrow(new HttpClientErrorException(NOT_FOUND));
 		
-		Resources<Resource<Entity>> resources = restOperations.getResources(URI.create("http://example.com"),
+		CollectionModel<EntityModel<Entity>> resources = restOperations.getResources(URI.create("http://example.com"),
 			Entity.class);
 		
 		assertThat(resources.getContent(), is(empty()));
@@ -182,7 +182,7 @@ public class RestOperationsTest {
 		when(restTemplate.patchForObject(URI.create("http://example.com"), patch, ObjectNode.class))
 			.thenReturn(createObjectNode("{\"field\":\"patchedValue\"}"));
 
-		Resource<Entity> resource = restOperations.patchForResource(URI.create("http://example.com"), patch,
+		EntityModel<Entity> resource = restOperations.patchForResource(URI.create("http://example.com"), patch,
 			Entity.class);
 
 		assertThat(resource.getContent().getField(), is("patchedValue"));
@@ -195,7 +195,7 @@ public class RestOperationsTest {
 		when(restTemplate.patchForObject(URI.create("http://example.com"), patch, ObjectNode.class))
 			.thenReturn(null);
 
-		Resource<Entity> resource = restOperations.patchForResource(URI.create("http://example.com"), patch,
+		EntityModel<Entity> resource = restOperations.patchForResource(URI.create("http://example.com"), patch,
 			Entity.class);
 
 		assertThat(resource, is(nullValue()));

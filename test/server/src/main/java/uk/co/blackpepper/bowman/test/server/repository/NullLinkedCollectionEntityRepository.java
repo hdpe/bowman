@@ -5,7 +5,7 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 import uk.co.blackpepper.bowman.test.server.model.NullLinkedCollectionEntity;
 
-@RepositoryRestResource(path = "/null-linked-collections")
+@RepositoryRestResource(path = "null-linked-collections")
 public interface NullLinkedCollectionEntityRepository extends CrudRepository<NullLinkedCollectionEntity, Integer> {
 	// no additional methods
 }

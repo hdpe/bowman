@@ -21,8 +21,8 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.hateoas.Resource;
-import org.springframework.hateoas.Resources;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 
 import uk.co.blackpepper.bowman.annotation.RemoteResource;
 import uk.co.blackpepper.bowman.annotation.ResourceId;
@@ -81,7 +81,7 @@ public class ClientTest {
 	public void getReturnsProxy() {
 		Entity expected = new Entity();
 		
-		Resource<Entity> resource = new Resource<>(new Entity());
+		EntityModel<Entity> resource = new EntityModel<>(new Entity());
 		when(restOperations.getResource(URI.create(BASE_URI + "/entities"), Entity.class)).thenReturn(resource);
 		when(proxyFactory.create(resource, restOperations)).thenReturn(expected);
 		
@@ -103,7 +103,7 @@ public class ClientTest {
 	public void getWithUriReturnsProxy() {
 		Entity expected = new Entity();
 		
-		Resource<Entity> resource = new Resource<>(new Entity());
+		EntityModel<Entity> resource = new EntityModel<>(new Entity());
 		when(restOperations.getResource(URI.create("http://www.example.com/1"), Entity.class)).thenReturn(resource);
 		when(proxyFactory.create(resource, restOperations)).thenReturn(expected);
 		
@@ -126,7 +126,7 @@ public class ClientTest {
 		Entity expected = new Entity();
 		Map<String, String> patch = new HashMap<String, String>();
 
-		Resource<Entity> resource = new Resource<>(new Entity());
+		EntityModel<Entity> resource = new EntityModel<>(new Entity());
 		when(restOperations.patchForResource(URI.create("http://www.example.com/1"), patch, Entity.class))
 			.thenReturn(resource);
 		when(proxyFactory.create(resource, restOperations)).thenReturn(expected);
@@ -152,9 +152,9 @@ public class ClientTest {
 	public void getAllWithNoArgumentsReturnsProxyIterable() {
 		Entity expected = new Entity();
 		
-		Resource<Entity> resource = new Resource<>(new Entity());
+		EntityModel<Entity> resource = new EntityModel<>(new Entity());
 		when(restOperations.getResources(URI.create(BASE_URI + "/entities"), Entity.class)).thenReturn(
-				new Resources<>(asList(resource)));
+				new CollectionModel<>(asList(resource)));
 		when(proxyFactory.create(resource, restOperations)).thenReturn(expected);
 		
 		Iterable<Entity> proxies = client.getAll();

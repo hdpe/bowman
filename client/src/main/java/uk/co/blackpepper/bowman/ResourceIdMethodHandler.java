@@ -2,17 +2,19 @@ package uk.co.blackpepper.bowman;
 
 import java.lang.reflect.Method;
 import java.net.URI;
+import java.util.Optional;
 
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.Link;
-import org.springframework.hateoas.Resource;
 
 import uk.co.blackpepper.bowman.annotation.ResourceId;
 
 class ResourceIdMethodHandler implements ConditionalMethodHandler {
 	
-	private final Resource<?> resource;
+	private final EntityModel<?> resource;
 
-	ResourceIdMethodHandler(Resource<?> resource) {
+	ResourceIdMethodHandler(EntityModel<?> resource) {
 		this.resource = resource;
 	}
 	
@@ -23,7 +25,7 @@ class ResourceIdMethodHandler implements ConditionalMethodHandler {
 
 	@Override
 	public Object invoke(Object self, Method method, Method proceed, Object[] args) {
-		Link selfLink = resource.getLink(Link.REL_SELF);
-		return selfLink == null ? null : URI.create(selfLink.getHref());
+		Optional<Link> selfLink = resource.getLink(IanaLinkRelations.SELF);
+		return selfLink.map(link -> URI.create(link.getHref())).orElse(null);
 	}
 }

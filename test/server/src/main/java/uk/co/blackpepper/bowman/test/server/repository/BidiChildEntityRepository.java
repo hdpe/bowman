@@ -20,7 +20,7 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 import uk.co.blackpepper.bowman.test.server.model.BidiChildEntity;
 
-@RepositoryRestResource(path = "/bidi-children")
+@RepositoryRestResource(path = "bidi-children")
 public interface BidiChildEntityRepository extends CrudRepository<BidiChildEntity, Integer> {
 	// no additional methods
 }

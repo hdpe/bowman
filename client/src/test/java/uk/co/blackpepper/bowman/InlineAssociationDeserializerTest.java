@@ -20,7 +20,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.hateoas.Resource;
+import org.springframework.hateoas.EntityModel;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,10 +38,10 @@ public class InlineAssociationDeserializerTest {
 
 	private static class SerializeParent {
 		
-		private List<Resource<Child>> children = new ArrayList<>();
+		private List<EntityModel<Child>> children = new ArrayList<>();
 
 		@SuppressWarnings("unused")
-		public List<Resource<Child>> getChildren() {
+		public List<EntityModel<Child>> getChildren() {
 			return children;
 		}
 	}
@@ -100,7 +100,7 @@ public class InlineAssociationDeserializerTest {
 	@Test
 	public void deserializeReturnsObject() throws Exception {
 		SerializeParent out = new SerializeParent();
-		out.children.add(new Resource<>(new Child("x")));
+		out.children.add(new EntityModel<>(new Child("x")));
 		String json = mapper.writeValueAsString(out);
 		
 		DeserializeParent parent = mapper.readValue(json, DeserializeParent.class);

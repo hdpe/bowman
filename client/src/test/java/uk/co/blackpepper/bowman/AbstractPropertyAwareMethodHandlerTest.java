@@ -6,13 +6,13 @@ import java.lang.reflect.Method;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.springframework.hateoas.Resource;
+import org.springframework.hateoas.EntityModel;
 
 public class AbstractPropertyAwareMethodHandlerTest {
 	
 	private static class TestMethodHandler extends AbstractPropertyAwareMethodHandler {
 		
-		TestMethodHandler(Resource<?> resource, BeanInfoProvider beanInfoProvider) {
+		TestMethodHandler(EntityModel<?> resource, BeanInfoProvider beanInfoProvider) {
 			super(resource.getContent().getClass(), beanInfoProvider);
 		}
 		
@@ -38,7 +38,7 @@ public class AbstractPropertyAwareMethodHandlerTest {
 	public void constructorOnIntrospectionExceptionThrowsException() {
 		thrown.expect(ClientProxyException.class);
 		
-		new TestMethodHandler(new Resource<>(new Object()), (clazz) -> {
+		new TestMethodHandler(new EntityModel<>(new Object()), (clazz) -> {
 			throw new IntrospectionException("x");
 		});
 	}

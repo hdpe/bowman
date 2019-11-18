@@ -17,7 +17,7 @@ package uk.co.blackpepper.bowman;
 
 import java.io.IOException;
 
-import org.springframework.hateoas.Resource;
+import org.springframework.hateoas.EntityModel;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -63,9 +63,9 @@ public class InlineAssociationDeserializer<T> extends StdDeserializer<T> impleme
 
 	@Override
 	public T deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
-		JavaType resourceType = ctxt.getTypeFactory().constructParametricType(Resource.class, type);
+		JavaType resourceType = ctxt.getTypeFactory().constructParametricType(EntityModel.class, type);
 		
-		Resource<T> resource = p.getCodec().readValue(p, resourceType);
+		EntityModel<T> resource = p.getCodec().readValue(p, resourceType);
 		
 		return proxyFactory.create(resource, restOperations);
 	}

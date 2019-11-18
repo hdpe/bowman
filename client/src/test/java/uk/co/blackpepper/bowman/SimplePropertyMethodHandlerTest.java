@@ -2,7 +2,7 @@ package uk.co.blackpepper.bowman;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.hateoas.Resource;
+import org.springframework.hateoas.EntityModel;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -50,7 +50,7 @@ public class SimplePropertyMethodHandlerTest {
 	
 	@Before
 	public void setUp() {
-		handler = new SimplePropertyMethodHandler<>(new Resource<>(new ResourceContent()));
+		handler = new SimplePropertyMethodHandler<>(new EntityModel<>(new ResourceContent()));
 	}
 	
 	@Test

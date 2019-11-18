@@ -18,7 +18,7 @@ package uk.co.blackpepper.bowman;
 import java.io.IOException;
 import java.util.List;
 
-import org.springframework.hateoas.Resource;
+import org.springframework.hateoas.EntityModel;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreType;
 import com.fasterxml.jackson.core.JsonGenerationException;
@@ -108,7 +108,7 @@ public class JacksonClientModule extends SimpleModule {
 			}
 		});
 		
-		setMixInAnnotation(Resource.class, ResourceMixin.class);
+		setMixInAnnotation(EntityModel.class, ResourceMixin.class);
 		setMixInAnnotation(MethodHandler.class, MethodHandlerMixin.class);
 	}
 }

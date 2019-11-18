@@ -10,7 +10,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.springframework.hateoas.Resource;
+import org.springframework.hateoas.EntityModel;
 
 import uk.co.blackpepper.bowman.annotation.LinkedResource;
 
@@ -43,7 +43,7 @@ public class LinkedResourceMethodHandlerTest {
 	
 	private MethodLinkUriResolver methodLinkUriResolver;
 	
-	private Resource<ResourceContent> resource;
+	private EntityModel<ResourceContent> resource;
 	
 	private PropertyValueFactory propertyValueFactory;
 	
@@ -56,7 +56,7 @@ public class LinkedResourceMethodHandlerTest {
 		JavassistClientProxyFactory proxyFactory = new JavassistClientProxyFactory();
 		
 		resourceContent = new ResourceContent();
-		resource = new Resource<>(resourceContent);
+		resource = new EntityModel<>(resourceContent);
 		
 		handler = new LinkedResourceMethodHandler(resource, mock(RestOperations.class), proxyFactory,
 			propertyValueFactory, methodLinkAttributesResolver, methodLinkUriResolver);

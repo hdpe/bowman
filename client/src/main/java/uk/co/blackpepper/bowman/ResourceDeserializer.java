@@ -3,9 +3,9 @@ package uk.co.blackpepper.bowman;
 import java.io.IOException;
 import java.lang.reflect.Modifier;
 
+import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Links;
-import org.springframework.hateoas.Resource;
-import org.springframework.hateoas.ResourceSupport;
+import org.springframework.hateoas.RepresentationModel;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.BeanProperty;
@@ -18,7 +18,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import javassist.util.proxy.ProxyFactory;
 
-class ResourceDeserializer extends StdDeserializer<Resource<?>> implements ContextualDeserializer {
+class ResourceDeserializer extends StdDeserializer<EntityModel<?>> implements ContextualDeserializer {
 
 	private static final long serialVersionUID = -7290132544264448620L;
 	
@@ -40,16 +40,16 @@ class ResourceDeserializer extends StdDeserializer<Resource<?>> implements Conte
 	}
 
 	@Override
-	public Resource<?> deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+	public EntityModel<?> deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
 		ObjectNode node = p.readValueAs(ObjectNode.class);
 
 		ObjectMapper mapper = (ObjectMapper) p.getCodec();
 
-		ResourceSupport resource = mapper.convertValue(node, ResourceSupport.class);
-		Links links = new Links(resource.getLinks());
+		RepresentationModel resource = mapper.convertValue(node, RepresentationModel.class);
+		Links links = Links.of(resource.getLinks());
 		
 		Object content = mapper.convertValue(node, getResourceDeserializationType(links));
-		return new Resource<>(content, links);
+		return new EntityModel<>(content, links);
 	}
 	
 	TypeResolver getTypeResolver() {

@@ -23,7 +23,7 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 import uk.co.blackpepper.bowman.test.server.model.SimpleEntity;
 
-@RepositoryRestResource(path = "/simple-entities")
+@RepositoryRestResource(path = "simple-entities")
 public interface SimpleEntityRepository extends CrudRepository<SimpleEntity, Integer> {
 	
 	SimpleEntity findByName(@Param("name") String name);
