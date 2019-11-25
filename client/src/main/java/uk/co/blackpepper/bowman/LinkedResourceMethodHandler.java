@@ -10,8 +10,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.springframework.hateoas.Resource;
-import org.springframework.hateoas.Resources;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 
 import uk.co.blackpepper.bowman.annotation.LinkedResource;
 
@@ -30,7 +30,7 @@ class LinkedResourceMethodHandler extends AbstractPropertyAwareMethodHandler {
 		}
 	}
 	
-	private final Resource resource;
+	private final EntityModel resource;
 
 	private final RestOperations restOperations;
 
@@ -44,12 +44,12 @@ class LinkedResourceMethodHandler extends AbstractPropertyAwareMethodHandler {
 	
 	private final Map<String, LinkedResourceResult> linkedResourceResults = new HashMap<>();
 
-	LinkedResourceMethodHandler(Resource resource, RestOperations restOperations, ClientProxyFactory proxyFactory) {
+	LinkedResourceMethodHandler(EntityModel resource, RestOperations restOperations, ClientProxyFactory proxyFactory) {
 		this(resource, restOperations, proxyFactory, new DefaultPropertyValueFactory(),
 			new MethodLinkAttributesResolver(), new MethodLinkUriResolver());
 	}
 
-	LinkedResourceMethodHandler(Resource resource, RestOperations restOperations, ClientProxyFactory proxyFactory,
+	LinkedResourceMethodHandler(EntityModel resource, RestOperations restOperations, ClientProxyFactory proxyFactory,
 		PropertyValueFactory propertyValueFactory, MethodLinkAttributesResolver methodLinkAttributesResolver,
 		MethodLinkUriResolver methodLinkUriResolver) {
 		
@@ -151,7 +151,7 @@ class LinkedResourceMethodHandler extends AbstractPropertyAwareMethodHandler {
 	}
 
 	private <F> F resolveSingleLinkedResource(URI associationResource, Class<F> linkedEntityType) {
-		Resource<F> linkedResource = restOperations.getResource(associationResource, linkedEntityType);
+		EntityModel<F> linkedResource = restOperations.getResource(associationResource, linkedEntityType);
 
 		if (linkedResource == null) {
 			return null;
@@ -159,8 +159,9 @@ class LinkedResourceMethodHandler extends AbstractPropertyAwareMethodHandler {
 
 		return proxyFactory.create(linkedResource, restOperations);
 	}
-
-	private <F> Collection<F> resolveCollectionLinkedResource(Resources<Resource<F>> resources, Object contextEntity,
+	
+	private <F> Collection<F> resolveCollectionLinkedResource(CollectionModel<EntityModel<F>> resources,
+		Object contextEntity,
 		Method originalMethod) throws IllegalAccessException, InvocationTargetException {
 
 		@SuppressWarnings("unchecked")
@@ -174,22 +175,23 @@ class LinkedResourceMethodHandler extends AbstractPropertyAwareMethodHandler {
 		}
 		return updateCollectionWithLinkedResources(collection, resources);
 	}
-
-	private <F> Collection<F> resolveCollectionLinkedResource(Resources<Resource<F>> resources, Method method) {
+	
+	private <F> Collection<F> resolveCollectionLinkedResource(CollectionModel<EntityModel<F>> resources,
+		Method method) {
 		return updateCollectionWithLinkedResources(
 			createCollectionForMethod(method), resources);
 	}
 
 	private <F> Collection<F> updateCollectionWithLinkedResources(Collection<F> collection,
-		Resources<Resource<F>> resources) {
-		for (Resource<F> fResource : resources) {
+		CollectionModel<EntityModel<F>> resources) {
+		for (EntityModel<F> fResource : resources) {
 			collection.add(proxyFactory.create(fResource, restOperations));
 		}
 
 		return collection;
 	}
 
-	private <F> Resources<Resource<F>> getLinkedResources(URI associationResource, Class<F> linkedEntityType) {
+	private <F> CollectionModel<EntityModel<F>> getLinkedResources(URI associationResource, Class<F> linkedEntityType) {
 		return restOperations.getResources(associationResource, linkedEntityType);
 	}
 	

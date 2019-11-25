@@ -2,7 +2,7 @@ package uk.co.blackpepper.bowman.test.it.model;
 
 import java.util.List;
 
-import org.springframework.hateoas.hal.Jackson2HalModule;
+import org.springframework.hateoas.mediatype.hal.Jackson2HalModule;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;

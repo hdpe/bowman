@@ -5,9 +5,9 @@ import java.net.URI;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Links;
-import org.springframework.hateoas.Resource;
 
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
@@ -20,7 +20,7 @@ public class MethodLinkUriResolverTest {
 	
 	@Test
 	public void resolveForMethodWithNoMatchingLinkThrowsException() {
-		Resource<Object> resource = new Resource<>(new Object(), new Links(new Link("http://www.example.com",
+		EntityModel<Object> resource = new EntityModel<>(new Object(), Links.of(new Link("http://www.example.com",
 			"other")));
 		
 		thrown.expect(NoSuchLinkException.class);
@@ -31,8 +31,9 @@ public class MethodLinkUriResolverTest {
 	
 	@Test
 	public void resolveForMethodReturnsUriWithParamsExpanded() {
-		Resource<Object> resource = new Resource<>(new Object(), new Links(new Link("http://www.example.com/{?x,y}",
-			"link1")));
+		EntityModel<Object> resource = new EntityModel<>(new Object(),
+			Links.of(new Link("http://www.example.com/{?x,y}",
+				"link1")));
 		
 		URI uri = new MethodLinkUriResolver().resolveForMethod(resource, "link1", new Object[] {"1", 2});
 		

@@ -19,8 +19,8 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.hateoas.Resource;
-import org.springframework.hateoas.Resources;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import uk.co.blackpepper.bowman.annotation.RemoteResource;
@@ -77,7 +77,7 @@ public class Client<T> {
 	 * @return the entity, or null if not found
 	 */
 	public T get(URI uri) {
-		Resource<T> resource = restOperations.getResource(uri, entityType);
+		EntityModel<T> resource = restOperations.getResource(uri, entityType);
 		
 		if (resource == null) {
 			return null;
@@ -105,9 +105,9 @@ public class Client<T> {
 	public Iterable<T> getAll(URI uri) {
 		List<T> result = new ArrayList<>();
 
-		Resources<Resource<T>> resources = restOperations.getResources(uri, entityType);
+		CollectionModel<EntityModel<T>> resources = restOperations.getResources(uri, entityType);
 
-		for (Resource<T> resource : resources) {
+		for (EntityModel<T> resource : resources) {
 			result.add(proxyFactory.create(resource, restOperations));
 		}
 
@@ -158,7 +158,7 @@ public class Client<T> {
 	 * @return The patched entity, or null if no response content was returned
 	 */
 	public T patch(URI uri, Object patch) {
-		Resource<T> resource = restOperations.patchForResource(uri, patch, entityType);
+		EntityModel<T> resource = restOperations.patchForResource(uri, patch, entityType);
 
 		return proxyFactory.create(resource, restOperations);
 	}

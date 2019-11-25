@@ -17,7 +17,7 @@ package uk.co.blackpepper.bowman;
 
 import java.util.Arrays;
 
-import org.springframework.hateoas.Resource;
+import org.springframework.hateoas.EntityModel;
 
 import javassist.util.proxy.Proxy;
 import javassist.util.proxy.ProxyFactory;
@@ -27,7 +27,7 @@ import static java.util.Arrays.asList;
 class JavassistClientProxyFactory implements ClientProxyFactory {
 
 	@Override
-	public <T> T create(Resource<T> resource, RestOperations restOperations) {
+	public <T> T create(EntityModel<T> resource, RestOperations restOperations) {
 		@SuppressWarnings("unchecked")
 		Class<T> entityType = (Class<T>) resource.getContent().getClass();
 		

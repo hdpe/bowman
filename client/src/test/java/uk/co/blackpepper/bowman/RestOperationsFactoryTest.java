@@ -43,6 +43,7 @@ import com.fasterxml.jackson.databind.KeyDeserializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.cfg.HandlerInstantiator;
+import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 import com.fasterxml.jackson.databind.jsontype.impl.MinimalClassNameIdResolver;
 import com.fasterxml.jackson.databind.jsontype.impl.StdTypeResolverBuilder;
 import com.fasterxml.jackson.databind.type.SimpleType;
@@ -337,7 +338,8 @@ public class RestOperationsFactoryTest {
 	private static class DummyTypeIdResolver extends MinimalClassNameIdResolver {
 		
 		protected DummyTypeIdResolver() {
-			super(SimpleType.constructUnsafe(Object.class), TypeFactory.defaultInstance());
+			super(SimpleType.constructUnsafe(Object.class), TypeFactory.defaultInstance(), BasicPolymorphicTypeValidator
+				.builder().build());
 		}
 	}
 }

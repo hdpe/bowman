@@ -3,10 +3,11 @@ package uk.co.blackpepper.bowman;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Links;
-import org.springframework.hateoas.Resource;
-import org.springframework.hateoas.hal.Jackson2HalModule;
+import org.springframework.hateoas.mediatype.hal.Jackson2HalModule;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -56,7 +57,7 @@ public class ResourceDeserializerTest {
 	@SuppressWarnings("serial")
 	private static class TestModule extends SimpleModule {
 		TestModule() {
-			setMixInAnnotation(Resource.class, ResourceMixin.class);
+			setMixInAnnotation(EntityModel.class, ResourceMixin.class);
 		}
 	}
 	
@@ -90,18 +91,18 @@ public class ResourceDeserializerTest {
 	@Test
 	public void deserializeResolvesType() throws Exception {
 		mapper.readValue("{\"_links\":{\"self\":{\"href\":\"http://x.com/1\"}}}",
-			new TypeReference<Resource<DeclaredType>>() { /* generic type reference */ });
+			new TypeReference<EntityModel<DeclaredType>>() { /* generic type reference */ });
 		
 		verify(typeResolver).resolveType(DeclaredType.class,
-			new Links(new Link("http://x.com/1", Link.REL_SELF)), configuration);
+			Links.of(new Link("http://x.com/1", IanaLinkRelations.SELF)), configuration);
 	}
 	
 	@Test
 	public void deserializeReturnsObjectOfResolvedType() throws Exception {
 		doReturn(ResolvedType.class).when(typeResolver).resolveType(any(), any(), any());
 		
-		Resource<DeclaredType> resource = mapper.readValue("{\"field\":\"x\"}",
-			new TypeReference<Resource<DeclaredType>>() { /* generic type reference */ });
+		EntityModel<DeclaredType> resource = mapper.readValue("{\"field\":\"x\"}",
+			new TypeReference<EntityModel<DeclaredType>>() { /* generic type reference */ });
 		
 		assertThat("class", resource.getContent().getClass(), Matchers.<Class<?>>equalTo(ResolvedType.class));
 		assertThat("field", ((ResolvedType) resource.getContent()).getField(), is("x"));
@@ -111,8 +112,8 @@ public class ResourceDeserializerTest {
 	public void deserializeReturnsObjectOfResolvedInterfaceType() throws Exception {
 		doReturn(ResolvedInterfaceType.class).when(typeResolver).resolveType(any(), any(), any());
 		
-		Resource<DeclaredType> resource = mapper.readValue("{}",
-			new TypeReference<Resource<DeclaredType>>() { /* generic type reference */ });
+		EntityModel<DeclaredType> resource = mapper.readValue("{}",
+			new TypeReference<EntityModel<DeclaredType>>() { /* generic type reference */ });
 		
 		assertThat(ResolvedInterfaceType.class.isAssignableFrom(resource.getContent().getClass()), is(true));
 	}
@@ -121,8 +122,8 @@ public class ResourceDeserializerTest {
 	public void deserializeReturnsObjectOfResolvedAbstractClassType() throws Exception {
 		doReturn(ResolvedAbstractClassType.class).when(typeResolver).resolveType(any(), any(), any());
 		
-		Resource<DeclaredType> resource = mapper.readValue("{}",
-			new TypeReference<Resource<DeclaredType>>() { /* generic type reference */ });
+		EntityModel<DeclaredType> resource = mapper.readValue("{}",
+			new TypeReference<EntityModel<DeclaredType>>() { /* generic type reference */ });
 		
 		assertThat(ResolvedAbstractClassType.class.isAssignableFrom(resource.getContent().getClass()), is(true));
 	}

@@ -3,9 +3,10 @@ package uk.co.blackpepper.bowman;
 import java.net.URI;
 
 import org.junit.Test;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Links;
-import org.springframework.hateoas.Resource;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
@@ -15,8 +16,8 @@ public class ResourceIdMethodHandlerTest {
 	
 	@Test
 	public void invokeWithResourceWithSelfLinkReturnsLinkUri() {
-		Resource<Object> resource = new Resource<>(new Object(), new Links(new Link("http://www.example.com/1",
-			Link.REL_SELF)));
+		EntityModel<Object> resource = new EntityModel<>(new Object(), Links.of(new Link("http://www.example.com/1",
+			IanaLinkRelations.SELF)));
 		
 		Object result = new ResourceIdMethodHandler(resource).invoke(null, null, null, null);
 		
@@ -25,7 +26,7 @@ public class ResourceIdMethodHandlerTest {
 	
 	@Test
 	public void invokeWithResourceWithNoSelfLinkReturnsNull() {
-		Resource<Object> resource = new Resource<>(new Object(), new Links(new Link("http://www.example.com/1",
+		EntityModel<Object> resource = new EntityModel<>(new Object(), Links.of(new Link("http://www.example.com/1",
 			"some-other-rel")));
 		
 		Object result = new ResourceIdMethodHandler(resource).invoke(null, null, null, null);

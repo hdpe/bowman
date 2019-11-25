@@ -20,7 +20,7 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 import uk.co.blackpepper.bowman.test.server.model.CustomRelEntity;
 
-@RepositoryRestResource(path = "/custom-rel-entities")
+@RepositoryRestResource(path = "custom-rel-entities")
 public interface CustomRelEntityRepository extends CrudRepository<CustomRelEntity, Integer> {
 	// no additional methods
 }

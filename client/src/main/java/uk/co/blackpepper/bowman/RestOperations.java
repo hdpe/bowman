@@ -18,8 +18,8 @@ package uk.co.blackpepper.bowman;
 import java.net.URI;
 import java.util.Collections;
 
-import org.springframework.hateoas.Resource;
-import org.springframework.hateoas.Resources;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -39,7 +39,7 @@ class RestOperations {
 		this.objectMapper = objectMapper;
 	}
 	
-	public <T> Resource<T> getResource(URI uri, Class<T> entityType) {
+	public <T> EntityModel<T> getResource(URI uri, Class<T> entityType) {
 		ObjectNode node;
 		
 		try {
@@ -53,12 +53,12 @@ class RestOperations {
 			throw exception;
 		}
 		
-		JavaType targetType = objectMapper.getTypeFactory().constructParametricType(Resource.class, entityType);
+		JavaType targetType = objectMapper.getTypeFactory().constructParametricType(EntityModel.class, entityType);
 		
 		return objectMapper.convertValue(node, targetType);
 	}
 
-	public <T> Resources<Resource<T>> getResources(URI uri, Class<T> entityType) {
+	public <T> CollectionModel<EntityModel<T>> getResources(URI uri, Class<T> entityType) {
 		ObjectNode node;
 		
 		try {
@@ -66,14 +66,14 @@ class RestOperations {
 		}
 		catch (HttpClientErrorException exception) {
 			if (exception.getStatusCode() == HttpStatus.NOT_FOUND) {
-				return Resources.wrap(Collections.<T>emptyList());
+				return CollectionModel.wrap(Collections.<T>emptyList());
 			}
 			
 			throw exception;
 		}
 		
-		JavaType innerType = objectMapper.getTypeFactory().constructParametricType(Resource.class, entityType);
-		JavaType targetType = objectMapper.getTypeFactory().constructParametricType(Resources.class, innerType);
+		JavaType innerType = objectMapper.getTypeFactory().constructParametricType(EntityModel.class, entityType);
+		JavaType targetType = objectMapper.getTypeFactory().constructParametricType(CollectionModel.class, innerType);
 		
 		return objectMapper.convertValue(node, targetType);
 	}
@@ -90,7 +90,7 @@ class RestOperations {
 		restTemplate.delete(uri);
 	}
 	
-	public <T> Resource<T> patchForResource(URI uri, Object patch, Class<T> entityType) {
+	public <T> EntityModel<T> patchForResource(URI uri, Object patch, Class<T> entityType) {
 		ObjectNode node;
 
 		node = restTemplate.patchForObject(uri, patch, ObjectNode.class);
@@ -98,7 +98,7 @@ class RestOperations {
 			return null;
 		}
 
-		JavaType targetType = objectMapper.getTypeFactory().constructParametricType(Resource.class, entityType);
+		JavaType targetType = objectMapper.getTypeFactory().constructParametricType(EntityModel.class, entityType);
 
 		return objectMapper.convertValue(node, targetType);
 	}

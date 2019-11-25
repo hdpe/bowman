@@ -1,8 +1,10 @@
 package uk.co.blackpepper.bowman;
 
 import java.net.URI;
+import java.util.Optional;
 
 import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Links;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -20,9 +22,9 @@ class SelfLinkTypeResolver implements TypeResolver {
 	@Override
 	public <T> Class<? extends T> resolveType(Class<T> declaredType, Links resourceLinks, Configuration configuration) {
 
-		Link self = resourceLinks.getLink(Link.REL_SELF);
+		Optional<Link> self = resourceLinks.getLink(IanaLinkRelations.SELF);
 		
-		if (self == null) {
+		if (!self.isPresent()) {
 			return declaredType;
 		}
 		
@@ -40,7 +42,7 @@ class SelfLinkTypeResolver implements TypeResolver {
 				.path(resourcePath)
 				.toUriString();
 			
-			String selfLinkUriString = toAbsoluteUriString(self.getHref(), configuration.getBaseUri());
+			String selfLinkUriString = toAbsoluteUriString(self.get().getHref(), configuration.getBaseUri());
 			
 			if (selfLinkUriString.startsWith(resourceBaseUriString + "/")) {
 				if (!declaredType.isAssignableFrom(candidateClass)) {

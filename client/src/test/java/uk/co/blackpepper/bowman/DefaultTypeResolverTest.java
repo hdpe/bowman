@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Links;
 
@@ -106,7 +107,7 @@ public class DefaultTypeResolverTest {
 	@Test
 	public void resolveTypeWithNoResourceTypeInfoReturnsDeclaredType() {
 		Class<?> type = resolver.resolveType(TypeWithoutInfo.class,
-			new Links(new Link("http://x", Link.REL_SELF)), Configuration.build());
+			Links.of(new Link("http://x", IanaLinkRelations.SELF)), Configuration.build());
 		
 		assertThat(type, Matchers.<Class<?>>equalTo(TypeWithoutInfo.class));
 	}
@@ -116,7 +117,7 @@ public class DefaultTypeResolverTest {
 		thrown.expect(ClientProxyException.class);
 		thrown.expectMessage("one of subtypes or typeResolver must be specified");
 	
-		resolver.resolveType(TypeWithUnderspecifiedInfo.class, new Links(), Configuration.build());
+		resolver.resolveType(TypeWithUnderspecifiedInfo.class, Links.of(), Configuration.build());
 	}
 	
 	@Test
@@ -124,12 +125,12 @@ public class DefaultTypeResolverTest {
 		thrown.expect(ClientProxyException.class);
 		thrown.expectMessage("one of subtypes or typeResolver must be specified");
 		
-		resolver.resolveType(TypeWithOverspecifiedInfo.class, new Links(), Configuration.build());
+		resolver.resolveType(TypeWithOverspecifiedInfo.class, Links.of(), Configuration.build());
 	}
 	
 	@Test
 	public void resolveTypeWithSubtypesAndNoSelfLinkReturnsDeclaredType() {
-		Class<?> type = resolver.resolveType(TypeWithSubtypes.class, new Links(), Configuration.build());
+		Class<?> type = resolver.resolveType(TypeWithSubtypes.class, Links.of(), Configuration.build());
 		
 		assertThat(type, Matchers.<Class<?>>equalTo(TypeWithSubtypes.class));
 	}
@@ -137,7 +138,7 @@ public class DefaultTypeResolverTest {
 	@Test
 	public void resolveTypeWithSubtypesAndNoMatchingSubtypeReturnsDeclaredType() {
 		Class<?> type = resolver.resolveType(TypeWithSubtypes.class,
-			new Links(new Link("http://x", Link.REL_SELF)), Configuration.build());
+			Links.of(new Link("http://x", IanaLinkRelations.SELF)), Configuration.build());
 		
 		assertThat(type, Matchers.<Class<?>>equalTo(TypeWithSubtypes.class));
 	}
@@ -147,7 +148,7 @@ public class DefaultTypeResolverTest {
 		Configuration config = Configuration.builder().setBaseUri("http://x.com").build();
 		
 		Class<?> type = resolver.resolveType(TypeWithSubtypes.class,
-			new Links(new Link("http://x.com/2/1", Link.REL_SELF)), config);
+			Links.of(new Link("http://x.com/2/1", IanaLinkRelations.SELF)), config);
 		
 		assertThat(type, Matchers.<Class<?>>equalTo(TypeWithSubtypesSubtype2.class));
 	}
@@ -157,7 +158,7 @@ public class DefaultTypeResolverTest {
 		Configuration config = Configuration.builder().setBaseUri("http://x.com").build();
 		
 		Class<?> type = resolver.resolveType(TypeWithSubtypes.class,
-			new Links(new Link("/2/1", Link.REL_SELF)), config);
+			Links.of(new Link("/2/1", IanaLinkRelations.SELF)), config);
 		
 		assertThat(type, Matchers.<Class<?>>equalTo(TypeWithSubtypesSubtype2.class));
 	}
@@ -169,7 +170,7 @@ public class DefaultTypeResolverTest {
 				+ " is not annotated with @RemoteResource");
 		
 		resolver.resolveType(TypeWithNonRemoteResourceSubtype.class,
-				new Links(new Link("/", Link.REL_SELF)), Configuration.build());
+			Links.of(new Link("/", IanaLinkRelations.SELF)), Configuration.build());
 	}
 	
 	@Test
@@ -179,12 +180,12 @@ public class DefaultTypeResolverTest {
 				+ " is not a subtype of " + TypeWithIllegalSubtype.class.getName());
 		
 		resolver.resolveType(TypeWithIllegalSubtype.class,
-				new Links(new Link("/x/1", Link.REL_SELF)), Configuration.build());
+			Links.of(new Link("/x/1", IanaLinkRelations.SELF)), Configuration.build());
 	}
 	
 	@Test
 	public void resolveTypeWithResolverReturnsResolvedType() {
-		Links links = new Links(new Link("_"));
+		Links links = Links.of(new Link("_"));
 		Configuration config = Configuration.build();
 		
 		doReturn(TypeWithResolverSubtype.class)

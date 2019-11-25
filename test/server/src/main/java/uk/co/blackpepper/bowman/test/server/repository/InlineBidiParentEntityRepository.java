@@ -20,7 +20,7 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 import uk.co.blackpepper.bowman.test.server.model.InlineBidiParentEntity;
 
-@RepositoryRestResource(path = "/inline-bidi-parents")
+@RepositoryRestResource(path = "inline-bidi-parents")
 public interface InlineBidiParentEntityRepository extends CrudRepository<InlineBidiParentEntity, Integer> {
 	// no additional methods
 }
