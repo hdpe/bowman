@@ -81,7 +81,7 @@ public class ClientTest {
 	public void getReturnsProxy() {
 		Entity expected = new Entity();
 		
-		EntityModel<Entity> resource = new EntityModel<>(new Entity());
+		EntityModel<Entity> resource = EntityModel.of(new Entity());
 		when(restOperations.getResource(URI.create(BASE_URI + "/entities"), Entity.class)).thenReturn(resource);
 		when(proxyFactory.create(resource, restOperations)).thenReturn(expected);
 		
@@ -103,7 +103,7 @@ public class ClientTest {
 	public void getWithUriReturnsProxy() {
 		Entity expected = new Entity();
 		
-		EntityModel<Entity> resource = new EntityModel<>(new Entity());
+		EntityModel<Entity> resource = EntityModel.of(new Entity());
 		when(restOperations.getResource(URI.create("http://www.example.com/1"), Entity.class)).thenReturn(resource);
 		when(proxyFactory.create(resource, restOperations)).thenReturn(expected);
 		
@@ -126,7 +126,7 @@ public class ClientTest {
 		Entity expected = new Entity();
 		Map<String, String> patch = new HashMap<String, String>();
 
-		EntityModel<Entity> resource = new EntityModel<>(new Entity());
+		EntityModel<Entity> resource = EntityModel.of(new Entity());
 		when(restOperations.patchForResource(URI.create("http://www.example.com/1"), patch, Entity.class))
 			.thenReturn(resource);
 		when(proxyFactory.create(resource, restOperations)).thenReturn(expected);
@@ -152,9 +152,9 @@ public class ClientTest {
 	public void getAllWithNoArgumentsReturnsProxyIterable() {
 		Entity expected = new Entity();
 		
-		EntityModel<Entity> resource = new EntityModel<>(new Entity());
+		EntityModel<Entity> resource = EntityModel.of(new Entity());
 		when(restOperations.getResources(URI.create(BASE_URI + "/entities"), Entity.class)).thenReturn(
-				new CollectionModel<>(asList(resource)));
+				CollectionModel.of(asList(resource)));
 		when(proxyFactory.create(resource, restOperations)).thenReturn(expected);
 		
 		Iterable<Entity> proxies = client.getAll();

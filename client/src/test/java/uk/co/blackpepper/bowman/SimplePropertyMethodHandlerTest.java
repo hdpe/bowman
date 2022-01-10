@@ -50,7 +50,7 @@ public class SimplePropertyMethodHandlerTest {
 	
 	@Before
 	public void setUp() {
-		handler = new SimplePropertyMethodHandler<>(new EntityModel<>(new ResourceContent()));
+		handler = new SimplePropertyMethodHandler<>(EntityModel.of(new ResourceContent()));
 	}
 	
 	@Test

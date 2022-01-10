@@ -94,7 +94,7 @@ public class ResourceDeserializerTest {
 			new TypeReference<EntityModel<DeclaredType>>() { /* generic type reference */ });
 		
 		verify(typeResolver).resolveType(DeclaredType.class,
-			Links.of(new Link("http://x.com/1", IanaLinkRelations.SELF)), configuration);
+			Links.of(Link.of("http://x.com/1", IanaLinkRelations.SELF)), configuration);
 	}
 	
 	@Test

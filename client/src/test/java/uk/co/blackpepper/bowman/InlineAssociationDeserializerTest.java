@@ -100,7 +100,7 @@ public class InlineAssociationDeserializerTest {
 	@Test
 	public void deserializeReturnsObject() throws Exception {
 		SerializeParent out = new SerializeParent();
-		out.children.add(new EntityModel<>(new Child("x")));
+		out.children.add(EntityModel.of(new Child("x")));
 		String json = mapper.writeValueAsString(out);
 		
 		DeserializeParent parent = mapper.readValue(json, DeserializeParent.class);

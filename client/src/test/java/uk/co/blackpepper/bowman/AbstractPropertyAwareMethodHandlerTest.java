@@ -38,7 +38,7 @@ public class AbstractPropertyAwareMethodHandlerTest {
 	public void constructorOnIntrospectionExceptionThrowsException() {
 		thrown.expect(ClientProxyException.class);
 		
-		new TestMethodHandler(new EntityModel<>(new Object()), (clazz) -> {
+		new TestMethodHandler(EntityModel.of(new Object()), (clazz) -> {
 			throw new IntrospectionException("x");
 		});
 	}

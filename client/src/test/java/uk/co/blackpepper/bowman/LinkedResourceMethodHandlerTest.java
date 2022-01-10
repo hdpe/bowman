@@ -56,7 +56,7 @@ public class LinkedResourceMethodHandlerTest {
 		JavassistClientProxyFactory proxyFactory = new JavassistClientProxyFactory();
 		
 		resourceContent = new ResourceContent();
-		resource = new EntityModel<>(resourceContent);
+		resource = EntityModel.of(resourceContent);
 		
 		handler = new LinkedResourceMethodHandler(resource, mock(RestOperations.class), proxyFactory,
 			propertyValueFactory, methodLinkAttributesResolver, methodLinkUriResolver);

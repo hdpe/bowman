@@ -135,8 +135,8 @@ public class JavassistClientProxyFactoryTest {
 	
 	@Test
 	public void createReturnsProxyWithId() {
-		EntityModel<Entity> resource = new EntityModel<>(new Entity(),
-				new Link("http://www.example.com/1", IanaLinkRelations.SELF));
+		EntityModel<Entity> resource = EntityModel.of(new Entity(),
+				Link.of("http://www.example.com/1", IanaLinkRelations.SELF));
 		
 		Entity proxy = proxyFactory.create(resource, mock(RestOperations.class));
 		
@@ -145,12 +145,12 @@ public class JavassistClientProxyFactoryTest {
 	
 	@Test
 	public void createReturnsProxyWithLinkedResource() {
-		EntityModel<Entity> resource = new EntityModel<>(new Entity(),
-				new Link("http://www.example.com/association/linked", "linked"));
+		EntityModel<Entity> resource = EntityModel.of(new Entity(),
+				Link.of("http://www.example.com/association/linked", "linked"));
 		
 		when(restOperations.getResource(URI.create("http://www.example.com/association/linked"),
-				Entity.class)).thenReturn(new EntityModel<>(new Entity(),
-						new Link("http://www.example.com/1", IanaLinkRelations.SELF)));
+				Entity.class)).thenReturn(EntityModel.of(new Entity(),
+						Link.of("http://www.example.com/1", IanaLinkRelations.SELF)));
 		
 		Entity proxy = proxyFactory.create(resource, restOperations);
 		
@@ -159,12 +159,12 @@ public class JavassistClientProxyFactoryTest {
 	
 	@Test
 	public void createReturnsProxyWithLinkedResourceWithCustomRel() {
-		EntityModel<Entity> resource = new EntityModel<>(new Entity(),
-				new Link("http://www.example.com/association/linked", "a:b"));
+		EntityModel<Entity> resource = EntityModel.of(new Entity(),
+				Link.of("http://www.example.com/association/linked", "a:b"));
 		
 		when(restOperations.getResource(URI.create("http://www.example.com/association/linked"),
-				Entity.class)).thenReturn(new EntityModel<>(new Entity(),
-						new Link("http://www.example.com/1", IanaLinkRelations.SELF)));
+				Entity.class)).thenReturn(EntityModel.of(new Entity(),
+						Link.of("http://www.example.com/1", IanaLinkRelations.SELF)));
 		
 		Entity proxy = proxyFactory.create(resource, restOperations);
 		
@@ -173,7 +173,7 @@ public class JavassistClientProxyFactoryTest {
 
 	@Test
 	public void createWithLinkedResourceLinkNotPresentReturnsProxyThrowingException() {
-		Entity entity = proxyFactory.create(new EntityModel<>(new Entity()), restOperations);
+		Entity entity = proxyFactory.create(EntityModel.of(new Entity()), restOperations);
 		
 		thrown.expect(NoSuchLinkException.class);
 		thrown.expect(hasProperty("linkName", is("linked")));
@@ -183,8 +183,8 @@ public class JavassistClientProxyFactoryTest {
 	
 	@Test
 	public void createWithLinkedResourceTargetNotPresentReturnsProxyReturningNull() {
-		EntityModel<Entity> resource = new EntityModel<>(new Entity(),
-			new Link("http://www.example.com/association/linked", "linked"));
+		EntityModel<Entity> resource = EntityModel.of(new Entity(),
+			Link.of("http://www.example.com/association/linked", "linked"));
 	
 		when(restOperations.getResource(URI.create("http://www.example.com/association/linked"),
 				Entity.class)).thenReturn(null);
@@ -196,12 +196,12 @@ public class JavassistClientProxyFactoryTest {
 	
 	@Test
 	public void createReturnsProxyWithLinkedResources() {
-		EntityModel<Entity> resource = new EntityModel<>(new Entity(),
-				new Link("http://www.example.com/association/linked", "linkedCollection"));
+		EntityModel<Entity> resource = EntityModel.of(new Entity(),
+				Link.of("http://www.example.com/association/linked", "linkedCollection"));
 		
 		when(restOperations.getResources(URI.create("http://www.example.com/association/linked"),
-				Entity.class)).thenReturn(new CollectionModel<>(asList(new EntityModel<>(new Entity(),
-						new Link("http://www.example.com/1", IanaLinkRelations.SELF)))));
+				Entity.class)).thenReturn(CollectionModel.of(asList(EntityModel.of(new Entity(),
+						Link.of("http://www.example.com/1", IanaLinkRelations.SELF)))));
 		
 		Entity proxy = proxyFactory.create(resource, restOperations);
 		
@@ -210,12 +210,12 @@ public class JavassistClientProxyFactoryTest {
 
 	@Test
 	public void createWithNullLinkedCollectionReturnsProxyWithLinkedResources() {
-		EntityModel<Entity> resource = new EntityModel<>(new Entity(),
-				new Link("http://www.example.com/association/linked", "nullLinkedCollection"));
+		EntityModel<Entity> resource = EntityModel.of(new Entity(),
+				Link.of("http://www.example.com/association/linked", "nullLinkedCollection"));
 		
 		when(restOperations.getResources(URI.create("http://www.example.com/association/linked"),
-				Entity.class)).thenReturn(new CollectionModel<>(asList(new EntityModel<>(new Entity(),
-						new Link("http://www.example.com/1", IanaLinkRelations.SELF)))));
+				Entity.class)).thenReturn(CollectionModel.of(asList(EntityModel.of(new Entity(),
+						Link.of("http://www.example.com/1", IanaLinkRelations.SELF)))));
 		
 		Entity proxy = proxyFactory.create(resource, restOperations);
 		
@@ -227,8 +227,8 @@ public class JavassistClientProxyFactoryTest {
 		Entity entity = new Entity();
 		entity.setActive(true);
 		
-		EntityModel<Entity> resource = new EntityModel<>(entity,
-			new Link("http://www.example.com/1", IanaLinkRelations.SELF));
+		EntityModel<Entity> resource = EntityModel.of(entity,
+			Link.of("http://www.example.com/1", IanaLinkRelations.SELF));
 		
 		Entity proxy = proxyFactory.create(resource, mock(RestOperations.class));
 		
@@ -241,8 +241,8 @@ public class JavassistClientProxyFactoryTest {
 		Entity entity = new Entity();
 		entity.setActive(true);
 		
-		EntityModel<Entity> resource = new EntityModel<>(entity,
-			new Link("http://www.example.com/1", IanaLinkRelations.SELF));
+		EntityModel<Entity> resource = EntityModel.of(entity,
+			Link.of("http://www.example.com/1", IanaLinkRelations.SELF));
 		
 		Entity proxy = proxyFactory.create(resource, mock(RestOperations.class));
 		
@@ -256,7 +256,7 @@ public class JavassistClientProxyFactoryTest {
 		AbstractClassTypeResource content = instantiateProxyOfAbstractClassType(AbstractClassTypeResource.class);
 		
 		AbstractClassTypeResource resource = proxyFactory
-			.create(new EntityModel<>(content), mock(RestOperations.class));
+			.create(EntityModel.of(content), mock(RestOperations.class));
 		
 		assertThat(resource, is(allOf(isA(AbstractClassTypeResource.class), not(sameInstance(content)))));
 	}
@@ -265,7 +265,7 @@ public class JavassistClientProxyFactoryTest {
 	public void createWithResourceWithProxiedInterfaceContentReturnsProxy() throws Exception {
 		InterfaceTypeResource content = instantiateProxyOfInterfaceType(InterfaceTypeResource.class);
 		
-		InterfaceTypeResource resource = proxyFactory.create(new EntityModel<>(content), mock(RestOperations.class));
+		InterfaceTypeResource resource = proxyFactory.create(EntityModel.of(content), mock(RestOperations.class));
 		
 		assertThat(resource, is(allOf(isA(InterfaceTypeResource.class), not(sameInstance(content)))));
 	}
@@ -275,11 +275,11 @@ public class JavassistClientProxyFactoryTest {
 		InterfaceTypeResource content = instantiateProxyOfInterfaceType(InterfaceTypeResource.class);
 		
 		when(restOperations.getResources(URI.create("http://www.example.com/association/linked"),
-			Entity.class)).thenReturn(new CollectionModel<>(asList(new EntityModel<>(new Entity(),
-			new Link("http://www.example.com/1", IanaLinkRelations.SELF)))));
+			Entity.class)).thenReturn(CollectionModel.of(asList(EntityModel.of(new Entity(),
+			Link.of("http://www.example.com/1", IanaLinkRelations.SELF)))));
 		
-		InterfaceTypeResource resource = proxyFactory.create(new EntityModel<>(content,
-			new Link("http://www.example.com/association/linked", "linked")), restOperations);
+		InterfaceTypeResource resource = proxyFactory.create(EntityModel.of(content,
+			Link.of("http://www.example.com/association/linked", "linked")), restOperations);
 		
 		assertThat(resource.linked().get(0).getId(), is(URI.create("http://www.example.com/1")));
 	}
@@ -289,7 +289,7 @@ public class JavassistClientProxyFactoryTest {
 		thrown.expect(ClientProxyException.class);
 		thrown.expectMessage("couldn't create proxy instance of " + UnconstructableEntity.class);
 		
-		proxyFactory.create(new EntityModel<>(new UnconstructableEntity(new Object())), mock(RestOperations.class));
+		proxyFactory.create(EntityModel.of(new UnconstructableEntity(new Object())), mock(RestOperations.class));
 	}
 	
 	private static <T> T instantiateProxyOfAbstractClassType(Class<T> type) throws Exception {
