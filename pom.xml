@@ -106,6 +106,17 @@
 						<source>8</source>
 					</configuration>
 				</plugin>
+
+				<plugin>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>3.0.0-M5</version>
+				</plugin>
+
+				<plugin>
+					<groupId>org.jacoco</groupId>
+					<artifactId>jacoco-maven-plugin</artifactId>
+					<version>0.8.7</version>
+				</plugin>
 				
 				<plugin>
 					<groupId>org.asciidoctor</groupId>
