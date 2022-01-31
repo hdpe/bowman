@@ -23,7 +23,7 @@
 		<version>1.5.0</version>
 	</parent>
 	
-	<groupId>uk.co.blackpepper.bowman</groupId>
+	<groupId>me.hdpe.bowman</groupId>
 	<artifactId>bowman-parent</artifactId>
 	<version>0.9.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
