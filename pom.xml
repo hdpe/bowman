@@ -23,7 +23,7 @@
 		<version>1.5.0</version>
 	</parent>
 	
-	<groupId>uk.co.blackpepper.bowman</groupId>
+	<groupId>me.hdpe.bowman</groupId>
 	<artifactId>bowman-parent</artifactId>
 	<version>0.9.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
@@ -106,6 +106,17 @@
 						<source>8</source>
 					</configuration>
 				</plugin>
+
+				<plugin>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>3.0.0-M5</version>
+				</plugin>
+
+				<plugin>
+					<groupId>org.jacoco</groupId>
+					<artifactId>jacoco-maven-plugin</artifactId>
+					<version>0.8.7</version>
+				</plugin>
 				
 				<plugin>
 					<groupId>org.asciidoctor</groupId>
@@ -119,30 +130,12 @@
 						<skip>true</skip>
 					</configuration>
 				</plugin>
-				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
 				<plugin>
-				    <groupId>org.eclipse.m2e</groupId>
-				    <artifactId>lifecycle-mapping</artifactId>
-				    <version>1.0.0</version>
-				    <configuration>
-				        <lifecycleMappingMetadata>
-				            <pluginExecutions>
-				                <pluginExecution>
-				                    <pluginExecutionFilter>
-				                        <groupId>org.codehaus.mojo</groupId>
-				                        <artifactId>build-helper-maven-plugin</artifactId>
-				                        <versionRange>[1.10,)</versionRange>
-				                        <goals>
-				                            <goal>regex-property</goal>
-				                        </goals>
-				                    </pluginExecutionFilter>
-				                    <action>
-				                        <ignore></ignore>
-				                    </action>
-				                </pluginExecution>
-				            </pluginExecutions>
-				        </lifecycleMappingMetadata>
-				    </configuration>
+					<groupId>org.sonatype.plugins</groupId>
+					<artifactId>nexus-staging-maven-plugin</artifactId>
+					<configuration>
+						<nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+					</configuration>
 				</plugin>
 			</plugins>
 		</pluginManagement>
@@ -184,4 +177,17 @@
 		</dependencies>
 	</dependencyManagement>
 
+	<distributionManagement>
+		<repository>
+			<id>sonatype-nexus-staging</id>
+			<name>Sonatype Nexus Staging Repository</name>
+			<url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+		</repository>
+
+		<snapshotRepository>
+			<id>sonatype-nexus-snapshots</id>
+			<name>Sonatype Nexus Snapshot Repository</name>
+			<url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>
+		</snapshotRepository>
+	</distributionManagement>
 </project>

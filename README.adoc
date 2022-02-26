@@ -1,6 +1,6 @@
 = Bowman
 
-image:https://travis-ci.org/BlackPepperSoftware/bowman.svg?branch=master[title=Build Status,link=https://travis-ci.org/BlackPepperSoftware/bowman]
+image:https://travis-ci.org/hdpe/bowman.svg?branch=main[title=Build Status,link=https://app.travis-ci.com/github/hdpe/bowman]
 image:https://coveralls.io/repos/github/BlackPepperSoftware/bowman/badge.svg?branch=master[title=Coverage Status,link=https://coveralls.io/github/BlackPepperSoftware/bowman?branch=master]
 image:https://img.shields.io/maven-central/v/uk.co.blackpepper.bowman/bowman-client.svg[title=Maven Central,link=https://search.maven.org/#search%7Cga%7C1%7Ca%3Abowman-client]
 
@@ -8,8 +8,8 @@ Bowman is a Java library for accessing a http://stateless.co/hal_specification.h
 
 == Documentation
 
-* https://blackpeppersoftware.github.io/bowman/latest/reference/[Reference Documentation]
-* https://blackpeppersoftware.github.io/bowman/latest/apidocs/[Javadoc]
+* https://hdpe.github.io/bowman/latest/reference/[Reference Documentation]
+* https://hdpe.github.io/bowman/latest/apidocs/[Javadoc]
 
 == Features
 

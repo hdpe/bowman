@@ -18,7 +18,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>uk.co.blackpepper.bowman</groupId>
+		<groupId>me.hdpe.bowman</groupId>
 		<artifactId>bowman-parent</artifactId>
 		<version>0.9.1-SNAPSHOT</version>
 	</parent>
