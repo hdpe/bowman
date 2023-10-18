@@ -1,6 +1,6 @@
 package uk.co.blackpepper.bowman.test.server.model;
 
-import javax.persistence.Entity;
+import jakarta.persistence.Entity;
 
 @SuppressWarnings("unused")
 @Entity
