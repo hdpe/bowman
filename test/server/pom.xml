@@ -20,7 +20,7 @@
 	<parent>
 		<groupId>me.hdpe.bowman</groupId>
 		<artifactId>bowman-test-parent</artifactId>
-		<version>0.11.0</version>
+		<version>0.11.1-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>bowman-test-server</artifactId>
