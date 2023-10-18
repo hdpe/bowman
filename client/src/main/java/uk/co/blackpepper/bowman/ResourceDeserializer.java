@@ -49,7 +49,7 @@ class ResourceDeserializer extends StdDeserializer<EntityModel<?>> implements Co
 		Links links = Links.of(resource.getLinks());
 		
 		Object content = mapper.convertValue(node, getResourceDeserializationType(links));
-		return new EntityModel<>(content, links);
+		return EntityModel.of(content, links);
 	}
 	
 	TypeResolver getTypeResolver() {

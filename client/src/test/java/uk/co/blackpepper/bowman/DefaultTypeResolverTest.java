@@ -107,7 +107,7 @@ public class DefaultTypeResolverTest {
 	@Test
 	public void resolveTypeWithNoResourceTypeInfoReturnsDeclaredType() {
 		Class<?> type = resolver.resolveType(TypeWithoutInfo.class,
-			Links.of(new Link("http://x", IanaLinkRelations.SELF)), Configuration.build());
+			Links.of(Link.of("http://x", IanaLinkRelations.SELF)), Configuration.build());
 		
 		assertThat(type, Matchers.<Class<?>>equalTo(TypeWithoutInfo.class));
 	}
@@ -138,7 +138,7 @@ public class DefaultTypeResolverTest {
 	@Test
 	public void resolveTypeWithSubtypesAndNoMatchingSubtypeReturnsDeclaredType() {
 		Class<?> type = resolver.resolveType(TypeWithSubtypes.class,
-			Links.of(new Link("http://x", IanaLinkRelations.SELF)), Configuration.build());
+			Links.of(Link.of("http://x", IanaLinkRelations.SELF)), Configuration.build());
 		
 		assertThat(type, Matchers.<Class<?>>equalTo(TypeWithSubtypes.class));
 	}
@@ -148,7 +148,7 @@ public class DefaultTypeResolverTest {
 		Configuration config = Configuration.builder().setBaseUri("http://x.com").build();
 		
 		Class<?> type = resolver.resolveType(TypeWithSubtypes.class,
-			Links.of(new Link("http://x.com/2/1", IanaLinkRelations.SELF)), config);
+			Links.of(Link.of("http://x.com/2/1", IanaLinkRelations.SELF)), config);
 		
 		assertThat(type, Matchers.<Class<?>>equalTo(TypeWithSubtypesSubtype2.class));
 	}
@@ -158,7 +158,7 @@ public class DefaultTypeResolverTest {
 		Configuration config = Configuration.builder().setBaseUri("http://x.com").build();
 		
 		Class<?> type = resolver.resolveType(TypeWithSubtypes.class,
-			Links.of(new Link("/2/1", IanaLinkRelations.SELF)), config);
+			Links.of(Link.of("/2/1", IanaLinkRelations.SELF)), config);
 		
 		assertThat(type, Matchers.<Class<?>>equalTo(TypeWithSubtypesSubtype2.class));
 	}
@@ -170,7 +170,7 @@ public class DefaultTypeResolverTest {
 				+ " is not annotated with @RemoteResource");
 		
 		resolver.resolveType(TypeWithNonRemoteResourceSubtype.class,
-			Links.of(new Link("/", IanaLinkRelations.SELF)), Configuration.build());
+			Links.of(Link.of("/", IanaLinkRelations.SELF)), Configuration.build());
 	}
 	
 	@Test
@@ -180,12 +180,12 @@ public class DefaultTypeResolverTest {
 				+ " is not a subtype of " + TypeWithIllegalSubtype.class.getName());
 		
 		resolver.resolveType(TypeWithIllegalSubtype.class,
-			Links.of(new Link("/x/1", IanaLinkRelations.SELF)), Configuration.build());
+			Links.of(Link.of("/x/1", IanaLinkRelations.SELF)), Configuration.build());
 	}
 	
 	@Test
 	public void resolveTypeWithResolverReturnsResolvedType() {
-		Links links = Links.of(new Link("_"));
+		Links links = Links.of(Link.of("_"));
 		Configuration config = Configuration.build();
 		
 		doReturn(TypeWithResolverSubtype.class)

@@ -16,7 +16,7 @@ public class ResourceIdMethodHandlerTest {
 	
 	@Test
 	public void invokeWithResourceWithSelfLinkReturnsLinkUri() {
-		EntityModel<Object> resource = new EntityModel<>(new Object(), Links.of(new Link("http://www.example.com/1",
+		EntityModel<Object> resource = EntityModel.of(new Object(), Links.of(Link.of("http://www.example.com/1",
 			IanaLinkRelations.SELF)));
 		
 		Object result = new ResourceIdMethodHandler(resource).invoke(null, null, null, null);
@@ -26,7 +26,7 @@ public class ResourceIdMethodHandlerTest {
 	
 	@Test
 	public void invokeWithResourceWithNoSelfLinkReturnsNull() {
-		EntityModel<Object> resource = new EntityModel<>(new Object(), Links.of(new Link("http://www.example.com/1",
+		EntityModel<Object> resource = EntityModel.of(new Object(), Links.of(Link.of("http://www.example.com/1",
 			"some-other-rel")));
 		
 		Object result = new ResourceIdMethodHandler(resource).invoke(null, null, null, null);

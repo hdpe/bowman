@@ -17,15 +17,30 @@ package uk.co.blackpepper.bowman.test.server;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SpringBootApplication
 public class Application {
-	
+
 	public static void main(String[] args) {
 		new Application().run(args);
 	}
-	
+
 	void run(String[] args) {
 		SpringApplication.run(Application.class, args);
+	}
+
+	@Bean
+	public ObjectMapper getObjectMapper() {
+		ObjectMapper objectMapper = new ObjectMapper();
+		objectMapper.setVisibility(objectMapper.getSerializationConfig()
+			.getDefaultVisibilityChecker()
+			.withFieldVisibility(Visibility.ANY)
+			.withGetterVisibility(Visibility.NONE)
+			.withIsGetterVisibility(Visibility.NONE));
+		return objectMapper;
 	}
 }

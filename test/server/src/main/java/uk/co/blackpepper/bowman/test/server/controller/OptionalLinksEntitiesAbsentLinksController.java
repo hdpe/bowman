@@ -26,7 +26,7 @@ public class OptionalLinksEntitiesAbsentLinksController {
 		OptionalLinksEntity entity = repository.findById(id)
 			.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 		
-		return new EntityModel<>(entity, Links.of(new Link(
+		return EntityModel.of(entity, Links.of(Link.of(
 			String.format("http://localhost:8080/optional-links-entities/%s", id))));
 	}
 }

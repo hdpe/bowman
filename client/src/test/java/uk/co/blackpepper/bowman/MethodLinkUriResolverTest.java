@@ -20,7 +20,7 @@ public class MethodLinkUriResolverTest {
 	
 	@Test
 	public void resolveForMethodWithNoMatchingLinkThrowsException() {
-		EntityModel<Object> resource = new EntityModel<>(new Object(), Links.of(new Link("http://www.example.com",
+		EntityModel<Object> resource = EntityModel.of(new Object(), Links.of(Link.of("http://www.example.com",
 			"other")));
 		
 		thrown.expect(NoSuchLinkException.class);
@@ -31,8 +31,8 @@ public class MethodLinkUriResolverTest {
 	
 	@Test
 	public void resolveForMethodReturnsUriWithParamsExpanded() {
-		EntityModel<Object> resource = new EntityModel<>(new Object(),
-			Links.of(new Link("http://www.example.com/{?x,y}",
+		EntityModel<Object> resource = EntityModel.of(new Object(),
+			Links.of(Link.of("http://www.example.com/{?x,y}",
 				"link1")));
 		
 		URI uri = new MethodLinkUriResolver().resolveForMethod(resource, "link1", new Object[] {"1", 2});
