@@ -153,13 +153,13 @@ public class SimpleEntityIT extends AbstractIT {
 	
 	@Test
 	public void canPatchEntity() {
-		SimpleEntity entity = new SimpleEntity();
-		entity.setName("x");
-		URI entityUri = client.post(entity);
-		
 		SimpleEntity related = new SimpleEntity();
 		related.setName("y");
 		client.post(related);
+		
+		SimpleEntity entity = new SimpleEntity();
+		entity.setName("x");
+		URI entityUri = client.post(entity);
 		
 		client.patch(entityUri, new SimpleEntityPatch(related));
 		
@@ -175,15 +175,15 @@ public class SimpleEntityIT extends AbstractIT {
 		related.setName("related");
 		client.post(related);
 
+		SimpleEntity related2 = new SimpleEntity();
+		related2.setName("related2");
+		client.post(related2);
+
 		SimpleEntity sent = new SimpleEntity();
 		sent.setRelated(related);
 		client.post(sent);
 
 		SimpleEntity retrieved = client.get(sent.getId());
-
-		SimpleEntity related2 = new SimpleEntity();
-		related2.setName("related2");
-		client.post(related2);
 
 		retrieved.setRelated(related2);
 		client.patch(retrieved.getId(), new SimpleEntityPatch(retrieved.getRelated()));
