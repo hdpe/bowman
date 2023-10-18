@@ -98,6 +98,11 @@
 					<artifactId>coveralls-maven-plugin</artifactId>
 					<version>4.3.0</version>
 				</plugin>
+
+				<plugin>
+					<artifactId>maven-enforcer-plugin</artifactId>
+					<version>3.4.1</version>
+				</plugin>
 				
 				<plugin>
 					<artifactId>maven-javadoc-plugin</artifactId>
@@ -115,7 +120,7 @@
 				<plugin>
 					<groupId>org.jacoco</groupId>
 					<artifactId>jacoco-maven-plugin</artifactId>
-					<version>0.8.7</version>
+					<version>0.8.11</version>
 				</plugin>
 				
 				<plugin>
