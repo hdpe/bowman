@@ -1,6 +1,6 @@
 = Bowman
 
-image:https://github.com/github/docs/actions/workflows/main.yml/badge.svg?branch=main[title=Build Status,link=https://github.com/hdpe/bowman/actions?query=branch%3Amain]
+image:https://github.com/hdpe/bowman/actions/workflows/build.yml/badge.svg?branch=main[title=Build Status,link=https://github.com/hdpe/bowman/actions?query=branch%3Amain]
 image:https://coveralls.io/repos/github/hdpe/bowman/badge.svg?branch=main[title=Coverage Status,link=https://coveralls.io/github/hdpe/bowman?branch=main]
 image:https://img.shields.io/maven-central/v/me.hdpe.bowman/bowman-client.svg[title=Maven Central,link=https://search.maven.org/#search%7Cga%7C1%7Ca%3Abowman-client]
 
