@@ -33,6 +33,14 @@
 				<configuration>
 					<repoToken>${env.COVERALLS_TOKEN}</repoToken>
 				</configuration>
+				<dependencies>
+					<!-- https://github.com/trautonen/coveralls-maven-plugin/issues/141 -->
+					<dependency>
+						<groupId>javax.xml.bind</groupId>
+						<artifactId>jaxb-api</artifactId>
+						<version>2.3.1</version>
+					</dependency>
+				</dependencies>
 			</plugin>
 				
 			<plugin>
