@@ -7,7 +7,7 @@ Add the Maven dependency:
 [source,xml]
 [subs="+attributes"]
 <dependency>
-  <groupId>uk.co.blackpepper.bowman</groupId>
+  <groupId>me.hdpe.bowman</groupId>
   <artifactId>bowman-client</artifactId>
   <version>{project-version}</version>
 </dependency>
